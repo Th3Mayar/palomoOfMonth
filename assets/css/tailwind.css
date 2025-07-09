@@ -1,0 +1,276 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    /* Variables HSL para shadcn-vue (modo oscuro por defecto) */
+    --foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --primary: 262.1 83.3% 57.8%; /* Morado */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --ring: 212.7 26.8% 83.9%;
+    --radius: 0.5rem;
+    
+    /* Variables personalizadas (modo oscuro por defecto) */
+    --theme-color: #9fa8da; /* Light Indigo para modo oscuro */
+    --background: #121212; /* Muy oscuro para el fondo principal */
+    --main-content: #1C1C1C; /* Gris oscuro */
+    --button-primary: #9575CD; /* Purple */
+    --button-secondary: #B39DDB; /* Light purple */
+    --dropdown-button: #B388FF; /* Light indigo */
+    --content-background: #212121; /* Fondo de contenido */
+    --button-variant: #7986cb; /* Indigo más claro para botones secundarios */
+    --button-success: #66bb6a; /* Verde más suave */
+    --button-danger: #EF5350; /* Rojo */
+    --text-variant-1: #b0bec5; /* Gris claro para texto secundario */
+    --text-variant-2: #90a4ae; /* Gris ligeramente más oscuro */
+    --text-primary: #E0E0E0; /* Blanco grisáceo */
+    --alert-success-bg: #43A047; /* Verde */
+    --alert-error-bg: #EF5350; /* Rojo */
+    --alert-info-bg: #42A5F5; /* Azul */
+    --alert-warning-bg: #FFA726; /* Naranja */
+    --shadow: #000000; /* Sombra completamente negra */
+    --list-option: #B39DDB; /* Purple */
+    --table-cell-bg: #424242; /* Gris oscuro */
+    --state-option-bg: #388e3c; /* Verde fuerte para opciones de estado */
+    --table-action-bg: #546e7a; /* Azul grisáceo oscuro para acciones de tabla */
+    --text-variant-3: #7986cb; /* Indigo más claro para textos secundarios */
+    --text-variant-4: #E0E0E0; /* Blanco */
+    --state-variant: #ba68c8; /* Púrpura suave para variantes de estado */
+    --button-variant-tertiary: #B388FF; /* Azul */
+    --skeleton: #2A2A2A;
+    --order-success-bg: #43A047; /* Green */
+    --button-variant-secondary: #B39DDB; /* Light purple */
+    --content-button: #2A2A2A; /* Gris oscuro para botones de contenido */
+  }
+
+  /* Estilos para el modo claro */
+  .light {
+    --foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --primary: 262.1 83.3% 57.8%; /* Morado */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --ring: 222.2 84% 4.9%;
+    
+    --theme-color: #ef6c00; /* Naranja vibrante por defecto */
+    --background: #ffffff; /* Blanco */
+    --main-content: #f0f4f8; /* Light grayish blue */
+    --button-primary: #7E57C2; /* Purple */
+    --button-secondary: #9575CD; /* Light purple */
+    --dropdown-button: #7C4DFF; /* Indigo */
+    --content-background: #fafafa; /* Very light gray */
+    --button-variant: #5c6bc0; /* Indigo */
+    --button-success: #4caf50; /* Green */
+    --button-danger: #f44336; /* Red */
+    --text-variant-1: #78909c; /* Cool gray */
+    --text-variant-2: #546e7a; /* Slate gray */
+    --text-primary: #212121; /* Almost black */
+    --alert-success-bg: #388e3c; /* Deep green */
+    --alert-error-bg: #d32f2f; /* Dark red */
+    --alert-info-bg: #1976d2; /* Blue */
+    --alert-warning-bg: #fbc02d; /* Yellow */
+    --shadow: #424242; /* Dark gray */
+    --list-option: #7E57C2; /* Purple */
+    --table-cell-bg: #e0e0e0; /* Light gray */
+    --state-option-bg: #388e3c; /* Green */
+    --table-action-bg: #455a64; /* Blue-gray */
+    --text-variant-3: #512DA8; /* Indigo */
+    --text-variant-4: #212121; /* Almost black */
+    --state-variant: #8e24aa; /* Purple */
+    --button-variant-tertiary: #7C4DFF; /* Indigo */
+    --skeleton: #2a2a2a;
+    --order-success-bg: #43A047; /* Green */
+    --button-variant-secondary: #B39DDB; /* Light purple */
+    --content-button: #F5F5F5; /* Light gray */
+  }
+}
+
+.bg-theme {
+  background-color: var(--theme-color);
+}
+
+.text-theme {
+  color: var(--theme-color);
+}
+
+.shadowError {
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.5);
+  border-color: #ff0000;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    font-family: "Poppins", sans-serif;
+  }
+}
+
+@layer utilities {
+  .bg-background {
+    background-color: var(--background);
+  }
+  
+  .bg-main-content {
+    background-color: var(--main-content);
+  }
+  
+  .bg-content-background {
+    background-color: var(--content-background);
+  }
+  
+  .bg-button-primary {
+    background-color: var(--button-primary);
+  }
+  
+  .bg-button-secondary {
+    background-color: var(--button-secondary);
+  }
+  
+  .bg-button-variant {
+    background-color: var(--button-variant);
+  }
+  
+  .bg-button-success {
+    background-color: var(--button-success);
+  }
+  
+  .bg-button-danger {
+    background-color: var(--button-danger);
+  }
+  
+  .bg-dropdown-button {
+    background-color: var(--dropdown-button);
+  }
+  
+  .bg-button-variant-secondary {
+    background-color: var(--button-variant-secondary);
+  }
+  
+  .bg-button-variant-tertiary {
+    background-color: var(--button-variant-tertiary);
+  }
+  
+  .bg-content-button {
+    background-color: var(--content-button);
+  }
+  
+  .bg-order-success {
+    background-color: var(--order-success-bg);
+  }
+  
+  .bg-alert-success {
+    background-color: var(--alert-success-bg);
+  }
+  
+  .bg-alert-error {
+    background-color: var(--alert-error-bg);
+  }
+  
+  .bg-alert-info {
+    background-color: var(--alert-info-bg);
+  }
+  
+  .bg-alert-warning {
+    background-color: var(--alert-warning-bg);
+  }
+  
+  .text-textPrimary {
+    color: var(--text-primary);
+  }
+  
+  .text-textVariant1 {
+    color: var(--text-variant-1);
+  }
+  
+  .text-textVariant2 {
+    color: var(--text-variant-2);
+  }
+  
+  .text-textVariant3 {
+    color: var(--text-variant-3);
+  }
+  
+  .text-textVariant4 {
+    color: var(--text-variant-4);
+  }
+  
+  .text-button-primary {
+    color: var(--button-primary);
+  }
+  
+  .text-button-secondary {
+    color: var(--button-secondary);
+  }
+  
+  .text-button-variant {
+    color: var(--button-variant);
+  }
+  
+  .text-state-variant {
+    color: var(--state-variant);
+  }
+  
+  .bg-state-variant {
+    background-color: var(--state-variant);
+  }
+  
+  .bg-list-option {
+    background-color: var(--list-option);
+  }
+  
+  .text-list-option {
+    color: var(--list-option);
+  }
+  
+  .bg-table-cell {
+    background-color: var(--table-cell-bg);
+  }
+  
+  .bg-table-action {
+    background-color: var(--table-action-bg);
+  }
+  
+  .bg-state-option {
+    background-color: var(--state-option-bg);
+  }
+}
