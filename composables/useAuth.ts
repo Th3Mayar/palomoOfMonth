@@ -36,18 +36,16 @@ export const useAuth = () => {
         token.value = data.token
         user.value = data.user || { name: credentials.name }
         
-        // Redirigir al usuario
         await navigateTo('/')
         
         return { success: true, ...data }
       }
 
-      return { success: false, message: 'Credenciales inválidas' }
+      return { success: false, message: 'Invalid credentials' }
     } catch (error: any) {
-      console.error('Error en login:', error)
       return { 
         success: false, 
-        message: error?.data?.message || error?.message || 'Error de conexión' 
+        message: error?.data?.message || error?.message || 'Error of connection' 
       }
     }
   }
@@ -63,12 +61,11 @@ export const useAuth = () => {
         return { success: true, ...data }
       }
 
-      return { success: false, message: 'Error en el registro' }
+      return { success: false, message: 'Error on register' }
     } catch (error: any) {
-      console.error('Error en registro:', error)
       return { 
         success: false, 
-        message: error?.data?.message || error?.message || 'Error de conexión' 
+        message: error?.data?.message || error?.message || 'Error of connection' 
       }
     }
   }
@@ -84,12 +81,11 @@ export const useAuth = () => {
         return { success: true, ...data }
       }
 
-      return { success: false, message: 'Error al enviar el enlace' }
+      return { success: false, message: 'Error on forgot password' }
     } catch (error: any) {
-      console.error('Error en forgot password:', error)
       return { 
         success: false, 
-        message: error?.data?.message || error?.message || 'Error de conexión' 
+        message: error?.data?.message || error?.message || 'Error of connection' 
       }
     }
   }
@@ -103,12 +99,9 @@ export const useAuth = () => {
   const checkAuth = () => {
     if (token.value) {
       try {
-        // Si tienes un token, establece el usuario
-        // En una implementación real, podrías decodificar el JWT o hacer una llamada al servidor
-        user.value = { name: 'Usuario' } // Placeholder - aquí podrías obtener info del token
+        user.value = { name: 'Bartolito' } 
         return true
       } catch (error) {
-        // Si hay un error con el token, limpiarlo
         token.value = null
         user.value = null
         return false
