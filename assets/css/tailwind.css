@@ -12,7 +12,7 @@
 
 @layer base {
   :root {
-    /* Variables HSL para shadcn-vue (modo oscuro por defecto) */
+    /* HSL variables for shadcn-vue (dark mode by default) */
     --foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215.4 16.3% 46.9%;
@@ -22,7 +22,7 @@
     --card-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --primary: 262.1 83.3% 57.8%; /* Morado */
+    --primary: 262.1 83.3% 57.8%; /* Purple */
     --primary-foreground: 210 20% 98%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -33,40 +33,40 @@
     --ring: 212.7 26.8% 83.9%;
     --radius: 0.5rem;
     
-    /* Variables personalizadas (modo oscuro por defecto) */
-    --theme-color: #9fa8da; /* Light Indigo para modo oscuro */
-    --background: #121212; /* Muy oscuro para el fondo principal */
-    --main-content: #1C1C1C; /* Gris oscuro */
+    /* Custom variables (dark mode by default) */
+    --theme-color: #9fa8da; /* Light Indigo for dark mode */
+    --background: #121212; /* Very dark for main background */
+    --main-content: #1C1C1C; /* Dark gray */
     --button-primary: #9575CD; /* Purple */
     --button-secondary: #B39DDB; /* Light purple */
     --dropdown-button: #B388FF; /* Light indigo */
-    --content-background: #212121; /* Fondo de contenido */
-    --button-variant: #7986cb; /* Indigo más claro para botones secundarios */
-    --button-success: #66bb6a; /* Verde más suave */
-    --button-danger: #EF5350; /* Rojo */
-    --text-variant-1: #b0bec5; /* Gris claro para texto secundario */
-    --text-variant-2: #90a4ae; /* Gris ligeramente más oscuro */
-    --text-primary: #E0E0E0; /* Blanco grisáceo */
-    --alert-success-bg: #43A047; /* Verde */
-    --alert-error-bg: #EF5350; /* Rojo */
-    --alert-info-bg: #42A5F5; /* Azul */
-    --alert-warning-bg: #FFA726; /* Naranja */
-    --shadow: #000000; /* Sombra completamente negra */
+    --content-background: #212121; /* Content background */
+    --button-variant: #7986cb; /* Lighter indigo for secondary buttons */
+    --button-success: #66bb6a; /* Softer green */
+    --button-danger: #EF5350; /* Red */
+    --text-variant-1: #b0bec5; /* Light gray for secondary text */
+    --text-variant-2: #90a4ae; /* Slightly darker gray */
+    --text-primary: #E0E0E0; /* Grayish white */
+    --alert-success-bg: #43A047; /* Green */
+    --alert-error-bg: #EF5350; /* Red */
+    --alert-info-bg: #42A5F5; /* Blue */
+    --alert-warning-bg: #FFA726; /* Orange */
+    --shadow: #000000; /* Completely black shadow */
     --list-option: #B39DDB; /* Purple */
-    --table-cell-bg: #424242; /* Gris oscuro */
-    --state-option-bg: #388e3c; /* Verde fuerte para opciones de estado */
-    --table-action-bg: #546e7a; /* Azul grisáceo oscuro para acciones de tabla */
-    --text-variant-3: #7986cb; /* Indigo más claro para textos secundarios */
-    --text-variant-4: #E0E0E0; /* Blanco */
-    --state-variant: #ba68c8; /* Púrpura suave para variantes de estado */
-    --button-variant-tertiary: #B388FF; /* Azul */
+    --table-cell-bg: #424242; /* Dark gray */
+    --state-option-bg: #388e3c; /* Strong green for state options */
+    --table-action-bg: #546e7a; /* Dark grayish blue for table actions */
+    --text-variant-3: #7986cb; /* Lighter indigo for secondary texts */
+    --text-variant-4: #E0E0E0; /* White */
+    --state-variant: #ba68c8; /* Soft purple for state variants */
+    --button-variant-tertiary: #B388FF; /* Blue */
     --skeleton: #2A2A2A;
     --order-success-bg: #43A047; /* Green */
     --button-variant-secondary: #B39DDB; /* Light purple */
-    --content-button: #2A2A2A; /* Gris oscuro para botones de contenido */
+    --content-button: #2A2A2A; /* Dark gray for content buttons */
   }
 
-  /* Estilos para el modo claro */
+  /* Styles for light mode */
   .light {
     --foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96.1%;
@@ -77,7 +77,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --primary: 262.1 83.3% 57.8%; /* Morado */
+    --primary: 262.1 83.3% 57.8%; /* Purple */
     --primary-foreground: 210 20% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 84% 4.9%;
@@ -87,8 +87,8 @@
     --destructive-foreground: 210 20% 98%;
     --ring: 222.2 84% 4.9%;
     
-    --theme-color: #ef6c00; /* Naranja vibrante por defecto */
-    --background: #ffffff; /* Blanco */
+    --theme-color: #ef6c00; /* Vibrant orange by default */
+    --background: #ffffff; /* White */
     --main-content: #f0f4f8; /* Light grayish blue */
     --button-primary: #7E57C2; /* Purple */
     --button-secondary: #9575CD; /* Light purple */
