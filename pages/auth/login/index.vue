@@ -7,24 +7,33 @@
           Enter your credentials to access Palomo of the Month
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent>
-        <form @submit.prevent="handleLogin" class="space-y-4">
+        <VeeForm 
+          @submit="handleLogin" 
+          :validation-schema="loginSchema" 
+          class="space-y-4"
+        >
           <div class="space-y-2">
             <label for="name" class="text-sm font-medium text-foreground">
               Username
             </label>
             <div class="relative">
               <User class="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="name"
-                v-model="form.name"
-                type="text"
-                placeholder="Enter your username"
-                class="pl-10"
-                required
-              />
+              <VeeField
+                name="name"
+                v-slot="{ field, errorMessage }"
+              >
+                <Input
+                  v-bind="field"
+                  id="name"
+                  type="text"
+                  placeholder="Enter your username"
+                  :class="`pl-10 ${errorMessage ? 'border-destructive' : ''}`"
+                />
+              </VeeField>
             </div>
+            <VeeErrorMessage name="name" class="text-sm text-destructive" />
           </div>
           
           <div class="space-y-2">
@@ -33,29 +42,34 @@
             </label>
             <div class="relative">
               <Lock class="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="password"
-                v-model="form.password"
-                type="password"
-                placeholder="Enter your password"
-                class="pl-10"
-                required
-              />
+              <VeeField
+                name="password"
+                v-slot="{ field, errorMessage }"
+              >
+                <Input
+                  v-bind="field"
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  :class="`pl-10 ${errorMessage ? 'border-destructive' : ''}`"
+                />
+              </VeeField>
             </div>
+            <VeeErrorMessage name="password" class="text-sm text-destructive" />
           </div>
-          
+
           <!-- Error message -->
           <div v-if="error" class="text-sm text-destructive bg-destructive/10 p-3 rounded-md flex items-center">
             <AlertCircle class="h-4 w-4 mr-2" />
             {{ error }}
           </div>
-          
+
           <!-- Success message -->
           <div v-if="success" class="text-sm text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-md flex items-center">
             <CheckCircle class="h-4 w-4 mr-2" />
             {{ success }}
           </div>
-          
+
           <Button 
             type="submit" 
             class="w-full" 
@@ -64,8 +78,8 @@
             <Loader2 v-if="loading" class="mr-2 h-4 w-4 animate-spin" />
             {{ loading ? 'Signing in...' : 'Sign In' }}
           </Button>
-        </form>
-        
+        </VeeForm>
+
         <div class="mt-6 text-center">
           <p class="text-sm text-muted-foreground">
             Forgot your password?
@@ -81,6 +95,7 @@
 
 <script setup lang="ts">
 import { User, Lock, Loader2, AlertCircle, CheckCircle } from 'lucide-vue-next'
+import { loginSchema } from '~/lib/validationSchemas'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
 import CardContent from '~/components/ui/CardContent.vue'
@@ -94,12 +109,6 @@ definePageMeta({
   layout: 'auth-layout'
 })
 
-// Form state
-const form = reactive({
-  name: '',
-  password: ''
-})
-
 const loading = ref(false)
 const error = ref('')
 const success = ref('')
@@ -107,28 +116,20 @@ const success = ref('')
 // Authentication composable
 const { login } = useAuth()
 
-// Theme is initialized in auth-layout.vue
-
 // Function to handle login
-const handleLogin = async () => {
-  if (!form.name || !form.password) {
-    error.value = 'Please fill in all fields'
-    return
-  }
-
+const handleLogin = async (values: any) => {
   loading.value = true
   error.value = ''
   success.value = ''
 
   try {
     const result = await login({
-      name: form.name,
-      password: form.password
+      name: values.name,
+      password: values.password
     })
 
     if (result.success) {
       success.value = 'Login successful. Redirecting...'
-      // Redirection is handled in the useAuth composable
     } else {
       error.value = result.message || 'Login failed'
     }
@@ -140,10 +141,8 @@ const handleLogin = async () => {
   }
 }
 
-// Clear form when component mounts
+// Clear messages when component mounts
 onMounted(() => {
-  form.name = ''
-  form.password = ''
   error.value = ''
   success.value = ''
 })

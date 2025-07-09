@@ -21,6 +21,15 @@ export default defineNuxtConfig({
       ErrorMessage: "VeeErrorMessage",
     },
   },
+  runtimeConfig: {
+    // Private keys (only available on server-side)
+    apiBaseUrl: process.env.API_BASE_URL,
+    authLoginEndpoint: process.env.AUTH_LOGIN_ENDPOINT,
+    // Public keys (exposed to client-side)
+    public: {
+      apiBaseUrl: process.env.API_BASE_URL
+    }
+  },
   css: ["~/assets/css/tailwind.css"],
   image: {
     provider: "ipx",
