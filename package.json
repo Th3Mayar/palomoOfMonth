@@ -1,0 +1,53 @@
+{
+  "name": "palomoOfMonth",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "start": "nuxt dev"
+  },
+  "dependencies": {
+    "@nuxt/image": "^1.7.0",
+    "@pinia/nuxt": "^0.5.3",
+    "@vee-validate/nuxt": "^4.13.2",
+    "@vee-validate/yup": "^4.15.1",
+    "@vee-validate/zod": "^4.13.2",
+    "@vueuse/core": "^13.5.0",
+    "axios": "^1.7.4",
+    "caniuse-lite": "",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "install": "^0.13.0",
+    "lucide-vue-next": "^0.525.0",
+    "nuxt": "^3.12.4",
+    "pinia": "^2.2.2",
+    "radix-vue": "^1.9.17",
+    "shadcn-nuxt": "^0.10.4",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
+    "tinycolor2": "^1.6.0",
+    "vee-validate": "^4.13.2",
+    "vue": "latest",
+    "vue-router": "^4.0.13",
+    "vue-sonner": "^1.1.5",
+    "vue-toastification": "^1.7.14",
+    "vuedraggable": "^2.24.3",
+    "yup": "^1.4.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@nuxt/types": "^2.18.1",
+    "@nuxtjs/color-mode": "^3.4.4",
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@types/node": "^22.4.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "postcss-import": "^16.1.0",
+    "typescript": "^5.5.4",
+    "vue-tsc": "^2.0.29"
+  }
+}
