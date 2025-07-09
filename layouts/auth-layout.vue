@@ -1,39 +1,39 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-background to-secondary/20">
-    <!-- Header opcional para auth -->
+    <!-- Optional auth header -->
     <div class="absolute top-4 left-4">
       <NuxtLink to="/" class="flex items-center space-x-2">
         <div class="w-8 h-8 bg-button-primary rounded-lg flex items-center justify-center">
           <span class="text-white font-bold text-sm">P</span>
         </div>
-        <span class="font-semibold text-foreground">Palomo del Mes</span>
+        <span class="font-semibold text-foreground">Palomo of the Month</span>
       </NuxtLink>
     </div>
     
-    <!-- Contenido principal -->
+    <!-- Main content -->
     <slot />
     
-    <!-- Footer opcional -->
+    <!-- Optional footer -->
     <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
       <p class="text-sm text-muted-foreground text-center">
-        © 2025 Palomo del Mes. Todos los derechos reservados.
+        © 2025 Palomo of the Month. All rights reserved.
       </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Layout específico para páginas de autenticación
+// Layout specific for authentication pages
 
-// Composable de tema
+// Theme composable
 const { initializeTheme, settings } = useTheme()
 
-// Inicializar tema al montar
+// Initialize theme on mount
 onMounted(() => {
   initializeTheme()
 })
 
-// También aplicar el tema inmediatamente si estamos en el cliente
+// Also apply theme immediately if we're on the client
 if (process.client) {
   initializeTheme()
 }

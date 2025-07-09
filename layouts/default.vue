@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen bg-background text-textPrimary">
+  <div class="min-h-screen bg-background text-foreground">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-// Inicializar el tema por defecto (dark mode)
+// Initialize default theme (dark mode)
 const { initializeTheme } = useTheme()
 
 onMounted(() => {
@@ -14,5 +14,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Layout específico si es necesario */
+/* Specific layout styles if needed */
 </style>
