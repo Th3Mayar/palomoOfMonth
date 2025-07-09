@@ -3,16 +3,16 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-3xl font-bold text-textPrimary mb-2">Configuración</h1>
-        <p class="text-textVariant1">Personaliza tu experiencia en Palomo del Mes</p>
+        <h1 class="text-3xl font-bold text-foreground mb-2">Settings</h1>
+        <p class="text-muted-foreground">Customize your Palomo of the Month experience</p>
       </div>
       <Button as="a" href="/" variant="outline">
         <ArrowLeft class="mr-2 h-4 w-4" />
-        Volver al inicio
+        Back to Home
       </Button>
     </div>
 
-    <!-- Alertas -->
+    <!-- Alerts -->
     <div class="fixed top-0 right-0 z-50">
       <Alert
         v-for="(alert, index) in alerts"
@@ -24,21 +24,21 @@
     </div>
 
     <div class="grid gap-6">
-      <!-- Sección de Tema -->
+      <!-- Theme Section -->
       <Card>
         <CardHeader>
           <CardTitle class="flex items-center">
             <Palette class="mr-2 h-5 w-5" />
-            Tema y Apariencia
+            Theme and Appearance
           </CardTitle>
           <CardDescription>
-            Personaliza el tema visual de la aplicación
+            Customize the visual theme of the application
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-6">
-          <!-- Modo Oscuro/Claro -->
+          <!-- Dark/Light Mode -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Modo de tema</label>
+            <label class="text-sm font-medium">Theme Mode</label>
             <div class="flex gap-3">
               <Button 
                 @click="setTheme('light')" 
@@ -46,7 +46,7 @@
                 size="sm"
               >
                 <Sun class="mr-2 h-4 w-4" />
-                Claro
+                Light
               </Button>
               <Button 
                 @click="setTheme('dark')" 
@@ -54,7 +54,7 @@
                 size="sm"
               >
                 <Moon class="mr-2 h-4 w-4" />
-                Oscuro
+                Dark
               </Button>
               <Button 
                 @click="setTheme('auto')" 
@@ -62,14 +62,14 @@
                 size="sm"
               >
                 <Monitor class="mr-2 h-4 w-4" />
-                Automático
+                Auto
               </Button>
             </div>
           </div>
 
-          <!-- Color Principal -->
+          <!-- Primary Color -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Color principal</label>
+            <label class="text-sm font-medium">Primary color</label>
             <div class="grid grid-cols-6 gap-2">
               <button
                 v-for="color in primaryColors"
@@ -85,9 +85,9 @@
             </div>
           </div>
 
-          <!-- Color del Logo -->
+          <!-- Logo Color -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Color del logo</label>
+            <label class="text-sm font-medium">Logo color</label>
             <div class="flex items-center space-x-4">
               <input
                 v-model="logoColor"
@@ -95,96 +95,96 @@
                 class="w-12 h-10 rounded border border-input"
                 @change="updateLogoColor"
               />
-              <span class="text-sm text-textVariant1">{{ logoColor }}</span>
+              <span class="text-sm text-muted-foreground">{{ logoColor }}</span>
               <Button @click="resetLogoColor" variant="outline" size="sm">
-                Restaurar
+                Reset
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <!-- Sección de Tipografía -->
+      <!-- Typography Section -->
       <Card>
         <CardHeader>
           <CardTitle class="flex items-center">
             <Type class="mr-2 h-5 w-5" />
-            Tipografía
+            Typography
           </CardTitle>
           <CardDescription>
-            Ajusta el tamaño y la fuente del texto
+            Adjust text size and font family
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-6">
-          <!-- Tamaño de fuente -->
+          <!-- Font size -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Tamaño de fuente</label>
+            <label class="text-sm font-medium">Font size</label>
             <div class="flex gap-2">
               <Button 
                 @click="setFontSize('small')" 
                 :variant="currentFontSize === 'small' ? 'default' : 'outline'"
                 size="sm"
               >
-                Pequeña
+                Small
               </Button>
               <Button 
                 @click="setFontSize('medium')" 
                 :variant="currentFontSize === 'medium' ? 'default' : 'outline'"
                 size="sm"
               >
-                Mediana
+                Medium
               </Button>
               <Button 
                 @click="setFontSize('large')" 
                 :variant="currentFontSize === 'large' ? 'default' : 'outline'"
                 size="sm"
               >
-                Grande
+                Large
               </Button>
             </div>
           </div>
 
-          <!-- Familia de fuente -->
+          <!-- Font family -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Familia de fuente</label>
+            <label class="text-sm font-medium">Font family</label>
             <select
               v-model="currentFont"
               @change="setFont"
               class="w-full p-2 border border-input rounded-md bg-background"
             >
-              <option value="poppins">Poppins (Por defecto)</option>
+              <option value="poppins">Poppins (Default)</option>
               <option value="inter">Inter</option>
               <option value="roboto">Roboto</option>
               <option value="opensans">Open Sans</option>
               <option value="lato">Lato</option>
-              <option value="system">Fuente del sistema</option>
+              <option value="system">System font</option>
             </select>
           </div>
         </CardContent>
       </Card>
 
-      <!-- Sección de Layout -->
+      <!-- Layout Section -->
       <Card>
         <CardHeader>
           <CardTitle class="flex items-center">
             <Layout class="mr-2 h-5 w-5" />
-            Diseño y Layout
+            Design and Layout
           </CardTitle>
           <CardDescription>
-            Personaliza la disposición de los elementos
+            Customize element arrangement
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-6">
-          <!-- Ancho del contenedor -->
+          <!-- Container width -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Ancho del contenedor</label>
+            <label class="text-sm font-medium">Container width</label>
             <div class="flex gap-2">
               <Button 
                 @click="setContainerWidth('narrow')" 
                 :variant="currentContainerWidth === 'narrow' ? 'default' : 'outline'"
                 size="sm"
               >
-                Estrecho
+                Narrow
               </Button>
               <Button 
                 @click="setContainerWidth('normal')" 
@@ -198,14 +198,14 @@
                 :variant="currentContainerWidth === 'wide' ? 'default' : 'outline'"
                 size="sm"
               >
-                Ancho
+                Wide
               </Button>
             </div>
           </div>
 
-          <!-- Espaciado de las tarjetas -->
+          <!-- Card spacing -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Espaciado entre tarjetas</label>
+            <label class="text-sm font-medium">Card spacing</label>
             <input
               v-model="cardSpacing"
               type="range"
@@ -215,61 +215,61 @@
               class="w-full"
               @input="updateCardSpacing"
             />
-            <div class="text-sm text-textVariant1">Espaciado: {{ cardSpacing }}</div>
+            <div class="text-sm text-muted-foreground">Spacing: {{ cardSpacing }}</div>
           </div>
 
-          <!-- Radio de bordes -->
+          <!-- Border radius -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Radio de bordes</label>
+            <label class="text-sm font-medium">Border radius</label>
             <div class="flex gap-2">
               <Button 
                 @click="setBorderRadius('none')" 
                 :variant="currentBorderRadius === 'none' ? 'default' : 'outline'"
                 size="sm"
               >
-                Sin bordes
+                None
               </Button>
               <Button 
                 @click="setBorderRadius('small')" 
                 :variant="currentBorderRadius === 'small' ? 'default' : 'outline'"
                 size="sm"
               >
-                Pequeño
+                Small
               </Button>
               <Button 
                 @click="setBorderRadius('medium')" 
                 :variant="currentBorderRadius === 'medium' ? 'default' : 'outline'"
                 size="sm"
               >
-                Mediano
+                Medium
               </Button>
               <Button 
                 @click="setBorderRadius('large')" 
                 :variant="currentBorderRadius === 'large' ? 'default' : 'outline'"
                 size="sm"
               >
-                Grande
+                Large
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <!-- Sección de Idioma -->
+      <!-- Language Section -->
       <Card>
         <CardHeader>
           <CardTitle class="flex items-center">
             <Globe class="mr-2 h-5 w-5" />
-            Idioma y Localización
+            Language and Localization
           </CardTitle>
           <CardDescription>
-            Configura el idioma y formato regional
+            Configure language and regional format
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-6">
-          <!-- Idioma -->
+          <!-- Language -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Idioma</label>
+            <label class="text-sm font-medium">Language</label>
             <select
               v-model="currentLanguage"
               @change="setLanguage"
@@ -282,9 +282,9 @@
             </select>
           </div>
 
-          <!-- Formato de fecha -->
+          <!-- Date format -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Formato de fecha</label>
+            <label class="text-sm font-medium">Date format</label>
             <select
               v-model="currentDateFormat"
               @change="setDateFormat"
@@ -299,43 +299,43 @@
         </CardContent>
       </Card>
 
-      <!-- Sección de Animaciones -->
+      <!-- Animations Section -->
       <Card>
         <CardHeader>
           <CardTitle class="flex items-center">
             <Zap class="mr-2 h-5 w-5" />
-            Animaciones y Efectos
+            Animations and Effects
           </CardTitle>
           <CardDescription>
-            Controla las animaciones y transiciones
+            Control animations and transitions
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-6">
-          <!-- Activar animaciones -->
+          <!-- Enable animations -->
           <div class="flex items-center justify-between">
             <div>
-              <label class="text-sm font-medium">Animaciones</label>
-              <p class="text-sm text-textVariant1">Activa o desactiva las animaciones</p>
+              <label class="text-sm font-medium">Animations</label>
+              <p class="text-sm text-muted-foreground">Enable or disable animations</p>
             </div>
             <Button
               @click="toggleAnimations"
               :variant="animationsEnabled ? 'default' : 'outline'"
               size="sm"
             >
-              {{ animationsEnabled ? 'Activadas' : 'Desactivadas' }}
+              {{ animationsEnabled ? 'Enabled' : 'Disabled' }}
             </Button>
           </div>
 
-          <!-- Velocidad de transiciones -->
+          <!-- Transition speed -->
           <div class="space-y-2">
-            <label class="text-sm font-medium">Velocidad de transiciones</label>
+            <label class="text-sm font-medium">Transition speed</label>
             <div class="flex gap-2">
               <Button 
                 @click="setTransitionSpeed('slow')" 
                 :variant="currentTransitionSpeed === 'slow' ? 'default' : 'outline'"
                 size="sm"
               >
-                Lenta
+                Slow
               </Button>
               <Button 
                 @click="setTransitionSpeed('normal')" 
@@ -349,37 +349,37 @@
                 :variant="currentTransitionSpeed === 'fast' ? 'default' : 'outline'"
                 size="sm"
               >
-                Rápida
+                Fast
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <!-- Acciones -->
+      <!-- Actions -->
       <Card>
         <CardHeader>
           <CardTitle class="flex items-center">
             <Settings class="mr-2 h-5 w-5" />
-            Acciones
+            Actions
           </CardTitle>
           <CardDescription>
-            Gestiona tu configuración
+            Manage your settings
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div class="flex gap-4">
             <Button @click="saveSettings" variant="default">
               <Save class="mr-2 h-4 w-4" />
-              Guardar cambios
+              Save changes
             </Button>
             <Button @click="resetSettings" variant="outline">
               <RotateCcw class="mr-2 h-4 w-4" />
-              Restaurar por defecto
+              Reset to default
             </Button>
             <Button @click="exportSettings" variant="secondary">
               <Download class="mr-2 h-4 w-4" />
-              Exportar configuración
+              Export settings
             </Button>
           </div>
         </CardContent>
@@ -401,16 +401,16 @@ import CardHeader from '~/components/ui/CardHeader.vue'
 import CardTitle from '~/components/ui/CardTitle.vue'
 import Alert from '~/components/ui/Alert.vue'
 
-// Configuración de la página
+// Page configuration
 definePageMeta({
   layout: 'default'
 })
 
-// Usar el composable de alertas y tema
+// Use alerts and theme composables
 const { alerts, showSuccess, showInfo, removeAlert } = useAlert()
 const { settings, updateSettings, saveSettings: saveThemeSettings, loadSettings } = useTheme()
 
-// Estados reactivos basados en el composable de tema
+// Reactive states based on theme composable
 const currentTheme = computed({
   get: () => settings.value.theme,
   set: (value) => updateSettings({ theme: value })
@@ -460,32 +460,32 @@ const currentTransitionSpeed = computed({
   set: (value) => updateSettings({ transitionSpeed: value })
 })
 
-// Colores principales disponibles
+// Available primary colors
 const primaryColors = [
-  { name: 'Morado', value: '#9333EA', preview: '#9333EA' },
-  { name: 'Azul', value: '#3B82F6', preview: '#3B82F6' },
-  { name: 'Verde', value: '#10B981', preview: '#10B981' },
-  { name: 'Naranja', value: '#F59E0B', preview: '#F59E0B' },
-  { name: 'Rojo', value: '#EF4444', preview: '#EF4444' },
-  { name: 'Rosa', value: '#EC4899', preview: '#EC4899' },
+  { name: 'Purple', value: '#9333EA', preview: '#9333EA' },
+  { name: 'Blue', value: '#3B82F6', preview: '#3B82F6' },
+  { name: 'Green', value: '#10B981', preview: '#10B981' },
+  { name: 'Orange', value: '#F59E0B', preview: '#F59E0B' },
+  { name: 'Red', value: '#EF4444', preview: '#EF4444' },
+  { name: 'Pink', value: '#EC4899', preview: '#EC4899' },
   { name: 'Indigo', value: '#6366F1', preview: '#6366F1' },
   { name: 'Teal', value: '#14B8A6', preview: '#14B8A6' }
 ]
 
-// Funciones para manejar los cambios
+// Functions to handle changes
 const setTheme = (theme: 'light' | 'dark' | 'auto') => {
   currentTheme.value = theme
-  showInfo('Tema actualizado', `Cambiado a modo ${theme}`)
+  showInfo('Theme updated', `Changed to ${theme} mode`)
 }
 
 const setPrimaryColor = (color: string) => {
   currentPrimaryColor.value = color
-  showInfo('Color actualizado', 'Color principal cambiado')
+  showInfo('Color updated', 'Primary color changed')
 }
 
 const updateLogoColor = () => {
-  // El valor se actualiza automáticamente a través del computed
-  showInfo('Logo actualizado', 'Color del logo cambiado')
+  // Value updates automatically through computed
+  showInfo('Logo updated', 'Logo color changed')
 }
 
 const resetLogoColor = () => {
@@ -494,54 +494,54 @@ const resetLogoColor = () => {
 
 const setFontSize = (size: 'small' | 'medium' | 'large') => {
   currentFontSize.value = size
-  showInfo('Tamaño de fuente actualizado')
+  showInfo('Font size updated')
 }
 
 const setFont = () => {
-  showInfo('Fuente actualizada')
+  showInfo('Font updated')
 }
 
 const setContainerWidth = (width: 'narrow' | 'normal' | 'wide') => {
   currentContainerWidth.value = width
-  showInfo('Ancho del contenedor actualizado')
+  showInfo('Container width updated')
 }
 
 const updateCardSpacing = () => {
-  // El valor se actualiza automáticamente a través del computed
+  // Value updates automatically through computed
 }
 
 const setBorderRadius = (radius: 'none' | 'small' | 'medium' | 'large') => {
   currentBorderRadius.value = radius
-  showInfo('Radio de bordes actualizado')
+  showInfo('Border radius updated')
 }
 
 const setLanguage = () => {
-  showInfo('Idioma cambiado', `Configurado a ${currentLanguage.value}`)
+  showInfo('Language changed', `Set to ${currentLanguage.value}`)
 }
 
 const setDateFormat = () => {
-  showInfo('Formato de fecha actualizado')
+  showInfo('Date format updated')
 }
 
 const toggleAnimations = () => {
   animationsEnabled.value = !animationsEnabled.value
   showInfo(
-    'Animaciones ' + (animationsEnabled.value ? 'activadas' : 'desactivadas')
+    'Animations ' + (animationsEnabled.value ? 'enabled' : 'disabled')
   )
 }
 
 const setTransitionSpeed = (speed: 'slow' | 'normal' | 'fast') => {
   currentTransitionSpeed.value = speed
-  showInfo('Velocidad de transición actualizada')
+  showInfo('Transition speed updated')
 }
 
 const saveSettings = () => {
   saveThemeSettings()
-  showSuccess('Configuración guardada', 'Todos los cambios han sido guardados correctamente')
+  showSuccess('Settings saved', 'All changes have been saved successfully')
 }
 
 const resetSettings = () => {
-  // Resetear usando el composable de tema
+  // Reset using theme composable
   updateSettings({
     theme: 'dark',
     primaryColor: '#9333EA',
@@ -551,13 +551,13 @@ const resetSettings = () => {
     containerWidth: 'normal',
     cardSpacing: 6,
     borderRadius: 'medium',
-    language: 'es',
-    dateFormat: 'dd/mm/yyyy',
+    language: 'en',
+    dateFormat: 'mm/dd/yyyy',
     animations: true,
     transitionSpeed: 'normal'
   })
   
-  showSuccess('Configuración restablecida', 'Se han restaurado los valores por defecto (modo oscuro)')
+  showSuccess('Settings reset', 'Default values have been restored (dark mode)')
 }
 
 const exportSettings = () => {
@@ -569,10 +569,10 @@ const exportSettings = () => {
   link.download = 'palomo-settings.json'
   link.click()
   
-  showSuccess('Configuración exportada', 'Archivo descargado correctamente')
+  showSuccess('Settings exported', 'File downloaded successfully')
 }
 
-// Cargar configuración al montar
+// Load settings on mount
 onMounted(() => {
   loadSettings()
 })
