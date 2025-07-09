@@ -2,9 +2,9 @@
   <div class="min-h-screen flex items-center justify-center bg-background">
     <Card class="w-full max-w-md">
       <CardHeader class="text-center">
-        <CardTitle class="text-2xl font-bold">Iniciar Sesión</CardTitle>
+        <CardTitle class="text-2xl font-bold">Sign In</CardTitle>
         <CardDescription>
-          Ingresa tus credenciales para acceder a Palomo del Mes
+          Enter your credentials to access Palomo of the Month
         </CardDescription>
       </CardHeader>
       
@@ -12,7 +12,7 @@
         <form @submit.prevent="handleLogin" class="space-y-4">
           <div class="space-y-2">
             <label for="name" class="text-sm font-medium text-foreground">
-              Usuario
+              Username
             </label>
             <div class="relative">
               <User class="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -20,7 +20,7 @@
                 id="name"
                 v-model="form.name"
                 type="text"
-                placeholder="Ingresa tu usuario"
+                placeholder="Enter your username"
                 class="pl-10"
                 required
               />
@@ -29,7 +29,7 @@
           
           <div class="space-y-2">
             <label for="password" class="text-sm font-medium text-foreground">
-              Contraseña
+              Password
             </label>
             <div class="relative">
               <Lock class="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -37,20 +37,20 @@
                 id="password"
                 v-model="form.password"
                 type="password"
-                placeholder="Ingresa tu contraseña"
+                placeholder="Enter your password"
                 class="pl-10"
                 required
               />
             </div>
           </div>
           
-          <!-- Mensaje de error -->
+          <!-- Error message -->
           <div v-if="error" class="text-sm text-destructive bg-destructive/10 p-3 rounded-md flex items-center">
             <AlertCircle class="h-4 w-4 mr-2" />
             {{ error }}
           </div>
           
-          <!-- Mensaje de éxito -->
+          <!-- Success message -->
           <div v-if="success" class="text-sm text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 p-3 rounded-md flex items-center">
             <CheckCircle class="h-4 w-4 mr-2" />
             {{ success }}
@@ -62,15 +62,15 @@
             :disabled="loading"
           >
             <Loader2 v-if="loading" class="mr-2 h-4 w-4 animate-spin" />
-            {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+            {{ loading ? 'Signing in...' : 'Sign In' }}
           </Button>
         </form>
         
         <div class="mt-6 text-center">
           <p class="text-sm text-muted-foreground">
-            ¿Olvidaste tu contraseña?
+            Forgot your password?
             <NuxtLink to="/auth/forgot-password" class="text-primary hover:underline">
-              Recuperar contraseña
+              Reset password
             </NuxtLink>
           </p>
         </div>
@@ -89,12 +89,12 @@ import CardHeader from '~/components/ui/CardHeader.vue'
 import CardTitle from '~/components/ui/CardTitle.vue'
 import Input from '~/components/ui/Input.vue'
 
-// Configuración de la página
+// Page configuration
 definePageMeta({
   layout: 'auth-layout'
 })
 
-// Estado del formulario
+// Form state
 const form = reactive({
   name: '',
   password: ''
@@ -104,15 +104,15 @@ const loading = ref(false)
 const error = ref('')
 const success = ref('')
 
-// Composable de autenticación
+// Authentication composable
 const { login } = useAuth()
 
-// El tema se inicializa en el layout auth-layout.vue
+// Theme is initialized in auth-layout.vue
 
-// Función para manejar el login
+// Function to handle login
 const handleLogin = async () => {
   if (!form.name || !form.password) {
-    error.value = 'Por favor completa todos los campos'
+    error.value = 'Please fill in all fields'
     return
   }
 
@@ -127,20 +127,20 @@ const handleLogin = async () => {
     })
 
     if (result.success) {
-      success.value = 'Inicio de sesión exitoso. Redirigiendo...'
-      // La redirección se maneja en el composable useAuth
+      success.value = 'Login successful. Redirecting...'
+      // Redirection is handled in the useAuth composable
     } else {
-      error.value = result.message || 'Error al iniciar sesión'
+      error.value = result.message || 'Login failed'
     }
   } catch (err: any) {
-    error.value = 'Error de conexión. Por favor, intenta de nuevo.'
+    error.value = 'Connection error. Please try again.'
     console.error('Login error:', err)
   } finally {
     loading.value = false
   }
 }
 
-// Limpiar el formulario cuando se monta el componente
+// Clear form when component mounts
 onMounted(() => {
   form.name = ''
   form.password = ''
