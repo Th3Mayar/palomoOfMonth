@@ -14,23 +14,23 @@ interface ThemeSettings {
 }
 
 export const useTheme = () => {
-  // Estado reactivo para las configuraciones
+  // Reactive state for settings
   const settings = ref<ThemeSettings>({
-    theme: 'dark', // Dark por defecto
+    theme: 'dark', // Dark by default
     primaryColor: '#9333EA',
-    logoColor: '#9575CD', // Purple por defecto para dark mode
+    logoColor: '#9575CD', // Purple by default for dark mode
     fontSize: 'medium',
     font: 'poppins',
     containerWidth: 'normal',
     cardSpacing: 6,
     borderRadius: 'medium',
-    language: 'es',
-    dateFormat: 'dd/mm/yyyy',
+    language: 'en',
+    dateFormat: 'mm/dd/yyyy',
     animations: true,
     transitionSpeed: 'normal'
   })
 
-  // Aplicar tema
+  // Apply theme
   const applyTheme = (theme: 'light' | 'dark' | 'auto') => {
     if (process.client) {
       if (theme === 'light') {
@@ -40,7 +40,7 @@ export const useTheme = () => {
         document.documentElement.classList.remove('light')
         document.documentElement.classList.add('dark')
       } else {
-        // Auto mode - detectar preferencia del sistema
+        // Auto mode - detect system preference
         document.documentElement.classList.remove('light', 'dark')
         if (window.matchMedia('(prefers-color-scheme: light)').matches) {
           document.documentElement.classList.add('light')
@@ -49,7 +49,7 @@ export const useTheme = () => {
     }
   }
 
-  // Aplicar color primario
+  // Apply primary color
   const applyPrimaryColor = (color: string) => {
     if (process.client) {
       const hsl = hexToHsl(color)
@@ -57,14 +57,14 @@ export const useTheme = () => {
     }
   }
 
-  // Aplicar color del logo
+  // Apply logo color
   const applyLogoColor = (color: string) => {
     if (process.client) {
       document.documentElement.style.setProperty('--button-primary', color)
     }
   }
 
-  // Función auxiliar para convertir HEX a HSL
+  // Auxiliary function to convert HEX to HSL
   const hexToHsl = (hex: string) => {
     const r = parseInt(hex.slice(1, 3), 16) / 255
     const g = parseInt(hex.slice(3, 5), 16) / 255
@@ -94,7 +94,7 @@ export const useTheme = () => {
     }
   }
 
-  // Cargar configuración
+  // Load settings
   const loadSettings = () => {
     if (process.client) {
       const saved = localStorage.getItem('palomoSettings')
@@ -107,14 +107,14 @@ export const useTheme = () => {
         }
       }
       
-      // Aplicar configuraciones
+      // Apply settings
       applyTheme(settings.value.theme)
       applyPrimaryColor(settings.value.primaryColor)
       applyLogoColor(settings.value.logoColor)
     }
   }
 
-  // Guardar configuración
+  // Save settings
   const saveSettings = () => {
     if (process.client) {
       localStorage.setItem('palomoSettings', JSON.stringify(settings.value))
@@ -138,15 +138,15 @@ export const useTheme = () => {
     saveSettings()
   }
 
-  // Inicializar configuración por defecto en dark mode
+  // Initialize default configuration in dark mode
   const initializeTheme = () => {
     if (process.client) {
-      // Si no hay configuración guardada, aplicar dark mode por defecto
+      // If no saved configuration, apply dark mode by default
       const saved = localStorage.getItem('palomoSettings')
       if (!saved) {
         document.documentElement.classList.remove('light')
-        // Dark es el por defecto, no necesita clase adicional
-        // Aplicar colores por defecto
+        // Dark is the default, doesn't need additional class
+        // Apply default colors
         applyLogoColor(settings.value.logoColor)
         applyPrimaryColor(settings.value.primaryColor)
       }
