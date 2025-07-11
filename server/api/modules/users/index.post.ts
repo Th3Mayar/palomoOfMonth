@@ -5,13 +5,6 @@ export default defineEventHandler(async (event) => {
   const apiBaseUrl = config.apiBaseUrl;
   const body = await readBody(event);
 
-  console.log('🔥 POST /users - Received body:', body);
-  console.log('🔥 POST /users - body.name:', body.name);
-  console.log('🔥 POST /users - body.password:', body.password ? '[HIDDEN]' : 'NO PASSWORD');
-  console.log('🔥 POST /users - body.id_employee:', body.id_employee);
-  console.log('🔥 POST /users - typeof body.name:', typeof body.name);
-  console.log('🔥 POST /users - body keys:', Object.keys(body));
-
   // Get the token from the request headers
   const authHeader = getHeader(event, 'authorization');
   const token = authHeader?.replace('Bearer ', '');
@@ -22,12 +15,6 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Authorization token required',
     });
   }
-
-  // Validate required fields
-  console.log('🔥 POST /users - Validating fields...');
-  console.log('🔥 POST /users - !body.name:', !body.name);
-  console.log('🔥 POST /users - !body.password:', !body.password);
-  console.log('🔥 POST /users - !body.id_employee:', !body.id_employee);
   
   if (!body.name || typeof body.name !== 'string' || body.name.trim() === '') {
     throw createError({
@@ -44,9 +31,6 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!body.id_employee || (typeof body.id_employee !== 'number' && typeof body.id_employee !== 'string')) {
-    console.log('🔥 POST /users - id_employee validation failed');
-    console.log('🔥 POST /users - body.id_employee value:', body.id_employee);
-    console.log('🔥 POST /users - body.id_employee type:', typeof body.id_employee);
     throw createError({
       statusCode: 400,
       statusMessage: 'Employee ID is required and must be a number or string',
@@ -57,30 +41,18 @@ export default defineEventHandler(async (event) => {
   const employeeId = typeof body.id_employee === 'string' ? parseInt(body.id_employee, 10) : body.id_employee;
   
   if (isNaN(employeeId) || employeeId <= 0) {
-    console.log('🔥 POST /users - Invalid employee ID after conversion:', employeeId);
     throw createError({
       statusCode: 400,
       statusMessage: 'Employee ID must be a valid positive number',
     });
   }
   
-  console.log('🔥 POST /users - Validation passed');
-
   try {
     const userData = {
       name: body.name,
       password: body.password,
-      status: true, // Add default status
-      role: 'user', // Add default role
       id_employee: employeeId // Use the converted number
     };
-
-    console.log('🔥 Creating user with data:', {
-      name: userData.name,
-      password: '[HIDDEN]',
-      role: userData.role,
-      id_employee: userData.id_employee
-    });
 
     const response = await $fetch(`${apiBaseUrl}/Users`, {
       method: 'POST',
@@ -91,21 +63,14 @@ export default defineEventHandler(async (event) => {
       body: userData,
     });
 
-    console.log('🔥 POST Response:', response);
-    console.log('🔥 POST Response type:', typeof response);
-    console.log('🔥 POST Response keys:', response ? Object.keys(response) : 'NO RESPONSE');
-
     // Handle different response formats more flexibly
     let mappedUser: User;
     
     if (response && typeof response === 'object' && (response as any).id_user !== undefined) {
       // Standard response format with id_user
-      console.log('🔥 Using standard response format with id_user');
       mappedUser = mapApiResponseToUser(response as UserApiResponse);
-      console.log('🔥 Mapped user (standard):', mappedUser);
     } else if (response && typeof response === 'object' && (response as any).id !== undefined) {
       // Alternative format where id is used instead of id_user
-      console.log('🔥 Using alternative response format with id');
       mappedUser = {
         id: (response as any).id,
         name: (response as any).name || body.name,
@@ -114,10 +79,8 @@ export default defineEventHandler(async (event) => {
         role: (response as any).role || 'user',
         id_employee: (response as any).id_employee || employeeId
       };
-      console.log('🔥 Mapped user (alternative):', mappedUser);
     } else {
       // Fallback: create a temporary user
-      console.log('🔥 Using fallback response format');
       mappedUser = {
         id: Date.now(), // temporary ID until we refresh the list
         name: body.name,
@@ -126,7 +89,6 @@ export default defineEventHandler(async (event) => {
         role: 'user',
         id_employee: employeeId
       };
-      console.log('🔥 Mapped user (fallback):', mappedUser);
     }
 
     return mappedUser;

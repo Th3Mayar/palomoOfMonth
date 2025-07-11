@@ -111,9 +111,39 @@
         </CardTitle>
         <CardDescription>
           Total Users: {{ users.length }}
+          <span v-if="searchQuery" class="ml-2">
+            ({{ filteredUsers.length }} filtered)
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <!-- Search and Filters -->
+        <div class="mb-6 space-y-4">
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+              <div class="relative">
+                <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="Search users by name..."
+                  class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
+            </div>
+            <Button
+              v-if="searchQuery"
+              @click="clearFilters"
+              variant="outline"
+              size="sm"
+              class="whitespace-nowrap !h-10"
+            >
+              <X class="mr-2 h-4 w-4" />
+              Clear
+            </Button>
+          </div>
+        </div>
+
         <!-- Loading State -->
         <div v-if="loading" class="flex items-center justify-center py-12">
           <div class="flex items-center space-x-3">
@@ -146,6 +176,21 @@
           </div>
         </div>
 
+        <!-- No Search Results -->
+        <div v-else-if="filteredUsers.length === 0 && searchQuery" class="flex flex-col items-center justify-center py-12 space-y-4">
+          <Search class="h-12 w-12 text-muted-foreground/50" />
+          <div class="text-center">
+            <h3 class="text-lg font-semibold text-foreground mb-1">No Results Found</h3>
+            <p class="text-muted-foreground mb-4">
+              No users match your search for "{{ searchQuery }}"
+            </p>
+            <Button @click="clearFilters" variant="outline">
+              <X class="mr-2 h-4 w-4" />
+              Clear Search
+            </Button>
+          </div>
+        </div>
+
         <!-- User Table -->
         <div v-else class="rounded-md border">
           <Table>
@@ -159,7 +204,7 @@
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="user in users" :key="user.id_user">
+              <TableRow v-for="user in filteredUsers" :key="user.id_user">
                 <TableCell class="w-20">
                   <div class="flex items-center justify-center">
                     <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -441,9 +486,7 @@ const fetchUsers = async () => {
     const userService = UserService.getInstance()
     users.value = await userService.getAllUsers()
     
-    console.log('📋 Fetched users:', users.value)
   } catch (err) {
-    console.error('Fetch users error:', err)
     error.value = err.message || 'Failed to load users'
     showError('Error', 'Failed to load users')
   } finally {
@@ -456,31 +499,19 @@ const fetchEmployees = async () => {
     const employeeService = EmployeeService.getInstance()
     employees.value = await employeeService.getAllEmployees()
     
-    console.log('📋 Fetched employees for dropdown:', employees.value)
   } catch (err) {
-    console.error('Fetch employees error:', err)
     showError('Error', 'Failed to load employees')
   }
 }
 
 // Form submission handlers
 const onCreateSubmit = handleCreateSubmit(async (values) => {
-  console.log('🚀 Create user form submitted with values:', values)
-  console.log('🚀 Values keys:', Object.keys(values))
-  console.log('🚀 values.name:', values.name, 'type:', typeof values.name)
-  console.log('🚀 values.password:', values.password ? '[HIDDEN]' : 'NO PASSWORD', 'type:', typeof values.password)
-  console.log('🚀 values.id_employee:', values.id_employee, 'type:', typeof values.id_employee)
-  
   // Ensure id_employee is a number
   const userData = {
     name: values.name,
     password: values.password,
-    role: 'user', // Add default role
     id_employee: parseInt(values.id_employee, 10)
   }
-  
-  console.log('🚀 Converted userData:', userData)
-  console.log('🚀 userData.id_employee type after conversion:', typeof userData.id_employee)
   
   loading.value = true
   
@@ -488,13 +519,10 @@ const onCreateSubmit = handleCreateSubmit(async (values) => {
     const userService = UserService.getInstance()
     const created = await userService.createUser(userData)
     
-    console.log('✅ Created user response:', created)
-    
     resetCreateForm()
     showSuccess('User created', `${created.name} has been added successfully`)
     await fetchUsers()
   } catch (err) {
-    console.error('❌ Create user error:', err)
     showError('Error', err.message || 'Failed to create user')
   } finally {
     loading.value = false
@@ -502,8 +530,6 @@ const onCreateSubmit = handleCreateSubmit(async (values) => {
 })
 
 const onEditSubmit = handleEditSubmit(async (values) => {
-  console.log('Edit user form submitted with values:', values)
-  
   // Ensure id_employee is a number
   const userData = {
     name: values.name,
@@ -513,7 +539,6 @@ const onEditSubmit = handleEditSubmit(async (values) => {
     id_employee: parseInt(values.id_employee, 10)
   }
   
-  console.log('Edit userData converted:', userData)
   loading.value = true
   
   try {
@@ -524,7 +549,6 @@ const onEditSubmit = handleEditSubmit(async (values) => {
     showSuccess('User updated', `${updated.name} has been updated successfully`)
     await fetchUsers()
   } catch (err) {
-    console.error('Update user error:', err)
     showError('Error', err.message || 'Failed to update user')
   } finally {
     loading.value = false
@@ -533,7 +557,6 @@ const onEditSubmit = handleEditSubmit(async (values) => {
 
 // Modal methods
 const openEditModal = (user) => {
-  console.log('Opening edit modal for user:', user)
   editingUserId.value = user.id_user
   setEditValues({
     name: user.name,
@@ -577,6 +600,30 @@ const confirmDelete = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// Search and filter state
+const searchQuery = ref('')
+
+// Computed properties for filtering
+const filteredUsers = computed(() => {
+  let filtered = [...users.value]
+  
+  // Apply search filter
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    filtered = filtered.filter(user => 
+      user.name.toLowerCase().includes(query) ||
+      (user.id_employee && getEmployeeName(user.id_employee).toLowerCase().includes(query))
+    )
+  }
+  
+  return filtered
+})
+
+// Filter methods
+const clearFilters = () => {
+  searchQuery.value = ''
 }
 
 // Initialize data on mount

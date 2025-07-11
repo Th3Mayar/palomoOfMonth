@@ -86,9 +86,39 @@
         </CardTitle>
         <CardDescription>
           Total Palomos: {{ employees.length }}
+          <span v-if="searchQuery" class="ml-2">
+            ({{ filteredEmployees.length }} filtered)
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <!-- Search and Filters -->
+        <div class="mb-6 space-y-4">
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+              <div class="relative">
+                <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="Search palomos by name..."
+                  class="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </div>
+            </div>
+            <Button
+              v-if="searchQuery"
+              @click="clearFilters"
+              variant="outline"
+              size="sm"
+              class="whitespace-nowrap !h-10"
+            >
+              <X class="mr-2 h-4 w-4" />
+              Clear
+            </Button>
+          </div>
+        </div>
+
         <!-- Loading State -->
         <div v-if="loading" class="flex items-center justify-center py-12">
           <div class="flex items-center space-x-3">
@@ -113,11 +143,26 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="employees.length === 0" class="flex flex-col items-center justify-center py-12 space-y-4">
+        <div v-else-if="filteredEmployees.length === 0 && !searchQuery" class="flex flex-col items-center justify-center py-12 space-y-4">
           <Users class="h-12 w-12 text-muted-foreground/50" />
           <div class="text-center">
             <h3 class="text-lg font-semibold text-foreground mb-1">No Palomos Found</h3>
             <p class="text-muted-foreground">Add your first palomo using the form above.</p>
+          </div>
+        </div>
+
+        <!-- No Search Results -->
+        <div v-else-if="filteredEmployees.length === 0 && searchQuery" class="flex flex-col items-center justify-center py-12 space-y-4">
+          <Search class="h-12 w-12 text-muted-foreground/50" />
+          <div class="text-center">
+            <h3 class="text-lg font-semibold text-foreground mb-1">No Results Found</h3>
+            <p class="text-muted-foreground mb-4">
+              No palomos match your search for "{{ searchQuery }}"
+            </p>
+            <Button @click="clearFilters" variant="outline">
+              <X class="mr-2 h-4 w-4" />
+              Clear Search
+            </Button>
           </div>
         </div>
 
@@ -132,7 +177,7 @@
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="employee in employees" :key="employee.id">
+              <TableRow v-for="employee in filteredEmployees" :key="employee.id">
                 <TableCell class="w-20">
                   <div class="flex items-center justify-center">
                     <div 
@@ -304,7 +349,7 @@
 <script setup lang="ts">
 import { 
   ArrowLeft, UserPlus, Users, Save, Trash2, Edit, 
-  AlertTriangle, RotateCcw
+  AlertTriangle, RotateCcw, Search, X
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
@@ -551,6 +596,29 @@ const confirmDelete = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// Search and filter state
+const searchQuery = ref('')
+
+// Computed properties for filtering
+const filteredEmployees = computed(() => {
+  let filtered = [...employees.value]
+  
+  // Apply search filter
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase().trim()
+    filtered = filtered.filter(employee => 
+      employee.name.toLowerCase().includes(query)
+    )
+  }
+  
+  return filtered
+})
+
+// Filter methods
+const clearFilters = () => {
+  searchQuery.value = ''
 }
 
 // Initialize data on mount
