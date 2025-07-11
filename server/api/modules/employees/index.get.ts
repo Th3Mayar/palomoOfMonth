@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
     console.log('📡 API: Making request to external API...');
     const response = await $fetch(`${apiBaseUrl}/Employees`, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
