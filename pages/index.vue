@@ -17,7 +17,7 @@
         <div class="w-10 h-10 bg-button-primary rounded-lg flex items-center justify-center">
           <span class="text-white font-bold">P</span>
         </div>
-        <h1 class="text-3xl font-bold text-foreground font-poppins">
+        <h1 class="text-1xl font-bold text-foreground font-poppins">
           Palomo of the Month
         </h1>
       </div>
@@ -34,7 +34,7 @@
           Sign In
         </Button>
         <div v-else class="flex items-center space-x-2">
-          <span class="text-foreground">Hello, {{ user?.name || 'User' }}</span>
+          <span class="text-foreground">Hello, {{ user?.name || 'User' }}!</span>
           <Button @click="logout" variant="outline" size="sm">
             <LogOut class="mr-2 h-4 w-4" />
             Sign Out
@@ -48,52 +48,72 @@
         {{ isLoggedIn ? 'Welcome back' : 'Welcome to the application' }} to recognize the outstanding palomo of the month
       </p>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <Card class="hover:shadow-lg transition-shadow">
-          <CardContent class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <Card class="hover:shadow-lg transition-shadow h-full">
+          <CardContent class="p-6 h-full flex flex-col">
             <div class="flex items-center justify-center w-12 h-12 bg-button-primary/10 rounded-lg mb-4 mx-auto">
               <Users class="h-6 w-6 text-button-primary" />
             </div>
             <h2 class="text-xl font-semibold mb-3 text-foreground">Palomos</h2>
-            <p class="text-muted-foreground mb-4">Manage palomo information</p>
+            <p class="text-muted-foreground mb-4 flex-grow">Manage palomo information and records</p>
             <Button 
               @click="handlePalomosClick" 
-              class="w-full"
+              class="w-full mt-auto"
               variant="default"
             >
               View Palomos
             </Button>
           </CardContent>
         </Card>
+
+        <Card class="hover:shadow-lg transition-shadow h-full">
+          <CardContent class="p-6 h-full flex flex-col">
+            <div class="flex items-center justify-center w-12 h-12 bg-green-500/10 rounded-lg mb-4 mx-auto">
+              <UserCog class="h-6 w-6 text-green-500" />
+            </div>
+            <h2 class="text-xl font-semibold mb-3 text-foreground">Users</h2>
+            <p class="text-muted-foreground mb-4 flex-grow">Manage user accounts and permissions</p>
+            <Button 
+              @click="handleUsersClick" 
+              class="w-full mt-auto"
+              variant="default"
+              style="background-color: rgb(34 197 94); color: white;"
+            >
+              View Users
+            </Button>
+          </CardContent>
+        </Card>
         
-        <Card class="hover:shadow-lg transition-shadow">
-          <CardContent class="p-6">
+        <Card class="hover:shadow-lg transition-shadow h-full">
+          <CardContent class="p-6 h-full flex flex-col">
             <div class="flex items-center justify-center w-12 h-12 bg-button-secondary/10 rounded-lg mb-4 mx-auto">
               <Award class="h-6 w-6 text-button-secondary" />
             </div>
             <h2 class="text-xl font-semibold mb-3 text-foreground">Nominees</h2>
-            <p class="text-muted-foreground mb-4">Review this month's nominations</p>
+            <p class="text-muted-foreground mb-4 flex-grow">Review this month's nominations</p>
             <Button 
               @click="handleNomineesClick" 
               variant="secondary" 
-              class="w-full"
+              class="w-full mt-auto"
+              disabled
             >
               View Nominees
             </Button>
           </CardContent>
         </Card>
         
-        <Card class="hover:shadow-lg transition-shadow">
-          <CardContent class="p-6">
+        <Card class="hover:shadow-lg transition-shadow h-full">
+          <CardContent class="p-6 h-full flex flex-col">
             <div class="flex items-center justify-center w-12 h-12 bg-button-variant/10 rounded-lg mb-4 mx-auto">
               <BarChart3 class="h-6 w-6 text-button-variant" />
             </div>
             <h2 class="text-xl font-semibold mb-3 text-foreground">Scores</h2>
-            <p class="text-muted-foreground mb-4">Check current scores</p>
+            <p class="text-muted-foreground mb-4 flex-grow">Check current scores and rankings</p>
             <Button 
               @click="handleScoresClick" 
               variant="outline" 
-              class="w-full"
+              class="w-full mt-auto"
+              disabled
             >
               View Scores
             </Button>
@@ -141,7 +161,7 @@
 </template>
 
 <script setup>
-import { LogIn, LogOut, Users, Award, BarChart3, Settings } from 'lucide-vue-next'
+import { LogIn, LogOut, Users, Award, BarChart3, Settings, UserCog } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
 import CardContent from '~/components/ui/CardContent.vue'
@@ -163,6 +183,9 @@ const loginButtonRef = ref(null)
 
 // Function to handle Palomos click
 const handlePalomosClick = () => {
+  console.log('🚀 Palomos clicked - isLoggedIn:', isLoggedIn.value)
+  console.log('🚀 User data:', user.value)
+  
   if (!isLoggedIn.value) {
     showWarning(
       'Access Required',
@@ -176,8 +199,33 @@ const handlePalomosClick = () => {
       }
     })
   } else {
+    console.log('✅ User is logged in, navigating to palomos')
     // Logic for authenticated users - navigate to palomos
-    navigateTo('/palomos')
+    navigateTo('/admin/palomos')
+  }
+}
+
+// Function to handle Users click
+const handleUsersClick = () => {
+  console.log('🚀 Users clicked - isLoggedIn:', isLoggedIn.value)
+  console.log('🚀 User data:', user.value)
+  
+  if (!isLoggedIn.value) {
+    showWarning(
+      'Access Required',
+      'You must sign in to access the users section'
+    )
+    
+    // Focus login button after a small delay
+    nextTick(() => {
+      if (loginButtonRef.value && loginButtonRef.value.$el) {
+        loginButtonRef.value.$el.focus()
+      }
+    })
+  } else {
+    console.log('✅ User is logged in, navigating to users')
+    // Logic for authenticated users - navigate to users
+    navigateTo('/admin/users')
   }
 }
 
@@ -221,8 +269,19 @@ const handleScoresClick = () => {
   }
 }
 
+// Debug: Watch user changes
+watch(user, (newUser) => {
+  console.log('👤 User changed:', newUser)
+  console.log('👤 User name:', newUser?.name)
+}, { immediate: true, deep: true })
+
 // Check authentication when mounting component
 onMounted(() => {
   checkAuth()
+  
+  // Debug: Ver qué contiene el usuario
+  console.log('🔍 User data:', user.value)
+  console.log('🔍 Is logged in:', isLoggedIn.value)
+  console.log('🔍 User name:', user.value?.name)
 })
 </script>

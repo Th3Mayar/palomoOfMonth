@@ -24,6 +24,10 @@ export default defineEventHandler(async (event) => {
       }
     })
 
+    console.log('🔗 External API Response:', response)
+    console.log('🔗 Response type:', typeof response)
+    console.log('🔗 Response keys:', Object.keys(response || {}))
+
     // Return consistent response format
     return {
       success: true,
