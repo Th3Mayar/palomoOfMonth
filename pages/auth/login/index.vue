@@ -135,7 +135,6 @@ const handleLogin = async (values: any) => {
     }
   } catch (err: any) {
     error.value = 'Connection error. Please try again.'
-    console.error('Login error:', err)
   } finally {
     loading.value = false
   }

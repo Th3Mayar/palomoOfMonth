@@ -3,7 +3,6 @@
     <button
       type="button"
       @click="toggleDropdown"
-      @blur="closeDropdown"
       :class="[
         'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
         error ? 'border-destructive' : '',
@@ -34,9 +33,36 @@
         v-if="isOpen"
         class="absolute z-50 mt-1 w-full rounded-md border border-input bg-popover shadow-lg"
       >
+      <!-- Search Input -->
+        <div class="border-b border-border p-2">
+          <div class="relative">
+            <Search class="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <input
+              ref="searchInput"
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search options..."
+              class="w-full pl-8 pr-3 py-1.5 text-sm border-0 bg-transparent focus:outline-none focus:ring-0 placeholder:text-muted-foreground"
+              @click.stop
+              @keydown="handleKeydown"
+            />
+          </div>
+        </div>
+        
+        <!-- Options List -->
+        <div class="max-h-60 overflow-auto py-1">
+          <!-- No results message -->
+          <div
+            v-if="filteredOptions.length === 0"
+            class="px-3 py-2 text-sm text-muted-foreground text-center"
+          >
+            No options found
+          </div>
+        </div>
+
         <div class="max-h-60 overflow-auto py-1">
           <button
-            v-for="option in options"
+            v-for="option in filteredOptions"
             :key="option.value"
             type="button"
             @mousedown.prevent="selectOption(option)"
@@ -55,7 +81,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown, Search } from 'lucide-vue-next'
 
 interface SelectOption {
   value: string | number
@@ -84,6 +110,8 @@ const emit = defineEmits<Emits>()
 
 const isOpen = ref(false)
 
+const searchQuery = ref('')
+
 const selectedValue = computed(() => props.modelValue)
 
 const selectedLabel = computed(() => {
@@ -94,6 +122,12 @@ const selectedLabel = computed(() => {
 const toggleDropdown = () => {
   if (!props.disabled) {
     isOpen.value = !isOpen.value
+
+    // Reset filter values
+    searchQuery.value = '';
+
+    // Focus to selectedValue
+    // For the future...
   }
 }
 
@@ -114,6 +148,17 @@ const handleClickOutside = (event: Event) => {
     isOpen.value = false
   }
 }
+
+const filteredOptions = computed(() => {
+  if (!searchQuery.value) {
+    return props.options
+  }
+  
+  const query = searchQuery.value.toLowerCase()
+  return props.options.filter(option => 
+    option.label.toLowerCase().includes(query)
+  )
+})
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)

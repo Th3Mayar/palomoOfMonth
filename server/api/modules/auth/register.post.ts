@@ -34,7 +34,6 @@ export default defineEventHandler(async (event) => {
       data: response
     }
   } catch (error: any) {
-    console.error('Register API Error:', error)
     
     // Handle validation errors
     if (error.statusCode) {

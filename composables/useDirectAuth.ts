@@ -17,7 +17,6 @@ export const useDirectAuth = () => {
 
       return data.value
     } catch (err) {
-      console.error('Direct login error:', err)
       throw err
     }
   }
@@ -41,7 +40,6 @@ export const useDirectAuth = () => {
 
       return data.value
     } catch (err) {
-      console.error('Direct external login error:', err)
       throw err
     }
   }

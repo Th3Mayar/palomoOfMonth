@@ -261,124 +261,128 @@
     </Card>
 
     <!-- Edit User Modal -->
-    <div 
-      v-if="showEditModal" 
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-      @click.self="closeEditModal"
-    >
-      <Card class="w-full max-w-md">
-        <CardHeader>
-          <div class="flex items-center justify-between">
-            <CardTitle class="flex items-center">
-              <Edit class="mr-2 h-5 w-5" />
-              Edit User
-            </CardTitle>
-            <Button @click="closeEditModal" variant="ghost" size="sm" class="h-8 w-8 p-0">
-              <X class="h-4 w-4" />
-            </Button>
+    <Dialog v-model:open="showEditModal">
+      <DialogContent class="sm:max-w-[525px]">
+        <DialogHeader>
+          <template #title>Edit User</template>
+          <template #description>
+            Update the user information below
+          </template>
+        </DialogHeader>
+        <form @submit="onEditSubmit" class="space-y-6">
+          <div class="space-y-2">
+            <label class="text-sm font-medium leading-none">
+              Username
+              <span class="text-destructive">*</span>
+            </label>
+            <input
+              type="text"
+              v-model="editName"
+              v-bind="editNameAttrs"
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="{ 'border-destructive': editErrors.name }"
+              placeholder="Enter user's name"
+            />
+            <p v-if="editErrors.name" class="text-sm text-destructive">
+              {{ editErrors.name }}
+            </p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <form @submit="onEditSubmit" class="space-y-4">
-            <div class="space-y-2">
-              <label class="text-sm font-medium leading-none">
-                Username
-                <span class="text-destructive">*</span>
-              </label>
-              <input
-                type="text"
-                v-model="editName"
-                v-bind="editNameAttrs"
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                :class="{ 'border-destructive': editErrors.name }"
-                placeholder="Enter user's name"
-              />
-              <p v-if="editErrors.name" class="text-sm text-destructive">
-                {{ editErrors.name }}
-              </p>
-            </div>
-            <div class="space-y-2">
-              <label class="text-sm font-medium leading-none">
-                Password
-                <span class="text-destructive">*</span>
-              </label>
-              <input
-                type="password"
-                v-model="editPassword"
-                v-bind="editPasswordAttrs"
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                :class="{ 'border-destructive': editErrors.password }"
-                placeholder="Enter new password"
-              />
-              <p v-if="editErrors.password" class="text-sm text-destructive">
-                {{ editErrors.password }}
-              </p>
-            </div>
-            <div class="space-y-2">
-              <label class="text-sm font-medium leading-none">
-                Employee
-                <span class="text-destructive">*</span>
-              </label>
-              <Select
-                v-model="editIdEmployee"
-                v-bind="editIdEmployeeAttrs"
-                :options="employeeOptions"
-                placeholder="Select an employee"
-                :error="!!editErrors.id_employee"
-              />
-              <p v-if="editErrors.id_employee" class="text-sm text-destructive">
-                {{ editErrors.id_employee }}
-              </p>
-            </div>
-            <div class="flex justify-end space-x-2">
-              <Button @click="closeEditModal" type="button" variant="outline">
-                Cancel
-              </Button>
-              <Button type="submit" :disabled="loading">
-                <Edit class="mr-2 h-4 w-4" />
-                {{ loading ? 'Updating...' : 'Update User' }}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-
-    <!-- Delete User Modal -->
-    <div 
-      v-if="showDeleteModal" 
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-      @click.self="closeDeleteModal"
-    >
-      <Card class="w-full max-w-md">
-        <CardHeader>
-          <CardTitle class="flex items-center text-destructive">
-            <AlertTriangle class="mr-2 h-5 w-5" />
-            Delete User
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="text-muted-foreground mb-6">
-            Are you sure you want to delete user <strong>{{ deletingUser?.name }}</strong>? This action cannot be undone.
-          </p>
-          <div class="flex justify-end space-x-2">
-            <Button @click="closeDeleteModal" variant="outline">
+          <div class="space-y-2">
+            <label class="text-sm font-medium leading-none">
+              Password
+              <span class="text-destructive">*</span>
+            </label>
+            <input
+              type="password"
+              v-model="editPassword"
+              v-bind="editPasswordAttrs"
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="{ 'border-destructive': editErrors.password }"
+              placeholder="Enter new password"
+            />
+            <p v-if="editErrors.password" class="text-sm text-destructive">
+              {{ editErrors.password }}
+            </p>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-medium leading-none">
+              Employee
+              <span class="text-destructive">*</span>
+            </label>
+            <Select
+              v-model="editIdEmployee"
+              v-bind="editIdEmployeeAttrs"
+              :options="employeeOptions"
+              placeholder="Select an employee"
+              :error="!!editErrors.id_employee"
+            />
+            <p v-if="editErrors.id_employee" class="text-sm text-destructive">
+              {{ editErrors.id_employee }}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              @click="closeEditModal"
+            >
               Cancel
             </Button>
-            <Button @click="confirmDelete" variant="destructive" :disabled="loading">
-              <Trash2 class="mr-2 h-4 w-4" />
-              {{ loading ? 'Deleting...' : 'Delete User' }}
+            <Button
+              type="submit"
+              :disabled="loading"
+            >
+              <Edit class="mr-2 h-4 w-4" />
+              {{ loading ? 'Updating...' : 'Update User' }}
             </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+
+    <!-- Delete User Modal -->
+    <Dialog v-model:open="showDeleteModal">
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <template #title>Confirm Delete</template>
+          <template #description>
+            Are you sure you want to delete this user? This action cannot be undone.
+          </template>
+        </DialogHeader>
+        <div class="flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800">
+          <AlertTriangle class="flex-shrink-0 inline w-4 h-4 mr-3" />
+          <span class="sr-only">Warning</span>
+          <div>
+            <span class="font-medium">Warning!</span> This will permanently delete the user record.
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            @click="closeDeleteModal"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            @click="confirmDelete"
+            :disabled="loading"
+          >
+            <Trash2 class="mr-2 h-4 w-4" />
+            {{ loading ? 'Deleting...' : 'Delete User' }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useForm } from 'vee-validate'
+import * as yup from 'yup'
 import { 
   ArrowLeft, 
   UserPlus, 
@@ -387,7 +391,8 @@ import {
   Trash2, 
   X, 
   AlertTriangle, 
-  RotateCcw 
+  RotateCcw,
+  Search
 } from 'lucide-vue-next'
 
 // UI Components
@@ -405,13 +410,14 @@ import TableBody from '~/components/ui/TableBody.vue'
 import TableRow from '~/components/ui/TableRow.vue'
 import TableHead from '~/components/ui/TableHead.vue'
 import TableCell from '~/components/ui/TableCell.vue'
+import Dialog from '~/components/ui/Dialog.vue'
+import DialogContent from '~/components/ui/DialogContent.vue'
+import DialogHeader from '~/components/ui/DialogHeader.vue'
+import DialogFooter from '~/components/ui/DialogFooter.vue'
 
 // Types and Services
 import { UserService } from '~/services/user/userService'
 import { EmployeeService } from '~/services/employee/employeeService'
-
-// Validation schemas
-import { userCreateSchema, userUpdateSchema } from '~/lib/validationSchemas'
 
 // Composables
 const { alerts, showSuccess, showError, showInfo, removeAlert } = useAlert()
@@ -420,6 +426,19 @@ const { alerts, showSuccess, showError, showInfo, removeAlert } = useAlert()
 definePageMeta({
   middleware: 'auth',
   layout: 'auth-layout'
+})
+
+// Validation schemas
+const userCreateSchema = yup.object({
+  name: yup.string().required('Name is required').min(2, 'Name must be at least 2 characters'),
+  password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+  id_employee: yup.number().required('Employee is required')
+})
+
+const userUpdateSchema = yup.object({
+  name: yup.string().required('Name is required').min(2, 'Name must be at least 2 characters'),
+  password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+  id_employee: yup.number().required('Employee is required')
 })
 
 // Reactive state
@@ -433,6 +452,9 @@ const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 const editingUserId = ref(0)
 const deletingUser = ref(null)
+
+// Search and filter state
+const searchQuery = ref('')
 
 // Create form
 const {
@@ -471,6 +493,21 @@ const employeeOptions = computed(() => {
   }))
 })
 
+const filteredUsers = computed(() => {
+  let filtered = [...users.value]
+  
+  // Apply search filter
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    filtered = filtered.filter(user => 
+      user.name.toLowerCase().includes(query) ||
+      (user.id_employee && getEmployeeName(user.id_employee).toLowerCase().includes(query))
+    )
+  }
+  
+  return filtered
+})
+
 // Helper function to get employee name
 const getEmployeeName = (employeeId) => {
   const employee = employees.value.find(emp => emp.id === employeeId)
@@ -486,7 +523,7 @@ const fetchUsers = async () => {
     const userService = UserService.getInstance()
     users.value = await userService.getAllUsers()
     
-  } catch (err) {
+  } catch (err: any) {
     error.value = err.message || 'Failed to load users'
     showError('Error', 'Failed to load users')
   } finally {
@@ -499,7 +536,7 @@ const fetchEmployees = async () => {
     const employeeService = EmployeeService.getInstance()
     employees.value = await employeeService.getAllEmployees()
     
-  } catch (err) {
+  } catch (err: any) {
     showError('Error', 'Failed to load employees')
   }
 }
@@ -522,7 +559,7 @@ const onCreateSubmit = handleCreateSubmit(async (values) => {
     resetCreateForm()
     showSuccess('User created', `${created.name} has been added successfully`)
     await fetchUsers()
-  } catch (err) {
+  } catch (err: any) {
     showError('Error', err.message || 'Failed to create user')
   } finally {
     loading.value = false
@@ -548,7 +585,7 @@ const onEditSubmit = handleEditSubmit(async (values) => {
     closeEditModal()
     showSuccess('User updated', `${updated.name} has been updated successfully`)
     await fetchUsers()
-  } catch (err) {
+  } catch (err: any) {
     showError('Error', err.message || 'Failed to update user')
   } finally {
     loading.value = false
@@ -595,31 +632,12 @@ const confirmDelete = async () => {
     closeDeleteModal()
     showSuccess('User deleted', `${deletedName} has been removed successfully`)
     await fetchUsers()
-  } catch (err) {
+  } catch (err: any) {
     showError('Error', err.message || 'Failed to delete user')
   } finally {
     loading.value = false
   }
 }
-
-// Search and filter state
-const searchQuery = ref('')
-
-// Computed properties for filtering
-const filteredUsers = computed(() => {
-  let filtered = [...users.value]
-  
-  // Apply search filter
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(user => 
-      user.name.toLowerCase().includes(query) ||
-      (user.id_employee && getEmployeeName(user.id_employee).toLowerCase().includes(query))
-    )
-  }
-  
-  return filtered
-})
 
 // Filter methods
 const clearFilters = () => {

@@ -30,14 +30,10 @@ export const useEmployees = () => {
     try {
       loading.value = true;
       error.value = null;
-      console.log('🔍 Fetching employees...');
       const fetchedEmployees = await employeeService.getAllEmployees();
-      console.log('✅ Employees fetched from service:', fetchedEmployees);
       employees.value = fetchedEmployees;
-      console.log('📝 Employees assigned to reactive ref:', employees.value);
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to fetch employees';
-      console.error('❌ Error fetching employees:', err);
     } finally {
       loading.value = false;
     }
@@ -83,7 +79,6 @@ export const useEmployees = () => {
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to update employee';
       showError('Error', error.value);
-      console.error('Error updating employee:', err);
       return { success: false, error: error.value };
     } finally {
       formState.isSubmitting = false;
@@ -105,7 +100,6 @@ export const useEmployees = () => {
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to delete employee';
       showError('Error', error.value);
-      console.error('Error deleting employee:', err);
       return { success: false, error: error.value };
     } finally {
       loading.value = false;
@@ -162,7 +156,6 @@ export const useEmployees = () => {
       return imageBytes;
     } catch (err) {
       error.value = 'Failed to process image';
-      console.error('Error processing image:', err);
       return null;
     }
   };

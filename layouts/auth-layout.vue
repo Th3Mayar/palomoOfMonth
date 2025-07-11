@@ -18,7 +18,7 @@
 // Layout specific for authentication pages
 
 // Theme composable
-const { initializeTheme, settings } = useTheme()
+const { initializeTheme } = useTheme()
 
 // Initialize theme on mount
 onMounted(() => {

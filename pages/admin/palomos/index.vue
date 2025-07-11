@@ -406,7 +406,7 @@ const { handleSubmit: handleCreateSubmit, defineField: defineCreateField, errors
 })
 
 const [createName, createNameAttrs] = defineCreateField('name')
-const [createImageBytes, createImageBytesAttrs] = defineCreateField('imageBytes')
+const [createImageBytes] = defineCreateField('imageBytes')
 
 // Edit form  
 const { handleSubmit: handleEditSubmit, defineField: defineEditField, errors: editErrors, resetForm: resetEditForm, setValues: setEditValues } = useForm({
@@ -438,27 +438,19 @@ const previewImageName = ref('')
 
 // Image handling
 const handleNewImageSelected = (file: File) => {
-  console.log('📁 Form: Image selected for create form:', file.name)
-  console.log('📁 Form: Current createImageBytes value:', createImageBytes.value?.substring(0, 50) + '...')
   showInfo('Image uploaded', 'Profile image has been uploaded successfully')
 }
 
 const handleNewImageRemoved = () => {
-  console.log('📁 Form: Image removed from create form')
-  console.log('📁 Form: Setting createImageBytes to empty string')
   showInfo('Image removed', 'Profile image has been removed')
   createImageBytes.value = ''
 }
 
 const handleEditImageSelected = (file: File) => {
-  console.log('📁 Form: Image selected for edit form:', file.name)
-  console.log('📁 Form: Current editImageBytes value:', editImageBytes.value?.substring(0, 50) + '...')
   showInfo('Image updated', 'Profile image has been updated successfully')
 }
 
 const handleEditImageRemoved = () => {
-  console.log('📁 Form: Image removed from edit form')
-  console.log('📁 Form: Setting editImageBytes to empty string')
   showInfo('Image removed', 'Profile image has been removed')
   editImageBytes.value = ''
 }
@@ -484,18 +476,7 @@ const fetchEmployees = async () => {
   try {
     const employeeService = EmployeeService.getInstance()
     employees.value = await employeeService.getAllEmployees()
-    
-    console.log('📋 Fetched employees:', employees.value)
-    employees.value.forEach((emp, index) => {
-      console.log(`👤 Employee ${index + 1}:`, {
-        id: emp.id,
-        name: emp.name,
-        imageBytes: emp.imageBytes ? `${emp.imageBytes.substring(0, 50)}...` : 'NO IMAGE',
-        imageBytesLength: emp.imageBytes?.length || 0
-      })
-    })
   } catch (err: any) {
-    console.error('Fetch error:', err)
     error.value = err.message || 'Failed to load palomos'
     showError('Error', 'Failed to load palomos')
   } finally {
@@ -505,27 +486,16 @@ const fetchEmployees = async () => {
 
 // Form submission handlers
 const onCreateSubmit = handleCreateSubmit(async (values) => {
-  console.log('🚀 Create form submitted with values:', values)
-  console.log('📝 Name value:', values.name)
-  console.log('🖼️ ImageBytes value:', values.imageBytes)
-  console.log('📏 ImageBytes length:', values.imageBytes?.length || 0)
-  console.log('🔍 ImageBytes type:', typeof values.imageBytes)
-  console.log('❓ ImageBytes is empty:', !values.imageBytes || values.imageBytes === '')
-  
   loading.value = true
   
   try {
     const employeeService = EmployeeService.getInstance()
     const created = await employeeService.createEmployee(values)
     
-    console.log('✅ Created employee response:', created)
-    console.log('🖼️ Created employee imageBytes:', created.imageBytes)
-    
     resetCreateForm()
     showSuccess('Palomo created', `${created.name} has been added successfully`)
     await fetchEmployees()
   } catch (err: any) {
-    console.error('❌ Create error:', err)
     showError('Error', err.message || 'Failed to create palomo')
   } finally {
     loading.value = false
@@ -533,7 +503,6 @@ const onCreateSubmit = handleCreateSubmit(async (values) => {
 })
 
 const onEditSubmit = handleEditSubmit(async (values) => {
-  console.log('Edit form submitted with values:', values)
   loading.value = true
   
   try {
@@ -544,7 +513,6 @@ const onEditSubmit = handleEditSubmit(async (values) => {
     showSuccess('Palomo updated', `${updated.name} has been updated successfully`)
     await fetchEmployees()
   } catch (err: any) {
-    console.error('Update error:', err)
     showError('Error', err.message || 'Failed to update palomo')
   } finally {
     loading.value = false
@@ -553,7 +521,6 @@ const onEditSubmit = handleEditSubmit(async (values) => {
 
 // Modal methods
 const openEditModal = (employee: Employee) => {
-  console.log('Opening edit modal for palomo:', employee)
   editingEmployeeId.value = employee.id
   setEditValues({
     name: employee.name,

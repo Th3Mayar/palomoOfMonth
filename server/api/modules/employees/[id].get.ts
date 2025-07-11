@@ -24,7 +24,6 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    console.log('Getting employee with ID:', id);
 
     const response = await $fetch(`${apiBaseUrl}/Employees/${id}`, {
       method: 'GET',
@@ -33,8 +32,6 @@ export default defineEventHandler(async (event) => {
         'Authorization': `Bearer ${token}`,
       },
     }) as EmployeeApiResponse;
-
-    console.log('GET individual employee response:', response);
 
     // Handle different response formats
     let mappedEmployee: Employee;
@@ -47,6 +44,7 @@ export default defineEventHandler(async (event) => {
       mappedEmployee = {
         id: (response as any).id,
         name: (response as any).name,
+        image: (response as any).image || '',
         imageBytes: (response as any).imageBytes || ''
       };
     } else {
@@ -55,12 +53,6 @@ export default defineEventHandler(async (event) => {
 
     return mappedEmployee;
   } catch (error: any) {
-    console.error('Error fetching employee:', error);
-    console.error('Error details:', {
-      message: error.message,
-      statusCode: error.statusCode,
-      data: error.data
-    });
     
     throw createError({
       statusCode: error.statusCode || 500,

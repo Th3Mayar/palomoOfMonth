@@ -63,8 +63,14 @@
       </p>
       
       <!-- Cards Grid - Responsive -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
-        <Card class="hover:shadow-lg transition-shadow h-full">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto"
+          :class="{
+            '!grid-cols-1': !isAdmin,
+            'sm:!grid-cols-1': !isAdmin,
+            'lg:!grid-cols-1': !isAdmin,
+            '!max-w-lg': !isAdmin
+          }">
+        <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-primary/10 rounded-lg mb-3 sm:mb-4 mx-auto">
               <Users class="h-5 w-5 sm:h-6 sm:w-6 text-button-primary" />
@@ -81,7 +87,7 @@
           </CardContent>
         </Card>
 
-        <Card class="hover:shadow-lg transition-shadow h-full">
+        <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-green-500/10 rounded-lg mb-3 sm:mb-4 mx-auto">
               <UserCog class="h-5 w-5 sm:h-6 sm:w-6 text-green-500" />
@@ -110,14 +116,13 @@
               @click="handleNomineesClick" 
               variant="secondary" 
               class="w-full mt-auto text-sm sm:text-base"
-              disabled
             >
               View Nominees
             </Button>
           </CardContent>
         </Card>
         
-        <Card class="hover:shadow-lg transition-shadow h-full">
+        <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-variant/10 rounded-lg mb-3 sm:mb-4 mx-auto">
               <BarChart3 class="h-5 w-5 sm:h-6 sm:w-6 text-button-variant" />
@@ -128,7 +133,6 @@
               @click="handleScoresClick" 
               variant="outline" 
               class="w-full mt-auto text-sm sm:text-base"
-              disabled
             >
               View Scores
             </Button>
@@ -188,7 +192,7 @@ definePageMeta({
 })
 
 // Use authentication composable
-const { user, isLoggedIn, logout, checkAuth } = useAuth()
+const { user, isLoggedIn, logout, checkAuth, isAdmin } = useAuth()
 
 // Use alerts composable
 const { alerts, showWarning, removeAlert } = useAlert()
@@ -198,9 +202,6 @@ const loginButtonRef = ref(null)
 
 // Function to handle Palomos click
 const handlePalomosClick = () => {
-  console.log('🚀 Palomos clicked - isLoggedIn:', isLoggedIn.value)
-  console.log('🚀 User data:', user.value)
-  
   if (!isLoggedIn.value) {
     showWarning(
       'Access Required',
@@ -214,7 +215,6 @@ const handlePalomosClick = () => {
       }
     })
   } else {
-    console.log('✅ User is logged in, navigating to palomos')
     // Logic for authenticated users - navigate to palomos
     navigateTo('/admin/palomos')
   }
@@ -222,9 +222,6 @@ const handlePalomosClick = () => {
 
 // Function to handle Users click
 const handleUsersClick = () => {
-  console.log('🚀 Users clicked - isLoggedIn:', isLoggedIn.value)
-  console.log('🚀 User data:', user.value)
-  
   if (!isLoggedIn.value) {
     showWarning(
       'Access Required',
@@ -238,7 +235,6 @@ const handleUsersClick = () => {
       }
     })
   } else {
-    console.log('✅ User is logged in, navigating to users')
     // Logic for authenticated users - navigate to users
     navigateTo('/admin/users')
   }
@@ -260,7 +256,11 @@ const handleNomineesClick = () => {
     })
   } else {
     // Logic for authenticated users - navigate to nominees
-    navigateTo('/nominees')
+    if(isAdmin.value) {
+      navigateTo('/admin/nominees')
+    } else {
+      navigateTo('/nominees')
+    }
   }
 }
 
@@ -280,7 +280,11 @@ const handleScoresClick = () => {
     })
   } else {
     // Logic for authenticated users - navigate to scores
-    navigateTo('/scores')
+    if(isAdmin.value) {
+      navigateTo('/admin/scores')
+    } else {
+      navigateTo('/scores')
+    }
   }
 }
 
@@ -293,11 +297,6 @@ watch(user, (newUser) => {
 // Check authentication when mounting component
 onMounted(() => {
   checkAuth()
-  
-  // Debug: Ver qué contiene el usuario
-  console.log('🔍 User data:', user.value)
-  console.log('🔍 Is logged in:', isLoggedIn.value)
-  console.log('🔍 User name:', user.value?.name)
 })
 </script>
 

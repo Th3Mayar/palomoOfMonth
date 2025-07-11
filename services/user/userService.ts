@@ -22,9 +22,7 @@ export class UserService {
 
   async getAllUsers(): Promise<User[]> {
     try {
-      console.log('🔍 UserService: Starting to fetch users...');
       const token = useCookie('auth-token');
-      console.log('🔑 Token value:', token.value ? 'Token exists' : 'No token');
       
       const response = await $fetch<User[]>('/api/modules/users', {
         method: 'GET',
@@ -33,27 +31,15 @@ export class UserService {
         },
       });
       
-      console.log('✅ UserService: Raw response from API:', response);
-      console.log('📊 UserService: Response type:', typeof response, 'Is array:', Array.isArray(response));
-      console.log('📏 UserService: Response length:', response?.length);
-      
       return response;
     } catch (error) {
-      console.error('❌ UserService: Error fetching users:', error);
       throw new Error('Failed to fetch users');
     }
   }
 
   async createUser(userData: CreateUserRequest): Promise<User> {
     try {
-      console.log('🔧 UserService - createUser called with data:', userData);
-      console.log('🔧 UserService - userData keys:', Object.keys(userData));
-      console.log('🔧 UserService - userData.name:', userData.name);
-      console.log('🔧 UserService - userData.id_employee:', userData.id_employee);
-      console.log('🔧 UserService - typeof userData.name:', typeof userData.name);
-      
       const token = useCookie('auth-token');
-      console.log('🔧 UserService - Sending POST request with body:', userData);
       
       const response = await $fetch<User>('/api/modules/users', {
         method: 'POST',
@@ -63,10 +49,8 @@ export class UserService {
         body: userData,
       });
       
-      console.log('🔧 UserService - Received response:', response);
       return response;
     } catch (error) {
-      console.error('🔧 UserService - Error creating user:', error);
       throw new Error('Failed to create user');
     }
   }
@@ -83,7 +67,6 @@ export class UserService {
       });
       return response;
     } catch (error) {
-      console.error('Error updating user:', error);
       throw new Error('Failed to update user');
     }
   }
@@ -98,7 +81,6 @@ export class UserService {
         },
       });
     } catch (error) {
-      console.error('Error deleting user:', error);
       throw new Error('Failed to delete user');
     }
   }

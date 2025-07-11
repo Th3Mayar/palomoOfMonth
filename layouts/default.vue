@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-background text-foreground flex flex-col">
+    
     <!-- Main content area -->
     <main class="flex-1 w-full">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

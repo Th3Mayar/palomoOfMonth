@@ -22,11 +22,14 @@ interface AuthResponse {
 
 export const useAuth = () => {
   const user = ref(null)
+  const isAdmin = ref(false)
+
   const token = useCookie('auth-token', { 
     default: () => null,
     serialize: String,
     deserialize: (value) => value 
   })
+
   const userCookie = useCookie('user-data', { 
     default: () => null,
     serialize: JSON.stringify,
@@ -41,7 +44,6 @@ export const useAuth = () => {
   
   const isLoggedIn = computed(() => {
     const result = !!user.value && !!token.value
-    console.log('🔍 isLoggedIn computed - user:', !!user.value, 'token:', !!token.value, 'result:', result)
     return result
   })
 
@@ -51,9 +53,6 @@ export const useAuth = () => {
         method: 'POST',
         body: credentials
       })
-
-      console.log('🔐 Login full response:', response)
-      console.log('🔐 Login response.data:', response.data)
 
       // The API returns { success: true, data: actualResponse }
       if (response.success && response.data) {
@@ -76,11 +75,6 @@ export const useAuth = () => {
           // useCookie in Nuxt can handle objects directly
           userCookie.value = userData
           
-          console.log('✅ Token stored:', token.value)
-          console.log('✅ User data stored:', userData)
-          console.log('✅ User cookie stored:', userCookie.value)
-          console.log('✅ isLoggedIn should be:', !!userData && !!token.value)
-          
           await navigateTo('/')
           
           return { success: true, token: apiData.token, user: userData }
@@ -89,7 +83,6 @@ export const useAuth = () => {
 
       return { success: false, message: 'Invalid credentials or missing token' }
     } catch (error: any) {
-      console.error('❌ Login error:', error)
       return { 
         success: false, 
         message: error?.data?.message || error?.message || 'Error of connection' 
@@ -138,44 +131,33 @@ export const useAuth = () => {
   }
 
   const logout = async () => {
-    console.log('🚪 Logging out...')
     token.value = null
     user.value = null
     userCookie.value = null
-    console.log('✅ Cleared all auth data')
     await navigateTo('/auth/login')
   }
 
   const checkAuth = () => {
-    console.log('🔍 CheckAuth called')
-    console.log('🔍 Token value:', token.value)
-    console.log('🔍 User cookie value:', userCookie.value)
-    console.log('🔍 User cookie type:', typeof userCookie.value)
-    
     if (token.value) {
       try {
         // The userCookie should already be deserialized to an object
         if (userCookie.value) {
           user.value = userCookie.value
-          console.log('✅ User restored from cookie:', userCookie.value)
-          console.log('✅ isLoggedIn computed result:', !!userCookie.value && !!token.value)
+          isAdmin.value = user.value?.role === 'admin'
           return true
         } else {
-          console.log('⚠️ No user cookie found, but token exists')
           // Clear token if no user data
           token.value = null
           user.value = null
           return false
         }
       } catch (error) {
-        console.error('❌ Error in checkAuth:', error)
         token.value = null
         user.value = null
         userCookie.value = null
         return false
       }
     } else {
-      console.log('⚠️ No token found')
       user.value = null
     }
     return false
@@ -188,6 +170,7 @@ export const useAuth = () => {
     register,
     forgotPassword,
     logout,
-    checkAuth
+    checkAuth,
+    isAdmin
   }
 }

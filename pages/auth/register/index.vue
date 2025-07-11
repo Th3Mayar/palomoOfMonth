@@ -186,7 +186,6 @@ const handleRegister = async (values: any) => {
     
   } catch (err: any) {
     error.value = 'Registration failed. Please try again.'
-    console.error('Registration error:', err)
   } finally {
     loading.value = false
   }

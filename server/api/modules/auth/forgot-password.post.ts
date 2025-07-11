@@ -29,8 +29,6 @@ export default defineEventHandler(async (event) => {
       data: response
     }
   } catch (error: any) {
-    console.error('Forgot Password API Error:', error)
-    
     // Handle validation errors
     if (error.statusCode) {
       throw error

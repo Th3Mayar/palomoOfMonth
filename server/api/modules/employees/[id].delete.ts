@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    console.log('Deleting employee with ID:', id);
 
     const response = await $fetch(`${apiBaseUrl}/Employees/${id}`, {
       method: 'DELETE',
@@ -32,17 +31,9 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    console.log('Delete response:', response);
-
     // DELETE typically returns empty response or success message
     return { success: true, message: 'Employee deleted successfully' };
   } catch (error: any) {
-    console.error('Error deleting employee:', error);
-    console.error('Error details:', {
-      message: error.message,
-      statusCode: error.statusCode,
-      data: error.data
-    });
     
     throw createError({
       statusCode: error.statusCode || 500,

@@ -108,7 +108,6 @@ const handleForgotPassword = async (values: any) => {
     
   } catch (err: any) {
     error.value = 'Failed to send reset link. Please try again.'
-    console.error('Forgot password error:', err)
   } finally {
     loading.value = false
   }

@@ -24,17 +24,12 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    console.log('🔗 External API Response:', response)
-    console.log('🔗 Response type:', typeof response)
-    console.log('🔗 Response keys:', Object.keys(response || {}))
-
     // Return consistent response format
     return {
       success: true,
       data: response
     }
   } catch (error: any) {
-    console.error('Login API Error:', error)
     
     // Handle fetch errors
     if (error.response) {
