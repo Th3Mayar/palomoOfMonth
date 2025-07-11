@@ -2,6 +2,7 @@
 export interface EmployeeApiResponse {
   id_employee: number;
   name: string;
+  image: string | null;
   imageBytes?: string | null;
 }
 
@@ -9,6 +10,7 @@ export interface EmployeeApiResponse {
 export interface Employee {
   id: number;
   name: string;
+  image: string; // URL or path to the image
   imageBytes: string;
 }
 
@@ -31,6 +33,7 @@ export const mapApiResponseToEmployee = (apiResponse: EmployeeApiResponse): Empl
   return {
     id: apiResponse.id_employee,
     name: apiResponse.name,
+    image: apiResponse.image ? apiResponse.image : '',
     imageBytes: apiResponse.imageBytes || '',
   };
 };

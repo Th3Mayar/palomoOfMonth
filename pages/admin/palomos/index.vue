@@ -136,12 +136,12 @@
                 <TableCell class="w-20">
                   <div class="flex items-center justify-center">
                     <div 
-                      v-if="employee.imageBytes" 
+                      v-if="employee.image" 
                       class="w-10 h-10 rounded-full bg-gray-100 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                      @click="openImagePreview(employee.imageBytes, employee.name)"
+                      @click="openImagePreview(employee.image, employee.name)"
                     >
                       <img 
-                        :src="`data:image/jpeg;base64,${employee.imageBytes}`" 
+                        :src="employee.image" 
                         :alt="`${employee.name}'s profile`"
                         class="w-full h-full object-cover"
                       />
@@ -419,8 +419,8 @@ const handleEditImageRemoved = () => {
 }
 
 // Image preview methods
-const openImagePreview = (imageBytes: string, employeeName: string) => {
-  previewImageSrc.value = `data:image/jpeg;base64,${imageBytes}`
+const openImagePreview = (image: string, employeeName: string) => {
+  previewImageSrc.value = image;
   previewImageName.value = `${employeeName}'s Profile`
   showImagePreview.value = true
 }
