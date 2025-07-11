@@ -85,7 +85,7 @@
           Palomo List
         </CardTitle>
         <CardDescription>
-          Total palomos: {{ employees.length }}
+          Total Palomos: {{ employees.length }}
         </CardDescription>
       </CardHeader>
       <CardContent>

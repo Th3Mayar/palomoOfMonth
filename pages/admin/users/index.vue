@@ -110,7 +110,7 @@
           User List
         </CardTitle>
         <CardDescription>
-          Total users: {{ users.length }}
+          Total Users: {{ users.length }}
         </CardDescription>
       </CardHeader>
       <CardContent>
