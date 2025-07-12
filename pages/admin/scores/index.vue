@@ -138,11 +138,11 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
               <label class="text-sm font-medium leading-none">
-                Date & Time
+                Date
                 <span class="text-destructive">*</span>
               </label>
               <input
-                type="datetime-local"
+                type="date"
                 v-model="createDate"
                 v-bind="createDateAttrs"
                 class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -301,7 +301,6 @@
                 <TableCell class="w-32">
                   <div class="text-sm">
                     <div class="font-medium">{{ formatDate(score.date) }}</div>
-                    <div class="text-muted-foreground">{{ formatTime(score.date) }}</div>
                   </div>
                 </TableCell>
                 <TableCell class="min-w-48">
@@ -316,9 +315,11 @@
                   </div>
                 </TableCell>
                 <TableCell class="flex-1">
-                  <div class="max-w-md truncate" :title="score.reason">
-                    {{ score.reason }}
-                  </div>
+                  <Tooltip :content="score.reason">
+                    <div class="max-w-md truncate cursor-help">
+                      {{ score.reason }}
+                    </div>
+                  </Tooltip>
                 </TableCell>
                 <TableCell class="w-32">
                   <div class="flex justify-end space-x-2">
@@ -391,11 +392,11 @@
           </div>
           <div class="space-y-2">
             <label class="text-sm font-medium leading-none">
-              Date & Time
+              Date
               <span class="text-destructive">*</span>
             </label>
             <input
-              type="datetime-local"
+              type="date"
               v-model="editDate"
               v-bind="editDateAttrs"
               class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -512,6 +513,7 @@ import TableHead from '~/components/ui/TableHead.vue'
 import TableCell from '~/components/ui/TableCell.vue'
 import Select from '~/components/ui/Select.vue'
 import Textarea from '~/components/ui/Textarea.vue'
+import Tooltip from '~/components/ui/Tooltip.vue'
 
 import type { Score } from '~/types/score'
 import type { Employee } from '~/types/employee'
@@ -559,7 +561,7 @@ const { handleSubmit: handleCreateSubmit, defineField: defineCreateField, errors
   initialValues: {
     id_employee: null,
     score: null,
-    date: new Date().toISOString().slice(0, 16),
+    date: new Date().toISOString().slice(0, 10),
     reason: ''
   }
 })
@@ -651,8 +653,8 @@ const onCreateSubmit = handleCreateSubmit(async (values) => {
     updateEmployeeNames(employees.value)
     
     resetCreateForm()
-    // Reset date to current time
-    createDate.value = new Date().toISOString().slice(0, 16)
+    // Reset date to current date
+    createDate.value = new Date().toISOString().slice(0, 10)
     
     showSuccess('Score recorded', `Score of ${created.score} points recorded successfully`)
   } catch (err: any) {
@@ -688,7 +690,7 @@ const openEditModal = (score: Score) => {
   setEditValues({
     id_employee: score.employeeId,
     score: score.score,
-    date: new Date(score.date).toISOString().slice(0, 16),
+    date: new Date(score.date).toISOString().slice(0, 10),
     reason: score.reason
   })
   showEditModal.value = true
@@ -841,5 +843,26 @@ onMounted(async () => {
 :deep(.table th:nth-child(5)),
 :deep(.table td:nth-child(5)) {
   width: 140px;
+}
+input[type="date"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23999' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='20' height='20'><path d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.89-1.99 2L3 20c0 1.1.89 2 2 2h14a2 2 0 0 0 2-2V6c0-1.11-.9-2-2-2zm0 16H5V10h14v10z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem 1rem;
+  padding-right: 2.5rem;
+  color-scheme: light dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0.75rem;
+  width: 1rem;
+  height: 100%;
+  cursor: pointer;
 }
 </style>
