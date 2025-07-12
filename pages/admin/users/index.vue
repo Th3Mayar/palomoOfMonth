@@ -133,16 +133,24 @@
                 />
               </div>
             </div>
-            <Button
-              v-if="searchQuery"
-              @click="clearFilters"
-              variant="outline"
-              size="sm"
-              class="whitespace-nowrap !h-10"
-            >
-              <X class="mr-2 h-4 w-4" />
-              Clear
-            </Button>
+            <div class="flex gap-2">
+              <Select
+                v-model="filterEmployee"
+                :options="[{ value: '', label: 'All Employees' }, ...employeeOptions]"
+                placeholder="Filter by employee"
+                class="w-48"
+              />
+              <Button
+                v-if="searchQuery || filterEmployee"
+                @click="clearFilters"
+                variant="outline"
+                size="sm"
+                class="whitespace-nowrap !h-10"
+              >
+                <X class="mr-2 h-4 w-4" />
+                Clear
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -179,16 +187,16 @@
         </div>
 
         <!-- No Search Results -->
-        <div v-else-if="filteredUsers.length === 0 && searchQuery" class="flex flex-col items-center justify-center py-12 space-y-4">
+        <div v-else-if="filteredUsers.length === 0 && (searchQuery || filterEmployee)" class="flex flex-col items-center justify-center py-12 space-y-4">
           <Search class="h-12 w-12 text-muted-foreground/50" />
           <div class="text-center">
             <h3 class="text-lg font-semibold text-foreground mb-1">No Results Found</h3>
             <p class="text-muted-foreground mb-4">
-              No users match your search for "{{ searchQuery }}"
+              No users match your current filters
             </p>
             <Button @click="clearFilters" variant="outline">
               <X class="mr-2 h-4 w-4" />
-              Clear Search
+              Clear Filters
             </Button>
           </div>
         </div>
@@ -458,6 +466,7 @@ const deletingUser = ref(null)
 
 // Search and filter state
 const searchQuery = ref('')
+const filterEmployee = ref('')
 
 // Create form
 const {
@@ -506,6 +515,11 @@ const filteredUsers = computed(() => {
       user.name.toLowerCase().includes(query) ||
       (user.id_employee && getEmployeeName(user.id_employee).toLowerCase().includes(query))
     )
+  }
+  
+  // Apply employee filter
+  if (filterEmployee.value) {
+    filtered = filtered.filter(user => user.id_employee === Number(filterEmployee.value))
   }
   
   return filtered
@@ -645,6 +659,7 @@ const confirmDelete = async () => {
 // Filter methods
 const clearFilters = () => {
   searchQuery.value = ''
+  filterEmployee.value = ''
 }
 
 // Helper function to check if user is admin
