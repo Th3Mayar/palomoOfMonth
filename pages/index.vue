@@ -65,8 +65,7 @@
       <!-- Cards Grid - Responsive -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto"
           :class="{
-            '!grid-cols-1': !isAdmin,
-            'sm:!grid-cols-1': !isAdmin,
+            'sm:!grid-cols-1 !max-w-2xl': !isAdmin,
             'lg:!grid-cols-2 !max-w-2xl': !isAdmin,
             '!max-w-lg': !isAdmin
           }">
