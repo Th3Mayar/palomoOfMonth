@@ -67,7 +67,7 @@
           :class="{
             '!grid-cols-1': !isAdmin,
             'sm:!grid-cols-1': !isAdmin,
-            'lg:!grid-cols-1': !isAdmin,
+            'lg:!grid-cols-2 !max-w-2xl': !isAdmin,
             '!max-w-lg': !isAdmin
           }">
         <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
@@ -122,7 +122,7 @@
           </CardContent>
         </Card>
         
-        <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
+        <Card class="hover:shadow-lg transition-shadow h-full">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-variant/10 rounded-lg mb-3 sm:mb-4 mx-auto">
               <BarChart3 class="h-5 w-5 sm:h-6 sm:w-6 text-button-variant" />
