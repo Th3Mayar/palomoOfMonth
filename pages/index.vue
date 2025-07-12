@@ -290,8 +290,6 @@ const handleScoresClick = () => {
 
 // Debug: Watch user changes
 watch(user, (newUser) => {
-  console.log('👤 User changed:', newUser)
-  console.log('👤 User name:', newUser?.name)
 }, { immediate: true, deep: true })
 
 // Check authentication when mounting component

@@ -26,15 +26,31 @@
     <!-- Create Palomo Section -->
     <Card class="mb-8">
       <CardHeader>
-        <CardTitle class="flex items-center">
-          <UserPlus class="mr-2 h-5 w-5" />
-          Add New Palomo
-        </CardTitle>
-        <CardDescription>
-          Fill in the palomo information below
-        </CardDescription>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <UserPlus class="mr-2 h-5 w-5" />
+            <div>
+              <CardTitle>Add New Palomo</CardTitle>
+              <CardDescription>
+                Fill in the palomo information below
+              </CardDescription>
+            </div>
+          </div>
+          <Button
+            @click="toggleAddPalomoSection"
+            variant="ghost"
+            size="sm"
+            class="p-2 transition-transform duration-200 hover:scale-105"
+          >
+            <ChevronDown v-if="isAddPalomoSectionCollapsed" class="h-4 w-4 transition-transform duration-200" />
+            <ChevronUp v-else class="h-4 w-4 transition-transform duration-200" />
+          </Button>
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent 
+        v-if="!isAddPalomoSectionCollapsed" 
+        class="animate-slideDown"
+      >
         <form @submit="onCreateSubmit" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
@@ -349,7 +365,7 @@
 <script setup lang="ts">
 import { 
   ArrowLeft, UserPlus, Users, Save, Trash2, Edit, 
-  AlertTriangle, RotateCcw, Search, X
+  AlertTriangle, RotateCcw, Search, X, ChevronDown, ChevronUp
 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
@@ -566,7 +582,11 @@ const confirmDelete = async () => {
 }
 
 // Search and filter state
+// Search state
 const searchQuery = ref('')
+
+// Collapsible sections state
+const isAddPalomoSectionCollapsed = ref(true)
 
 // Computed properties for filtering
 const filteredEmployees = computed(() => {
@@ -588,6 +608,11 @@ const clearFilters = () => {
   searchQuery.value = ''
 }
 
+// Toggle methods for collapsible sections
+const toggleAddPalomoSection = () => {
+  isAddPalomoSectionCollapsed.value = !isAddPalomoSectionCollapsed.value
+}
+
 // Initialize data on mount
 onMounted(() => {
   fetchEmployees()
@@ -598,6 +623,29 @@ onMounted(() => {
 /* Component-specific styles */
 .transition-transform {
   transition: transform 0.2s ease-in-out;
+}
+
+/* Slide down animation for collapsible content */
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects */
+.hover\:scale-105:hover {
+  transform: scale(1.05);
 }
 
 /* Table layout optimizations */

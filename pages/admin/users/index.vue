@@ -26,15 +26,17 @@
     <!-- Create User Section -->
     <Card class="mb-8">
       <CardHeader>
-        <CardTitle class="flex items-center">
+        <div class="flex items-center">
           <UserPlus class="mr-2 h-5 w-5" />
-          Add New User
-        </CardTitle>
-        <CardDescription>
-          Fill in the user information below
-        </CardDescription>
+          <div>
+            <CardTitle>Add New User</CardTitle>
+            <CardDescription>
+              Fill in the user information below
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent class="space-y-6">
         <form @submit="onCreateSubmit" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-2">
@@ -657,6 +659,11 @@ onMounted(async () => {
 /* Component-specific styles */
 .transition-transform {
   transition: transform 0.2s ease-in-out;
+}
+
+/* Hover effects */
+.hover\:scale-105:hover {
+  transform: scale(1.05);
 }
 
 /* Table layout optimizations */
