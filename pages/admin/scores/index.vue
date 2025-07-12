@@ -223,8 +223,14 @@
                 placeholder="Filter by palomo"
                 class="w-48"
               />
+              <input
+                v-model="filterDate"
+                type="date"
+                placeholder="Filter by date"
+                class="flex h-10 w-48 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              />
               <Button
-                v-if="searchQuery || filterEmployee"
+                v-if="searchQuery || filterEmployee || filterDate"
                 @click="clearFilters"
                 variant="outline"
                 size="sm"
@@ -261,7 +267,7 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="filteredScores.length === 0 && !searchQuery && !filterEmployee" class="flex flex-col items-center justify-center py-12 space-y-4">
+        <div v-else-if="filteredScores.length === 0 && !searchQuery && !filterEmployee && !filterDate" class="flex flex-col items-center justify-center py-12 space-y-4">
           <Trophy class="h-12 w-12 text-muted-foreground/50" />
           <div class="text-center">
             <h3 class="text-lg font-semibold text-foreground mb-1">No Scores Found</h3>
@@ -596,6 +602,7 @@ const deletingScore = ref<Score | null>(null)
 // Search and filter state
 const searchQuery = ref('')
 const filterEmployee = ref('')
+const filterDate = ref('')
 
 // Collapsible sections state
 const isConfigSectionCollapsed = ref(true)
@@ -630,8 +637,45 @@ const filteredScores = computed(() => {
     filtered = filtered.filter(score => score.employeeId === Number(filterEmployee.value))
   }
   
-  // Sort by date (newest first)
-  filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  // Apply date filter
+  if (filterDate.value) {
+    filtered = filtered.filter(score => {
+      // Helper function to safely convert any date to YYYY-MM-DD format
+      const getDateString = (date: any): string => {
+        try {
+          if (date instanceof Date) {
+            return date.toISOString().slice(0, 10)
+          } else if (typeof date === 'string') {
+            if (date.includes('T')) {
+              return date.slice(0, 10)
+            } else if (date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+              return date
+            } else {
+              return new Date(date).toISOString().slice(0, 10)
+            }
+          } else {
+            return new Date(date).toISOString().slice(0, 10)
+          }
+        } catch (error) {
+          console.warn('Date conversion error:', error, date)
+          return ''
+        }
+      }
+      
+      const scoreDateFormatted = getDateString(score.date)
+      return scoreDateFormatted === filterDate.value
+    })
+  }
+  
+  // Sort by score (highest first), then by date as secondary sort
+  filtered.sort((a, b) => {
+    // Primary sort: highest score first
+    if (b.score !== a.score) {
+      return b.score - a.score
+    }
+    // Secondary sort: newest date first
+    return new Date(b.date).getTime() - new Date(a.date).getTime()
+  })
   
   return filtered
 })
@@ -642,7 +686,7 @@ const onCreateSubmit = handleCreateSubmit(async (values) => {
     const scoreData = {
       id_employee: Number(values.id_employee),
       score: Number(values.score),
-      date: new Date(values.date).toISOString(),
+      date: values.date, // Keep as string in YYYY-MM-DD format
       reason: values.reason
     }
     
@@ -667,7 +711,7 @@ const onEditSubmit = handleEditSubmit(async (values) => {
     const scoreData = {
       id_employee: Number(values.id_employee),
       score: Number(values.score),
-      date: new Date(values.date).toISOString(),
+      date: values.date, // Keep as string in YYYY-MM-DD format
       reason: values.reason
     }
     
@@ -729,6 +773,7 @@ const confirmDelete = async () => {
 const clearFilters = () => {
   searchQuery.value = ''
   filterEmployee.value = ''
+  filterDate.value = ''
 }
 
 // Toggle methods for collapsible sections
