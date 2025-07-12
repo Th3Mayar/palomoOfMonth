@@ -249,7 +249,8 @@
                       @click="openDeleteModal(user)" 
                       variant="ghost" 
                       size="sm"
-                      class="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                      :class="`h-8 w-8 p-0 text-destructive hover:text-destructive ${isAdminUser(user) ? 'opacity-50 cursor-not-allowed' : ''}`"
+                      :disabled="isAdminUser(user)"
                     >
                       <Trash2 class="h-4 w-4" />
                     </Button>
@@ -644,6 +645,11 @@ const confirmDelete = async () => {
 // Filter methods
 const clearFilters = () => {
   searchQuery.value = ''
+}
+
+// Helper function to check if user is admin
+const isAdminUser = (user) => {
+  return user.role === 'admin' || user.name.toLowerCase() === 'admin'
 }
 
 // Initialize data on mount
