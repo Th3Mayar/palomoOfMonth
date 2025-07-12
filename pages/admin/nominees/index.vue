@@ -8,6 +8,7 @@
 <script setup>
 // Page configuration
 definePageMeta({
+  middleware: 'auth',
   layout: 'auth-layout'
 })
 </script>

@@ -395,6 +395,7 @@ import { EmployeeService } from '~/services/employee/employeeService'
 
 // Page configuration
 definePageMeta({
+  middleware: 'auth',
   layout: 'auth-layout'
 })
 

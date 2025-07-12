@@ -518,6 +518,7 @@ import type { Employee } from '~/types/employee'
 
 // Page configuration
 definePageMeta({
+  middleware: 'auth',
   layout: 'auth-layout'
 })
 
