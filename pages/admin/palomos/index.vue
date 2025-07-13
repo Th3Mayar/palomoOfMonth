@@ -1,15 +1,17 @@
 <template>
   <div class="container mx-auto px-4 py-8 max-w-6xl">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-foreground mb-2">Palomo Management</h1>
-        <p class="text-muted-foreground">Manage your team members and their information</p>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 mt-8">
+      <div class="flex-1 min-w-0">
+        <h1 class="text-2xl sm:text-3xl font-bold text-foreground mb-2 truncate">Palomo Management</h1>
+        <p class="text-sm sm:text-base text-muted-foreground">Manage your team members and their information</p>
       </div>
-      <Button as="a" href="/" variant="outline">
-        <ArrowLeft class="mr-2 h-4 w-4" />
-        Back to Home
-      </Button>
+      <div class="flex-shrink-0">
+        <Button as="a" href="/" variant="outline" class="w-full sm:w-auto">
+          <ArrowLeft class="mr-2 h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
     </div>
 
     <!-- Alerts Container -->
