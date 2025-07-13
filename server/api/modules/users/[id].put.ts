@@ -4,7 +4,21 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const apiBaseUrl = config.apiBaseUrl;
   const body = await readBody(event);
-  const userId = getRouterParam(event, 'id');
+  
+  // Try multiple ways to get the user ID
+  let userId = getRouterParam(event, 'id');
+  
+  // Alternative method using event.context.params
+  if (!userId && event.context?.params?.id) {
+    userId = event.context.params.id;
+  }
+  
+  // If still no userId, try extracting from URL
+  if (!userId) {
+    const url = event.node?.req?.url || '';
+    const match = url.match(/\/users\/([^\/\?]+)/);
+    userId = match ? match[1] : undefined;
+  }
 
   console.log('🔥 PUT /users/[id] - User ID:', userId);
   console.log('🔥 PUT /users/[id] - Received body:', body);
