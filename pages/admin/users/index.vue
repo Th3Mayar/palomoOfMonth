@@ -214,7 +214,7 @@
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow v-for="user in filteredUsers" :key="user.id_user">
+              <TableRow v-for="user in filteredUsers" :key="user.id">
                 <TableCell class="w-20">
                   <div class="flex items-center justify-center">
                     <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -257,8 +257,8 @@
                       @click="openDeleteModal(user)" 
                       variant="ghost" 
                       size="sm"
-                      :class="`h-8 w-8 p-0 text-destructive hover:text-destructive ${isAdminUser(user) ? 'opacity-50 cursor-not-allowed' : ''}`"
-                      :disabled="isAdminUser(user)"
+                      :class="`h-8 w-8 p-0 text-destructive hover:text-destructive ${isAdmin ? 'opacity-50 cursor-not-allowed' : ''}`"
+                      :disabled="isAdmin"
                     >
                       <Trash2 class="h-4 w-4" />
                     </Button>
@@ -431,7 +431,8 @@ import { UserService } from '~/services/user/userService'
 import { EmployeeService } from '~/services/employee/employeeService'
 
 // Composables
-const { alerts, showSuccess, showError, showInfo, removeAlert } = useAlert()
+const { alerts, showSuccess, showError, removeAlert } = useAlert()
+const { isAdmin } = useAuth()
 
 // Page configuration
 definePageMeta({
@@ -588,8 +589,6 @@ const onEditSubmit = handleEditSubmit(async (values) => {
   const userData = {
     name: values.name,
     password: values.password,
-    status: true, // Add default status
-    role: 'user', // Add default role
     id_employee: parseInt(values.id_employee, 10)
   }
   
@@ -611,7 +610,7 @@ const onEditSubmit = handleEditSubmit(async (values) => {
 
 // Modal methods
 const openEditModal = (user) => {
-  editingUserId.value = user.id_user
+  editingUserId.value = user.id
   setEditValues({
     name: user.name,
     password: '', // Don't prefill password for security
@@ -643,7 +642,7 @@ const confirmDelete = async () => {
   
   try {
     const userService = UserService.getInstance()
-    await userService.deleteUser(deletingUser.value.id_user)
+    await userService.deleteUser(deletingUser.value.id)
     
     const deletedName = deletingUser.value.name
     closeDeleteModal()
@@ -660,11 +659,6 @@ const confirmDelete = async () => {
 const clearFilters = () => {
   searchQuery.value = ''
   filterEmployee.value = ''
-}
-
-// Helper function to check if user is admin
-const isAdminUser = (user) => {
-  return user.role === 'admin' || user.name.toLowerCase() === 'admin'
 }
 
 // Initialize data on mount
