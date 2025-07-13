@@ -17,8 +17,6 @@ export default defineEventHandler(async (event) => {
     userId = match ? match[1] : undefined;
   }
 
-  console.log('🔥 DELETE /users/[id] - User ID:', userId);
-
   // Get the token from the request headers
   const authHeader = getHeader(event, 'authorization');
   const token = authHeader?.replace('Bearer ', '');
@@ -38,8 +36,6 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    console.log('🔥 Deleting user with ID:', userId);
-
     const response = await $fetch(`${apiBaseUrl}/Users/${userId}`, {
       method: 'DELETE',
       headers: {
@@ -48,12 +44,8 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    console.log('🔥 DELETE Response:', response);
-
     return { success: true, message: 'User deleted successfully' };
   } catch (error: any) {
-    console.error('Error deleting user:', error);
-    
     throw createError({
       statusCode: error.statusCode || 500,
       statusMessage: error.message || 'Failed to delete user',

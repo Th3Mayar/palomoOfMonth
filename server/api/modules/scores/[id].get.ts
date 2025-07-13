@@ -43,7 +43,6 @@ export default defineEventHandler(async (event) => {
 
       return score;
     } catch (error: any) {
-      console.error('Error fetching score:', error);
       if (error.statusCode === 404) {
         throw createError({
           statusCode: 404,

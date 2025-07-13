@@ -93,13 +93,6 @@ export default defineEventHandler(async (event) => {
 
     return mappedUser;
   } catch (error: any) {
-    console.error('Error creating user:', error);
-    console.error('Error details:', {
-      message: error.message,
-      statusCode: error.statusCode,
-      data: error.data
-    });
-    
     throw createError({
       statusCode: error.statusCode || 500,
       statusMessage: error.message || 'Failed to create user',

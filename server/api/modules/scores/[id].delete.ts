@@ -44,7 +44,6 @@ export default defineEventHandler(async (event) => {
       setResponseStatus(event, 204);
       return '';
     } catch (error: any) {
-      console.error('Error deleting score:', error);
       if (error.statusCode === 404) {
         throw createError({
           statusCode: 404,

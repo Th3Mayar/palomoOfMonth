@@ -103,7 +103,6 @@ export default defineEventHandler(async (event) => {
         reason: body.reason,
       };
     } catch (error: any) {
-      console.error('Error updating score:', error);
       throw createError({
         statusCode: error.statusCode || 500,
         statusMessage: error.message || 'Failed to update score'
