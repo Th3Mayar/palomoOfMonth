@@ -4,19 +4,13 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const apiBaseUrl = config.apiBaseUrl
 
-  // Get the token from the request headers or cookies
-  let token = getHeader(event, 'authorization')?.replace('Bearer ', '')
+  // Get JWT from cookies using the correct cookie name
+  const jwt = getCookie(event, 'auth-token')
   
-  // If no header token, try to get from cookies
-  if (!token) {
-    const cookies = parseCookies(getHeader(event, 'cookie') || '')
-    token = cookies.token
-  }
-  
-  if (!token) {
+  if (!jwt) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Authorization token required'
+      statusMessage: 'Unauthorized'
     })
   }
 
@@ -46,36 +40,20 @@ export default defineEventHandler(async (event) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${jwt}`
       },
       body: {
         month,
         max_quantity
       }
     })
-
+    
     return response
 
   } catch (error: any) {
-    console.error('Error generating nominees:', error)
-    
     throw createError({
       statusCode: error.statusCode || 500,
       statusMessage: error.message || 'Failed to generate nominees'
     })
   }
 })
-
-// Helper function to parse cookies
-function parseCookies(cookieString: string): Record<string, string> {
-  const cookies: Record<string, string> = {}
-  if (cookieString) {
-    cookieString.split(';').forEach(cookie => {
-      const [name, value] = cookie.trim().split('=')
-      if (name && value) {
-        cookies[name] = decodeURIComponent(value)
-      }
-    })
-  }
-  return cookies
-}

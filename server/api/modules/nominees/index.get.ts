@@ -6,15 +6,14 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const { startDate, endDate, idEmployee } = query
 
-  // Get the token from the request headers
-  const authHeader = getHeader(event, 'authorization');
-  const token = authHeader?.replace('Bearer ', '');
+  // Get JWT from cookies using the correct cookie name
+  const jwt = getCookie(event, 'auth-token')
   
-  if (!token) {
+  if (!jwt) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Authorization token required',
-    });
+      statusMessage: 'Unauthorized'
+    })
   }
 
   // Validate query parameters
@@ -62,7 +61,7 @@ export default defineEventHandler(async (event) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${jwt}`,
       },
     })
 
@@ -85,20 +84,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 })
-
-// Helper function to parse cookies
-function parseCookies(cookieString: string): Record<string, string> {
-  const cookies: Record<string, string> = {}
-  if (cookieString) {
-    cookieString.split(';').forEach(cookie => {
-      const [name, value] = cookie.trim().split('=')
-      if (name && value) {
-        cookies[name] = decodeURIComponent(value)
-      }
-    })
-  }
-  return cookies
-}
 
 // Helper function to validate date format
 function isValidDate(dateString: string): boolean {

@@ -58,11 +58,9 @@
           <div class="space-y-2">
             <label class="text-sm font-medium">Employee</label>
             <Select
-                v-model="editEmployeeId"
-                v-bind="editEmployeeIdAttrs"
+                v-model="filters.idEmployee"
                 :options="employeeOptions"
                 placeholder="Select a palomo"
-                :error="!!editErrors.id_employee"
               />
           </div>
           <div class="flex items-end space-x-2">
@@ -149,47 +147,42 @@
           <Button @click="clearFilters">Clear Filters</Button>
         </div>
 
-        <div v-else class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr class="border-b">
-                <th class="text-left p-4 font-medium">ID</th>
-                <th class="text-left p-4 font-medium">Employee</th>
-                <th class="text-left p-4 font-medium">Position</th>
-                <th class="text-left p-4 font-medium">Nomination Date</th>
-                <th class="text-left p-4 font-medium">Status</th>
-                <th class="text-left p-4 font-medium">Reason</th>
-                <th class="text-left p-4 font-medium">Nominated By</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr 
-                v-for="nominee in nominees" 
-                :key="nominee.id"
-                class="border-b hover:bg-muted/50 transition-colors"
-              >
-                <td class="p-4 font-mono text-sm">{{ nominee.id }}</td>
-                <td class="p-4">
-                  <div class="font-medium">{{ nominee.employee_name }}</div>
-                  <div class="text-sm text-muted-foreground">ID: {{ nominee.id_employee }}</div>
-                </td>
-                <td class="p-4">{{ nominee.employee_position || 'N/A' }}</td>
-                <td class="p-4">{{ formatDate(nominee.nomination_date) }}</td>
-                <td class="p-4">
-                  <span 
-                    :class="getStatusColor(nominee.status)"
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  >
-                    {{ nominee.status }}
-                  </span>
-                </td>
-                <td class="p-4 max-w-xs">
-                  <p class="truncate" :title="nominee.reason">{{ nominee.reason }}</p>
-                </td>
-                <td class="p-4">{{ nominee.nominator_name || 'System' }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-else class="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead class="w-32">Date</TableHead>
+                <TableHead class="min-w-48">Palomo</TableHead>
+                <TableHead class="w-20 text-center">Score</TableHead>
+                <TableHead class="w-20 text-center">Votes</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow v-for="nominee in nominees" :key="(nominee as any).id_nominees">
+                <TableCell class="w-32">
+                  <div class="text-sm">
+                    <div class="font-medium">{{ formatDate((nominee as any).date) }}</div>
+                  </div>
+                </TableCell>
+                <TableCell class="min-w-48">
+                  <div class="font-medium">
+                    {{ getEmployeeName((nominee as any).id_employee) }}
+                  </div>
+                </TableCell>
+                <TableCell class="w-20 text-center">
+                  <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {{ (nominee as any).total_score }}
+                  </div>
+                </TableCell>
+                <TableCell class="w-20 text-center">
+                  <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                       :class="(nominee as any).votes > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
+                    {{ (nominee as any).votes }}
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </div>
       </CardContent>
     </Card>
@@ -254,36 +247,19 @@ import CardHeader from '~/components/ui/CardHeader.vue'
 import CardTitle from '~/components/ui/CardTitle.vue'
 import Alert from '~/components/ui/Alert.vue'
 import Select from '~/components/ui/Select.vue'
-
-import { useForm } from 'vee-validate'
-import * as yup from 'yup'
+import Table from '~/components/ui/Table.vue'
+import TableHeader from '~/components/ui/TableHeader.vue'
+import TableBody from '~/components/ui/TableBody.vue'
+import TableRow from '~/components/ui/TableRow.vue'
+import TableHead from '~/components/ui/TableHead.vue'
+import TableCell from '~/components/ui/TableCell.vue'
 
 // Types
 import type { Nominee, NomineesFilters, GenerateNomineesResponse } from '~/types/nominees'
 
-const { getMaxScore } = useScoreConfig()
-
-const editScoreSchema = yup.object({
-  id_employee: yup.number().required('Palomo is required'),
-  score: yup.number().required('Score is required').min(0).max(getMaxScore()),
-  date: yup.string().required('Date is required'),
-  reason: yup.string().required('Reason is required').min(10, 'Reason must be at least 10 characters').max(500, 'Reason cannot exceed 500 characters')
-})
-
-// Edit form
-const { handleSubmit: handleEditSubmit, defineField: defineEditField, errors: editErrors, resetForm: resetEditForm, setValues: setEditValues } = useForm({
-  validationSchema: editScoreSchema,
-  initialValues: {
-    id_employee: null,
-    score: null,
-    date: '',
-    reason: ''
-  }
-})
 // Composables
 const { alerts, showSuccess, showError, removeAlert } = useAlert()
 const { employees, fetchEmployees } = useEmployees()
-const [editEmployeeId, editEmployeeIdAttrs] = defineEditField('id_employee')
 
 // Page configuration
 definePageMeta({
@@ -294,7 +270,6 @@ definePageMeta({
 // Reactive state
 const loading = ref(false)
 const generateLoading = ref(false)
-const employeesLoading = ref(false)
 const nominees = ref<Nominee[]>([])
 const showGenerateModal = ref(false)
 
@@ -326,25 +301,33 @@ const months = [
 ]
 
 // Computed properties
-const pendingCount = computed(() => 
-  nominees.value.filter(n => n.status === 'pending').length
-)
+const pendingCount = computed(() => {
+  // Since the new data doesn't have status, count nominees with votes = 0
+  return nominees.value.filter((n: any) => n.votes === 0).length
+})
 
-const approvedCount = computed(() => 
-  nominees.value.filter(n => n.status === 'approved').length
-)
+const approvedCount = computed(() => {
+  // Count nominees with votes > 0
+  return nominees.value.filter((n: any) => n.votes > 0).length
+})
 
 const currentMonthCount = computed(() => {
   const now = new Date()
   const currentMonth = now.getMonth() + 1
   const currentYear = now.getFullYear()
   
-  return nominees.value.filter(n => {
-    const nominationDate = new Date(n.nomination_date)
+  return nominees.value.filter((n: any) => {
+    const nominationDate = new Date(n.date)
     return nominationDate.getMonth() + 1 === currentMonth && 
            nominationDate.getFullYear() === currentYear
   }).length
 })
+
+// Helper function to get employee name by ID
+const getEmployeeName = (employeeId: number) => {
+  const employee = employees.value.find(emp => emp.id === employeeId)
+  return employee ? employee.name : `Employee ${employeeId}`
+}
 
 const fetchNominees = async () => {
   try {
@@ -435,19 +418,6 @@ const formatDate = (dateString: string) => {
     month: 'short',
     day: 'numeric'
   })
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-800'
-    case 'approved':
-      return 'bg-green-100 text-green-800'
-    case 'rejected':
-      return 'bg-red-100 text-red-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
-  }
 }
 
 // Load data on mount
