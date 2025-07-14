@@ -56,6 +56,7 @@ export class UserService {
   }
 
   async updateUser(id: number, userData: UpdateUserRequest): Promise<User> {
+    console.log('Updating user with ID:', id, 'and data:', userData);
     try {
       const token = useCookie('auth-token');
       const response = await $fetch<User>(`/api/modules/users/${id}`, {
