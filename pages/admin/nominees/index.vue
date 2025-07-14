@@ -199,15 +199,11 @@
         <CardContent class="space-y-4">
           <div class="space-y-2">
             <label class="text-sm font-medium">Month</label>
-            <select
+            <Select
               v-model="generateForm.month"
-              class="w-full p-2 border border-input rounded-md bg-background"
-            >
-              <option value="">Select month...</option>
-              <option v-for="(month, index) in months" :key="index" :value="index + 1">
-                {{ month }}
-              </option>
-            </select>
+              :options="monthOptions"
+              placeholder="Select month..."
+            />
           </div>
           <div class="space-y-2">
             <label class="text-sm font-medium">Maximum Quantity</label>
@@ -299,6 +295,14 @@ const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
 ]
+
+// Month options for Select component
+const monthOptions = computed(() => {
+  return months.map((month, index) => ({
+    value: index + 1,
+    label: month
+  }))
+})
 
 // Computed properties
 const pendingCount = computed(() => {
