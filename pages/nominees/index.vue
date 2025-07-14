@@ -6,6 +6,8 @@
 </template>
 
 <script setup>
+// Page configuration
+// Page configuration
 definePageMeta({
   middleware: 'auth',
   layout: 'auth-layout'
