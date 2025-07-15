@@ -7,7 +7,8 @@
 
     <!-- Countdown Timer -->
     <div class="fixed top-4 right-4 z-40 lg:flex flex-col items-end space-y-2 w-full sm:w-auto hidden">
-      <div class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+      <div
+        class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
         <div class="flex items-center gap-2 justify-between w-full sm:w-auto">
           <Calendar class="w-4 h-4" />
           <span class="text-xs sm:text-sm flex gap-1 flex-wrap">
@@ -31,7 +32,8 @@
           </p>
           <!-- Responsive Countdown: below Back to Home on mobile, right on desktop -->
           <div class="flex sm:hidden w-full justify-center mt-2">
-            <div class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex items-center gap-2 w-full justify-center">
+            <div
+              class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex items-center gap-2 w-full justify-center">
               <Calendar class="w-4 h-4" />
               <span class="text-xs sm:text-sm flex gap-1 flex-wrap">
                 Voting ends in:
@@ -50,9 +52,9 @@
         </div>
       </div>
       <Card class="mb-8 max-w-7xl mx-auto">
-        <CardContent class="p-3 flex flex-col sm:flex-row gap-2 items-center justify-center">
-          <Calendar class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary mb-2 sm:mb-0" />
-          <div class="flex flex-col items-center sm:items-start">
+        <CardContent class="p-3 grid grid-cols-[auto,1fr] items-center justify-items-center">
+          <Calendar class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary" />
+          <div class="flex flex-col items-center">
             <p class="text-sm sm:text-base text-foreground">
               Voting period: {{ votingPeriod.start }} – {{ votingPeriod.end }}
             </p>
@@ -367,7 +369,7 @@ async function submitVote(nominee: any) {
       name: nominee.name,
       id_employee: nominee.id_employee
     }
-    
+
     await fetchAllData()
   } catch (err: any) {
     const message = err?.message?.replace(/^Error:\s*/i, '').trim() || 'Failed to submit vote.'
@@ -422,13 +424,13 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString()
 
 // Init
 onMounted(async () => {
-  try { await checkAuth() } catch {}
+  try { await checkAuth() } catch { }
 
-  await fetchAllData();  
+  await fetchAllData();
 
   if (!userVote.value) {
     const cached = window.sessionStorage.getItem('palomo-vote');
-    
+
     if (cached) {
       const parsed = JSON.parse(cached);
       userVote.value = { id_nominess: parsed.id_nominess };
