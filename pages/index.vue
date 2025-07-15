@@ -26,7 +26,7 @@
       <!-- Navigation section -->
       <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
         <!-- Settings button always visible for testing -->
-        <Button as="a" href="/settings" variant="ghost" size="sm" class="w-full sm:w-auto">
+        <Button as="button" @click.prevent="navigateTo('/settings')" variant="ghost" size="sm" class="w-full sm:w-auto">
           <Settings class="mr-2 h-4 w-4" />
           Settings
         </Button>
@@ -35,8 +35,8 @@
         <Button 
           v-if="!isLoggedIn" 
           ref="loginButtonRef" 
-          as="a" 
-          href="/auth/login" 
+          as="button" 
+          @click.prevent="navigateTo('/auth/login')"
           variant="default"
           class="w-full sm:w-auto"
         >
@@ -169,7 +169,7 @@
         <p class="text-sm sm:text-base text-muted-foreground mb-4">
           Sign in to vote and see all application features
         </p>
-        <Button as="a" href="/auth/login" size="lg" class="w-full sm:w-auto">
+        <Button as="button" @click.prevent="navigateTo('/auth/login')" size="lg" class="w-full sm:w-auto">
           <LogIn class="mr-2 h-4 w-4" />
           Sign In Now
         </Button>
@@ -206,15 +206,12 @@ const handlePalomosClick = () => {
       'Access Required',
       'You must sign in to access the palomos section'
     )
-    
-    // Focus login button after a small delay
     nextTick(() => {
       if (loginButtonRef.value && loginButtonRef.value.$el) {
         loginButtonRef.value.$el.focus()
       }
     })
   } else {
-    // Logic for authenticated users - navigate to palomos
     navigateTo('/admin/palomos')
   }
 }
@@ -226,15 +223,12 @@ const handleUsersClick = () => {
       'Access Required',
       'You must sign in to access the users section'
     )
-    
-    // Focus login button after a small delay
     nextTick(() => {
       if (loginButtonRef.value && loginButtonRef.value.$el) {
         loginButtonRef.value.$el.focus()
       }
     })
   } else {
-    // Logic for authenticated users - navigate to users
     navigateTo('/admin/users')
   }
 }
@@ -246,15 +240,12 @@ const handleNomineesClick = () => {
       'Access Required',
       'You must sign in to access the nominees section'
     )
-    
-    // Focus login button after a small delay
     nextTick(() => {
       if (loginButtonRef.value && loginButtonRef.value.$el) {
         loginButtonRef.value.$el.focus()
       }
     })
   } else {
-    // Logic for authenticated users - navigate to nominees
     if(isAdmin.value) {
       navigateTo('/admin/nominees')
     } else {
@@ -270,15 +261,12 @@ const handleScoresClick = () => {
       'Access Required',
       'You must sign in to access the scores section'
     )
-    
-    // Focus login button after a small delay
     nextTick(() => {
       if (loginButtonRef.value && loginButtonRef.value.$el) {
         loginButtonRef.value.$el.focus()
       }
     })
   } else {
-    // Logic for authenticated users - navigate to scores
     if(isAdmin.value) {
       navigateTo('/admin/scores')
     } else {

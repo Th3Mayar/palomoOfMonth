@@ -5,7 +5,7 @@
       <div class="flex-1 min-w-0">
       </div>
       <div class="flex-shrink-0">
-        <Button as="a" href="/" variant="outline" class="w-full sm:w-auto">
+        <Button as="a"  @click.prevent="navigateTo('/')" variant="outline" class="w-full sm:w-auto">
           <ArrowLeft class="mr-2 h-4 w-4" />
           Back to Home
         </Button>

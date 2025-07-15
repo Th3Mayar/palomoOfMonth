@@ -7,7 +7,7 @@
         <p class="text-sm sm:text-base text-muted-foreground">Manage your team members and their information</p>
       </div>
       <div class="flex-shrink-0">
-        <Button as="a" href="/" variant="outline" class="w-full sm:w-auto">
+        <Button as="button" @click.prevent="navigateTo('/')" variant="outline" class="w-full sm:w-auto">
           <ArrowLeft class="mr-2 h-4 w-4" />
           Back to Home
         </Button>
