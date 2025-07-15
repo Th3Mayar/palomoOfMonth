@@ -1,32 +1,38 @@
 <template>
   <div class="py-4 sm:py-8">
-    <!-- ⚡ alerts -->
+    <!-- Alerts -->
     <div class="fixed top-4 right-4 z-50 space-y-2">
-      <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
+      <Alert
+        v-for="(alert, index) in alerts"
+        :key="alert.id"
+        :alert="alert"
+        :index="index"
+        @remove="removeAlert"
+      />
     </div>
 
-    <!-- 🗳️ Headline -->
+    <!-- Title and Instructions -->
     <div class="text-center px-4 sm:px-0">
       <p class="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto">
-        Vote for your favorite palomo this month
+        Vote for your favorite palomo this month. You can change your vote.
       </p>
 
-      <!-- 📅 Voting period -->
+      <!-- Voting Period Info -->
       <Card class="mb-8 max-w-2xl mx-auto">
         <CardContent class="p-4 sm:p-6">
-          <div
-            class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-secondary/10 rounded-lg mb-3 sm:mb-4 mx-auto">
+          <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-secondary/10 rounded-lg mb-3 sm:mb-4 mx-auto">
             <Calendar class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary" />
           </div>
           <p class="text-sm sm:text-base text-foreground mb-2">
             Voting period: {{ votingPeriod.start }} – {{ votingPeriod.end }}
           </p>
           <p class="text-xs sm:text-sm text-muted-foreground">
-            You can vote once per month. Cast your vote for your favorite palomo!
+            You may vote once per month. Voting again on the same nominee has no effect.
           </p>
         </CardContent>
       </Card>
 
+      <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-12">
         <div class="flex items-center space-x-3">
           <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
@@ -34,6 +40,7 @@
         </div>
       </div>
 
+      <!-- Error State -->
       <div v-else-if="error" class="flex flex-col items-center justify-center py-12 space-y-4">
         <div class="text-destructive">
           <Users class="h-12 w-12 mx-auto mb-2" />
@@ -48,20 +55,29 @@
         </div>
       </div>
 
-      <div v-if="nomineesWithStats.length" :class="[
-        hasVoted ? 'flex justify-center' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6',
-        'max-w-7xl mx-auto place-content-center'
-      ].join(' ')">
-        <Card v-for="nominee in nomineesWithStats" :key="nominee.id" :class="[
-          'hover:shadow-lg transition-shadow h-full',
-          userVote?.id_nominess === nominee.id ? 'ring-1 ring-green-600 scale-110 shadow-2xl mt-5 order-1 border-green-500 z-10' : '',
-          hasVoted && userVote?.id_nominess !== nominee.id ? 'opacity-75' : ''
-        ].join(' ')">
+      <!-- Nominee Grid -->
+      <div
+        v-if="nomineesWithStats.length"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto place-content-center"
+      >
+        <Card
+          v-for="nominee in nomineesWithStats"
+          :key="nominee.id"
+          :class="[
+            'hover:shadow-lg transition-shadow h-full cursor-pointer',
+            selectedVote?.id === nominee.id ? 'ring-2 ring-green-600 scale-[1.02]' : ''
+          ].join(' ')"
+          @click="selectVote(nominee)"
+        >
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
-            <!-- Photo -->
+            <!-- Employee Photo -->
             <div class="h-32 sm:h-48 bg-muted rounded-lg flex items-center justify-center mb-4">
-              <img v-if="nominee.photo" :src="nominee.photo" :alt="nominee.name"
-                class="h-full w-full object-cover rounded-lg" />
+              <img
+                v-if="nominee.photo"
+                :src="nominee.photo"
+                :alt="nominee.name"
+                class="h-full w-full object-cover rounded-lg"
+              />
               <div v-else class="text-muted-foreground">
                 <User class="w-12 h-12 sm:w-16 sm:h-16" />
               </div>
@@ -69,31 +85,27 @@
 
             <!-- Name -->
             <div class="flex-grow">
-              <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">
-                {{ nominee.name }}
-              </h3>
+              <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">{{ nominee.name }}</h3>
             </div>
 
-            <Button v-if="!hasVoted" @click="submitVote(nominee)" :disabled="submittingVote"
-              class="w-full mt-auto text-sm sm:text-base" variant="default">
-              {{ submittingVote ? 'Voting…' : `Vote for ${nominee.name}` }}
-            </Button>
-
-            <div v-else-if="userVote?.id_nominess === nominee.id" class="text-center mt-auto">
-              <span class="text-green-600 font-medium text-sm sm:text-base">✓ You voted for this palomo</span>
-              <p class="text-xs sm:text-sm text-muted-foreground mt-1">
-                Voted on: {{ new Date(userVote.date).toLocaleDateString() }}
-              </p>
+            <!-- Voting Status -->
+            <div class="mt-auto">
+              <span v-if="selectedVote?.id === nominee.id" class="text-green-600 font-medium text-sm sm:text-base">
+                ✓ Your current vote
+              </span>
             </div>
-
-            <Button v-else disabled variant="outline"
-              class="w-full mt-auto text-sm sm:text-base cursor-not-allowed opacity-50">
-              Already voted
-            </Button>
           </CardContent>
         </Card>
       </div>
 
+      <!-- Confirm Vote Button -->
+      <div v-if="selectedVote" class="flex justify-center mt-6">
+        <Button @click="submitVote(selectedVote)" :disabled="submittingVote">
+          {{ submittingVote ? 'Submitting…' : 'Confirm Vote' }}
+        </Button>
+      </div>
+
+      <!-- No Nominees -->
       <div v-else-if="!loading && !error" class="text-center py-12">
         <Card class="max-w-md mx-auto">
           <CardContent class="p-6 sm:p-8">
@@ -109,51 +121,50 @@
 </template>
 
 <script setup lang="ts">
-/* ------------ imports ------------ */
 import { ref, onMounted, computed, watch } from 'vue'
 import { Calendar, User, Users } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
 import CardContent from '~/components/ui/CardContent.vue'
 import Alert from '~/components/ui/Alert.vue'
-
 import { VoteService } from '~/services/vote/voteService'
 import { EmployeeService } from '~/services/employee/employeeService'
 
-/* ------------ page meta ------------ */
-definePageMeta({ middleware: 'auth', layout: 'auth-layout' })
-
-/* ------------ composables ------------ */
+// Authentication & Alerts
 const { user, checkAuth, isLoggedIn } = useAuth()
 const { alerts, showSuccess, showError, removeAlert } = useAlert()
 
-/* ------------ state ------------ */
+// State
 const loading = ref(true)
-const nominees = ref < any[] > ([])
-const employees = ref < any[] > ([])
-const userVote = ref < any | null > (null)
+const nominees = ref<any[]>([])
+const employees = ref<any[]>([])
+const userVote = ref<any | null>(null)
+const selectedVote = ref<any | null>(null)
 const hasVoted = ref(false)
-const error = ref < string | null > (null)
+const error = ref<string | null>(null)
 const submittingVote = ref(false)
 
-/* ------------ helpers ------------ */
+// Voting period (start to end of current month)
 const votingPeriod = computed(() => {
   const now = new Date()
   const year = now.getFullYear()
   const month = now.getMonth()
   const start = new Date(year, month, 1)
   const end = new Date(year, month + 1, 0)
-  return { start: start.toLocaleDateString(), end: end.toLocaleDateString(), current: now }
+  return {
+    start: start.toLocaleDateString(),
+    end: end.toLocaleDateString(),
+    current: now
+  }
 })
 
-/* ------------ fetch ------------- */
+// Fetch nominees
 async function fetchNominees() {
   const token = useCookie('auth-token').value
   const raw = await $fetch('/api/modules/nominees', {
     headers: { Authorization: `Bearer ${token}` }
   })
   const list = Array.isArray(raw) ? raw : raw?.data || []
-
   nominees.value = list.map((n: any) => ({
     ...n,
     id: n.id ?? n.id_nominees ?? n.id_nominess,
@@ -161,36 +172,25 @@ async function fetchNominees() {
   }))
 }
 
+// Fetch employees
 async function fetchEmployees() {
   const employeeService = EmployeeService.getInstance()
   employees.value = await employeeService.getAllEmployees()
 }
 
-/* ------------ computed ------------ */
+// Return nominee objects with employee data
 const nomineesWithStats = computed(() => {
-  const nomArr = nominees.value
-  const empArr = employees.value
-
-  if (hasVoted.value && userVote.value?.id_nominess) {
-    const found = nomArr.find(n => n.id === userVote.value.id_nominess)
-    const emp = found && empArr.find(e => e.id === found.id_employee)
-
-    if (found) {
-      return [{
-        ...found,
-        name: emp ? emp.name : 'Unknown Employee',
-        photo: emp ? emp.image : null
-      }]
+  return nominees.value.map(nominee => {
+    const emp = employees.value.find(e => e.id === nominee.id_employee)
+    return {
+      ...nominee,
+      name: emp?.name ?? 'Unknown Employee',
+      photo: emp?.image ?? null
     }
-  }
-
-  return nomArr.map(n => {
-    const emp = empArr.find(e => e.id === n.id_employee)
-    return { ...n, name: emp?.name ?? 'Unknown Employee', photo: emp?.image ?? null }
   })
 })
 
-/* ------------ workflow ------------ */
+// Load everything
 async function fetchAllData() {
   loading.value = true
   error.value = null
@@ -205,20 +205,29 @@ async function fetchAllData() {
   }
 }
 
+// Get previous vote
 async function checkUserVote() {
   if (!isLoggedIn.value || !user.value?.id) return
   try {
     const voteService = VoteService.getInstance()
-    userVote.value = await voteService.getUserVote(user.value.id, votingPeriod.value.current)
-    hasVoted.value = !!userVote.value
+    const result = await voteService.getUserVote(user.value.id, votingPeriod.value.current)
+    userVote.value = result
+    hasVoted.value = !!result
+    if (result) selectedVote.value = { id: result.id_nominess }
   } catch (err) {
     showError('Error', 'Failed to check your voting status.')
   }
 }
 
+// Mark nominee as selected
+function selectVote(nominee: any) {
+  selectedVote.value = { id: nominee.id, name: nominee.name }
+  window.sessionStorage.setItem('palomo-vote', JSON.stringify(selectedVote.value))
+}
+
+// Submit vote
 async function submitVote(nominee: any) {
   if (!nominee || !user.value?.id_user) return
-
   const voteData = {
     id_user: user.value.id_user,
     id_nominess: nominee.id,
@@ -229,13 +238,9 @@ async function submitVote(nominee: any) {
   try {
     const voteService = VoteService.getInstance()
     await voteService.createVote(voteData)
-
-    showSuccess('Success', `Vote submitted for ${nominee.name}!`)
-    window.sessionStorage.setItem('palomo-vote', JSON.stringify(voteData))
-
     userVote.value = voteData
-    hasVoted.value = true
-    await fetchAllData()
+    selectedVote.value = { id: voteData.id_nominess }
+    showSuccess('Success', `Vote submitted for ${nominee.name}`)
   } catch (err: any) {
     showError('Error', err.message ?? 'Failed to submit vote.')
   } finally {
@@ -243,33 +248,26 @@ async function submitVote(nominee: any) {
   }
 }
 
-/* ------------ lifecycle ------------ */
 onMounted(async () => {
-  try { await checkAuth() } catch { /* ignore */ }
-
+  try { await checkAuth() } catch {}
   const cached = window.sessionStorage.getItem('palomo-vote')
-  if (cached) {
-    userVote.value = JSON.parse(cached)
-    hasVoted.value = true
-  }
+  if (cached) selectedVote.value = JSON.parse(cached)
   await fetchAllData()
 })
 
 watch(() => votingPeriod.value.current.getMonth(), fetchAllData)
+
+/* ------------ page meta ------------ */
+definePageMeta({ middleware: 'auth', layout: 'auth-layout' })
 </script>
 
 <style scoped>
 .animate-spin {
-  animation: spin 1s linear infinite
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg)
-  }
-
-  to {
-    transform: rotate(360deg)
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 </style>

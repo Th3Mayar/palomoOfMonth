@@ -6,7 +6,7 @@ export class VoteService {
   }
   private static instance: VoteService;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): VoteService {
     if (!VoteService.instance) {
@@ -16,23 +16,25 @@ export class VoteService {
   }
 
   async createVote(userData: CreateVoteRequest): Promise<VoteResponse> {
-      try {
-        const token = useCookie('auth-token');
+    try {
+      const token = useCookie('auth-token').value
 
-        const response = await $fetch<VoteResponse>('/api/modules/votes', {
-          method: 'POST',
-          body: userData,
-          headers: {
-            'Authorization': `Bearer ${token.value}`,
-            'Content-Type': 'application/json',
-          },
-        });
+      return await $fetch<VoteResponse>('/api/modules/votes', {
+        method: 'POST',
+        body: userData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+    } catch (err: any) {
+      const msg =
+        err?.data?.message ||
+        err?.statusMessage ||
+        err?.message ||
+        'Error saving your vote'
 
-        console.log('Vote created successfully:', response);
-        
-        return response;
-      } catch (error) {
-        throw new Error('Error saving your vote');
-      }
+      throw new Error(msg)
     }
+  }
 }
