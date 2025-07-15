@@ -39,7 +39,6 @@
         </CardHeader>
         <CardContent class="space-y-6">
           <form @submit="onAccountSubmit" class="space-y-6">
-            <!-- Update Form -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="space-y-2">
                 <label class="text-sm font-medium leading-none">
@@ -50,11 +49,12 @@
                   type="text"
                   v-model="accountName"
                   v-bind="accountNameAttrs"
+                  :disabled="!isEditingAccount"
                   class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   :class="{ 'border-destructive': accountErrors.name }"
                   placeholder="Enter new username"
                 />
-                <p v-if="accountErrors.name" class="text-sm text-destructive">
+                <p v-if="accountErrors.name && isEditingAccount" class="text-sm text-destructive">
                   {{ accountErrors.name }}
                 </p>
               </div>
@@ -67,22 +67,38 @@
                   type="password"
                   v-model="accountPassword"
                   v-bind="accountPasswordAttrs"
+                  :disabled="!isEditingAccount"
                   class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   :class="{ 'border-destructive': accountErrors.password }"
                   placeholder="Enter new password"
                 />
-                <p v-if="accountErrors.password" class="text-sm text-destructive">
+                <p v-if="accountErrors.password && isEditingAccount" class="text-sm text-destructive">
                   {{ accountErrors.password }}
                 </p>
               </div>
+              <div class="space-y-2 md:col-span-2" v-if="isEditingAccount">
+                <label class="text-sm font-medium leading-none">
+                  Confirm Password
+                  <span class="text-destructive">*</span>
+                </label>
+                <input
+                  type="password"
+                  v-model="confirmPassword"
+                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Confirm new password"
+                />
+              </div>
             </div>
-            
-            <div class="pt-4 border-t">
-              <Button
-                type="submit"
-                :disabled="loading"
-                class="w-full md:w-auto"
-              >
+            <div class="pt-4 border-t flex gap-2">
+              <Button type="button" @click="isEditingAccount = true" v-if="!isEditingAccount" class="w-full md:w-auto">
+                <Pencil class="mr-2 h-4 w-4" /> Edit
+              </Button>
+              <!-- Cancel Button -->
+              <Button type="button" @click="isEditingAccount = false" v-if="isEditingAccount" class="w-full md:w-auto" variant="outline">
+                <ArrowLeft class="mr-2 h-4 w-4" />
+                Cancel
+              </Button>
+              <Button type="submit" :disabled="loading || !isEditingAccount" v-if="isEditingAccount" class="w-full md:w-auto">
                 <Save class="mr-2 h-4 w-4" />
                 {{ loading ? 'Updating...' : 'Update Account' }}
               </Button>
@@ -461,7 +477,8 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { 
   ArrowLeft, Palette, Type, Layout, Globe, Zap, Settings, 
-  Save, RotateCcw, Download, Sun, Moon, Monitor, User
+  Save, RotateCcw, Download, Sun, Moon, Monitor, User,
+  Pencil
 } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
@@ -492,6 +509,8 @@ const accountUpdateSchema = yup.object({
 
 // Reactive state
 const loading = ref(false)
+const isEditingAccount = ref(false)
+const confirmPassword = ref('')
 
 // Account form
 const {
@@ -513,6 +532,8 @@ const setAccountData = (userData: { name?: string; password?: string }) => {
       name: userData.name || '',
       password: userData.password || ''
     })
+    confirmPassword.value = ''
+    isEditingAccount.value = false
   } catch (error) {
     console.warn('Error setting account values:', error)
     // Fallback: set values directly
@@ -554,8 +575,11 @@ const getCurrentUser = () => {
 
 // Form submission handler
 const onAccountSubmit = handleAccountSubmit(async (values) => {
-  console.log("user", user.value);
-  console.log("values", values);
+  // if (!isEditingAccount.value) return
+  // if (values.password !== confirmPassword.value) {
+  //   showError('Error', 'Passwords do not match.')
+  //   return
+  // }
 
   // Get current user data from available sources
   const currentUser = getCurrentUser()
@@ -584,13 +608,7 @@ const onAccountSubmit = handleAccountSubmit(async (values) => {
     // Use the corrected id_employee
     id_employee: correctedIdEmployee
   }
-  
-  console.log("userData to send", userData);
-  console.log("currentUser.id_user for update:", currentUser.id_user);
-  console.log("original id_employee:", currentUser.id_employee);
-  console.log("corrected id_employee:", correctedIdEmployee);
-  console.log("Full currentUser structure:", currentUser);
-  
+
   loading.value = true
   
   try {
