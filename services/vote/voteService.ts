@@ -1,6 +1,9 @@
 import type { CreateVoteRequest, VoteResponse } from '~/types/votes'
 
 export class VoteService {
+  getUserVote(id: any, current: Date): any {
+    throw new Error('Method not implemented.');
+  }
   private static instance: VoteService;
 
   private constructor() {}
