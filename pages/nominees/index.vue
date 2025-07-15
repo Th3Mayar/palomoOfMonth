@@ -54,9 +54,18 @@
       <div v-if="nomineesWithStats.length"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto place-content-center">
         <Card v-for="nominee in nomineesWithStats" :key="nominee.id" :class="[
-          'hover:shadow-lg transition-shadow h-full cursor-pointer',
+          'relative hover:shadow-lg transition-shadow h-full cursor-pointer',
           selectedVote?.id === nominee.id ? 'ring-2 ring-green-600 scale-[1.02]' : ''
         ].join(' ')" @click="selectVote(nominee)">
+
+          <!-- Top badge -->
+          <div v-if="nominee.id"
+            class="absolute top-3 left-3 z-10 px-2.5 py-1 bg-primary text-white text-[0.75rem] sm:text-sm font-semibold rounded-full flex items-center gap-1 shadow-md ring-2 ring-white/50">
+            <Trophy class="w-4 h-4 shrink-0" />
+            <span>Top #{{ nominee.id }}</span>
+          </div>
+
+
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <!-- Employee Photo -->
             <div class="h-32 sm:h-48 bg-muted rounded-lg flex items-center justify-center mb-4">
@@ -83,6 +92,7 @@
             </div>
           </CardContent>
         </Card>
+
       </div>
 
       <!-- Confirm Vote Button -->
@@ -120,7 +130,7 @@
           <ul v-if="selectedNomineeScores.length">
             <li v-for="(item, idx) in selectedNomineeScores" :key="idx" class="border-b pb-2 mb-2">
               <p class="text-sm text-muted-foreground mb-1 flex gap-1">{{ formatDate(item.date) }} <strong class="flex">
-                  <ArrowBigRightDash class="-mt-[2px]"/> ({{ item.score
+                  <ArrowBigRightDash class="-mt-[2px]" /> ({{ item.score
                   }})
                 </strong></p>
               <p class="text-foreground text-sm whitespace-pre-wrap">{{ item.reason }}</p>
@@ -135,7 +145,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import { Calendar, User, Users, X, ArrowBigRightDash } from 'lucide-vue-next'
+import { Calendar, User, Users, X, ArrowBigRightDash, Trophy } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
 import CardContent from '~/components/ui/CardContent.vue'
