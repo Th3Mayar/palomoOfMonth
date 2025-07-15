@@ -66,13 +66,13 @@
           <div v-if="nominee.id"
             class="absolute top-3 left-3 z-10 px-2.5 py-1 bg-primary text-white text-[0.75rem] sm:text-sm font-semibold rounded-full flex items-center gap-1 shadow-md ring-2 ring-white/50">
             <Trophy class="w-4 h-4 shrink-0" />
-            <span>Top #{{ nominee.id }}</span>
+            <span>Top #{{ nominee.index }}</span>
           </div>
 
 
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <!-- Employee Photo -->
-            <div class="h-32 sm:h-48 bg-muted rounded-lg flex items-center justify-center mb-4">
+            <div class="h-32 sm:h-72 bg-muted rounded-lg flex items-center justify-center mb-4">
               <img v-if="nominee.photo" :src="nominee.photo" :alt="nominee.name"
                 class="h-full w-full object-cover rounded-lg" />
               <div v-else class="text-muted-foreground">
@@ -209,6 +209,9 @@ async function fetchEmployees() {
 // Nominee + employee data
 const nomineesWithStats = computed(() => {
   return nominees.value.map(nom => {
+    // set index based on current nominees
+    nom.index = nominees.value.findIndex(n => n.id === nom.id) + 1
+
     const emp = employees.value.find(e => e.id === nom.id_employee)
     return { ...nom, name: emp?.name ?? 'Unknown Employee', photo: emp?.image ?? null }
   })
