@@ -1,17 +1,17 @@
 <template>
   <div class="container mx-auto px-4 py-8 max-w-7xl">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
+     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 mt-8">
       <div>
-        <h1 class="text-3xl font-bold text-foreground mb-2">Nominees Management</h1>
-        <p class="text-muted-foreground">Manage employee nominations for Palomo of the Month</p>
+        <h1 class="text-2xl sm:text-3xl font-bold text-foreground mb-2 truncate">Nominees Management</h1>
+        <p class="text-sm sm:text-base text-muted-foreground">Manage employee nominations for Palomo of the Month</p>
       </div>
       <div class="flex gap-3">
         <Button @click="refreshData" variant="outline" :disabled="loading">
           <RefreshCw class="mr-2 h-4 w-4" :class="{ 'animate-spin': loading }" />
           Refresh
         </Button>
-        <Button @click="openGenerateModal" variant="default">
+        <Button @click="openGenerateModal" variant="default" class="w-full sm:w-auto">
           <Plus class="mr-2 h-4 w-4" />
           Generate Nominees
         </Button>

@@ -6,7 +6,7 @@
     </div>
 
     <!-- Title and Instructions -->
-    <div class="text-center px-4 sm:px-0">
+    <div class="text-center px-4 sm:px-0 mt-10">
       <p class="text-base sm:text-lg text-muted-foreground mb-5 sm:mb-5 max-w-3xl mx-auto">
         Vote for your favorite palomo this month. You can change your vote.
         <Button as="a" href="/" variant="outline" class="w-full sm:w-auto">
