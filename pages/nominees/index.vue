@@ -6,7 +6,7 @@
     </div>
 
     <!-- Countdown Timer -->
-    <div class="fixed top-4 right-4 z-50 flex flex-col items-end space-y-2">
+    <div class="fixed top-4 right-4 z-40 flex flex-col items-end space-y-2">
       <div class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex items-center gap-2">
         <Calendar class="w-4 h-4" />
         <span class="text-xs sm:text-sm flex gap-1">
@@ -22,7 +22,7 @@
 
     <!-- Title and Instructions -->
     <div class="text-center px-4 sm:px-0 mt-10">
-      <p class="text-base sm:text-lg text-muted-foreground mb-5 sm:mb-5 max-w-3xl mx-auto">
+      <p class="flex text-base sm:text-lg text-muted-foreground mb-5 sm:mb-5 max-w-7xl mx-auto justify-between">
         Vote for your favorite palomo this month. You can change your vote.
         <Button as="a" href="/" variant="outline" class="w-full sm:w-auto">
           <ArrowLeft class="mr-2 h-4 w-4" />
@@ -31,13 +31,10 @@
       </p>
 
       <!-- Voting Period Info -->
-      <Card class="mb-8 max-w-2xl mx-auto">
-        <CardContent class="p-4 sm:p-6">
-          <div
-            class="absolute items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-secondary/10 rounded-lg mb-3 sm:mb-4 mx-auto -mt-3 -ml-3">
-            <Calendar class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary" />
-          </div>
-          <p class="text-sm sm:text-base text-foreground mb-2">
+      <Card class="mb-8 max-w-7xl mx-auto">
+        <CardContent class="p-3 flex gap-2 items-center justify-center">
+          <Calendar class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary" />
+          <p class="text-sm sm:text-base text-foreground">
             Voting period: {{ votingPeriod.start }} – {{ votingPeriod.end }}
           </p>
           <p class="text-xs sm:text-sm text-muted-foreground">
@@ -87,7 +84,7 @@
 
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <!-- Employee Photo -->
-            <div class="h-32 sm:h-72 bg-muted rounded-lg flex items-center justify-center mb-4">
+            <div class="h-32 sm:h-72 bg-muted rounded-lg flex items-center justify-center mb-4 relative">
               <img v-if="nominee.photo" :src="nominee.photo" :alt="nominee.name"
                 class="h-full w-full object-cover rounded-lg" />
               <div v-else class="text-muted-foreground">
@@ -102,7 +99,7 @@
 
             <!-- Voting Status -->
             <div class="mt-auto flex flex-col gap-2">
-              <span v-if="selectedVote?.id === nominee.id" class="text-green-600 font-medium text-sm sm:text-base">
+              <span v-if="userVote && userVote.id_nominess === nominee.id" class="text-green-600 font-medium text-sm sm:text-base">
                 ✓ Your current vote
               </span>
               <Button variant="outline" size="sm" @click.stop="openScoreModal(nominee)">
@@ -111,18 +108,19 @@
             </div>
           </CardContent>
         </Card>
-
       </div>
 
       <!-- Confirm Vote Button -->
-      <div v-if="selectedVote" class="flex justify-center mt-6">
+      <div
+        v-if="selectedVote && (!userVote || userVote.id_nominess !== selectedVote.id) && (!userVote || !selectedVote || userVote.id_nominess !== selectedVote.id)"
+        class="flex justify-center mt-6">
         <Button @click="submitVote(selectedVote)" :disabled="submittingVote">
           {{ submittingVote ? 'Submitting…' : 'Confirm Vote' }}
         </Button>
       </div>
 
       <!-- No Nominees -->
-      <div v-else-if="!loading && !error" class="text-center py-12">
+      <div v-else-if="!loading && !error && !nomineesWithStats.length" class="text-center py-12">
         <Card class="max-w-md mx-auto">
           <CardContent class="p-6 sm:p-8">
             <Users class="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -241,9 +239,7 @@ async function fetchEmployees() {
 // Nominee + employee data
 const nomineesWithStats = computed(() => {
   return nominees.value.map(nom => {
-    // set index based on current nominees
     nom.index = nominees.value.findIndex(n => n.id === nom.id) + 1
-
     const emp = employees.value.find(e => e.id === nom.id_employee)
     return { ...nom, name: emp?.name ?? 'Unknown Employee', photo: emp?.image ?? null }
   })
@@ -272,19 +268,54 @@ async function checkUserVote() {
     const result = await voteService.getUserVote(user.value.id, votingPeriod.value.current)
     userVote.value = result
     hasVoted.value = !!result
-    if (result) selectedVote.value = { id: result.id_nominess }
+
+    if (result && result.id_nominess) {
+      const votedNominee = nominees.value.find(n => n.id === result.id_nominess)
+      if (votedNominee) {
+        selectedVote.value = {
+          id: votedNominee.id,
+          name: votedNominee.name,
+          id_employee: votedNominee.id_employee
+        }
+      } else {
+        selectedVote.value = null
+      }
+    } else {
+      selectedVote.value = null
+    }
   } catch (err) {
     showError('Error', 'Failed to check your voting status.')
   }
 }
 
-// Select nominee
+onMounted(async () => {
+  try { await checkAuth() } catch { }
+  const cached = window.sessionStorage.getItem('palomo-vote')
+  if (cached) {
+    const parsed = JSON.parse(cached)
+    await fetchNominees()
+    await fetchEmployees()
+    const votedNominee = nominees.value.find(n => n.id === parsed.id_nominess)
+    
+    if (votedNominee) {
+      selectedVote.value = {
+        id: votedNominee.id,
+        name: votedNominee.name,
+        id_employee: votedNominee.id_employee
+      }
+      hasVoted.value = true
+    }
+  }
+  await fetchAllData()
+  updateCountdown()
+  countdownInterval = window.setInterval(updateCountdown, 1000)
+})
+
 function selectVote(nominee: any) {
-  selectedVote.value = { id: nominee.id, name: nominee.name }
-  window.sessionStorage.setItem('palomo-vote', JSON.stringify(selectedVote.value))
+  selectedVote.value = { id: nominee.id, name: nominee.name, id_employee: nominee.id_employee }
 }
 
-// Submit vote
+// Submit vote (permite editar voto)
 async function submitVote(nominee: any) {
   if (!nominee || !user.value?.id_user) return
 
@@ -302,7 +333,12 @@ async function submitVote(nominee: any) {
     window.sessionStorage.setItem('palomo-vote', JSON.stringify(voteData))
     userVote.value = voteData
     hasVoted.value = true
-    selectedVote.value = { id: nominee.id, name: nominee.name }
+
+    selectedVote.value = {
+      id: nominee.id,
+      name: nominee.name,
+      id_employee: nominee.id_employee
+    }
     await fetchAllData()
   } catch (err: any) {
     const message = err?.message?.replace(/^Error:\s*/i, '').trim() || 'Failed to submit vote.'
@@ -321,7 +357,7 @@ async function openScoreModal(nominee: any) {
       const storedVote = window.sessionStorage.getItem('palomo-vote')
       if (storedVote) {
         const parsed = JSON.parse(storedVote)
-        const votedNominee = nominees.value.find(n => n.id === parsed.id)
+        const votedNominee = nominees.value.find(n => n.id === parsed.id_nominess)
         if (votedNominee) {
           idEmployee = votedNominee.id_employee
           selectedNomineeName.value = votedNominee.name
@@ -337,9 +373,9 @@ async function openScoreModal(nominee: any) {
     }
 
     const token = useCookie('auth-token').value
-    const allScores = await $fetch('/api/modules/scores', {
+    const allScores = await $fetch<any>('/api/modules/scores', {
       headers: { Authorization: `Bearer ${token}` }
-    }) as { data?: any[] } | any[]
+    })
 
     const scoresList = Array.isArray((allScores as any)?.data) ? (allScores as any).data : allScores
 
