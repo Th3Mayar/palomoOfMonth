@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold text-foreground mb-2">Settings</h1>
         <p class="text-muted-foreground">Customize your Palomo of the Month experience</p>
       </div>
-      <Button as="a" href="/" variant="outline" @click.prevent="navigateTo('/')">
+      <Button as="button" variant="outline" @click.prevent="navigateTo('/')">
         <ArrowLeft class="mr-2 h-4 w-4" />
         Back to Home
       </Button>

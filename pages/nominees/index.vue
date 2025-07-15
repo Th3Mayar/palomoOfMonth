@@ -45,7 +45,7 @@
           </div>
         </div>
         <div class="w-full sm:w-auto flex flex-col gap-2">
-          <Button as="a" href="/" variant="outline" class="w-full sm:w-auto mt-2 sm:mt-0">
+          <Button as="button" @click.prevent="navigateTo('/')" variant="outline" class="w-full sm:w-auto mt-2 sm:mt-0">
             <ArrowLeft class="mr-2 h-4 w-4" />
             Back to Home
           </Button>
