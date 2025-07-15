@@ -7,15 +7,19 @@
 
     <!-- Title and Instructions -->
     <div class="text-center px-4 sm:px-0">
-      <p class="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto">
+      <p class="text-base sm:text-lg text-muted-foreground mb-5 sm:mb-5 max-w-3xl mx-auto">
         Vote for your favorite palomo this month. You can change your vote.
+        <Button as="a" href="/" variant="outline" class="w-full sm:w-auto">
+          <ArrowLeft class="mr-2 h-4 w-4" />
+          Back to Home
+        </Button>
       </p>
 
       <!-- Voting Period Info -->
       <Card class="mb-8 max-w-2xl mx-auto">
         <CardContent class="p-4 sm:p-6">
           <div
-            class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-secondary/10 rounded-lg mb-3 sm:mb-4 mx-auto">
+            class="absolute items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-secondary/10 rounded-lg mb-3 sm:mb-4 mx-auto -mt-3 -ml-3">
             <Calendar class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary" />
           </div>
           <p class="text-sm sm:text-base text-foreground mb-2">
@@ -145,7 +149,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import { Calendar, User, Users, X, ArrowBigRightDash, Trophy } from 'lucide-vue-next'
+import { Calendar, User, Users, X, ArrowBigRightDash, Trophy, ArrowLeft } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
 import CardContent from '~/components/ui/CardContent.vue'
