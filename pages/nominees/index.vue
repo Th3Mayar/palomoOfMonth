@@ -5,6 +5,21 @@
       <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
     </div>
 
+    <!-- Countdown Timer -->
+    <div class="fixed top-4 right-4 z-50 flex flex-col items-end space-y-2">
+      <div class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex items-center gap-2">
+        <Calendar class="w-4 h-4" />
+        <span class="text-xs sm:text-sm flex gap-1">
+          Voting ends in:
+          <span>{{ countdown.days }}d</span>
+          <span>{{ countdown.hours }}h</span>
+          <span>{{ countdown.minutes }}m</span>
+        </span>
+      </div>
+      <!-- Alerts -->
+      <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
+    </div>
+
     <!-- Title and Instructions -->
     <div class="text-center px-4 sm:px-0 mt-10">
       <p class="text-base sm:text-lg text-muted-foreground mb-5 sm:mb-5 max-w-3xl mx-auto">
@@ -148,7 +163,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { Calendar, User, Users, X, ArrowBigRightDash, Trophy, ArrowLeft } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
@@ -175,6 +190,23 @@ const submittingVote = ref(false)
 const isScoreModalOpen = ref(false)
 const selectedNomineeScores = ref<any[]>([])
 const selectedNomineeName = ref('')
+
+const countdown = ref({ days: 0, hours: 0, minutes: 0 })
+let countdownInterval: number | undefined
+
+function updateCountdown() {
+  const now = new Date()
+  const end = new Date(votingPeriod.value.end)
+  const diffMs = end.getTime() - now.getTime()
+  if (diffMs <= 0) {
+    countdown.value = { days: 0, hours: 0, minutes: 0 }
+    return
+  }
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24)
+  const minutes = Math.floor((diffMs / (1000 * 60)) % 60)
+  countdown.value = { days, hours, minutes }
+}
 
 // Voting period (start to end of current month)
 const votingPeriod = computed(() => {
@@ -332,6 +364,12 @@ onMounted(async () => {
     hasVoted.value = true
   }
   await fetchAllData()
+  updateCountdown()
+  countdownInterval = window.setInterval(updateCountdown, 1000)
+})
+
+onUnmounted(() => {
+  if (countdownInterval) clearInterval(countdownInterval)
 })
 
 // Page configuration
