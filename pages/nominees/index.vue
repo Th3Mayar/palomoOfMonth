@@ -69,7 +69,7 @@
       <!-- Nominee Grid -->
       <div v-if="nomineesWithStats.length"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-7xl mx-auto place-content-center">
-        <Card v-for="nominee in nomineesWithStats" :key="nominee.id" :class="[
+        <Card v-for="nominee in nomineesWithStats" :key="nominee.id" :id="nominee.id" :class="[
           'relative hover:shadow-lg transition-shadow h-full cursor-pointer',
           selectedVote?.id === nominee.id ? 'ring-2 ring-green-600 scale-[1.02]' : ''
         ].join(' ')" @click="selectVote(nominee)">
@@ -81,6 +81,14 @@
             <span>Top #{{ nominee.index }}</span>
           </div>
 
+          <!-- Confirm Vote Button overlay -->
+          <div v-if="selectedVote?.id === nominee.id && (!userVote || userVote.id_nominess !== selectedVote.id)
+            && selectedVote.id_employee === nominee.id_employee
+          " class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-lg z-20">
+            <Button @click.stop="submitVote(selectedVote)" :disabled="submittingVote" class="text-lg px-6 py-3">
+              {{ submittingVote ? 'Submitting…' : 'Confirm Vote' }}
+            </Button>
+          </div>
 
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <!-- Employee Photo -->
@@ -99,7 +107,8 @@
 
             <!-- Voting Status -->
             <div class="mt-auto flex flex-col gap-2">
-              <span v-if="userVote && userVote.id_nominess === nominee.id" class="text-green-600 font-medium text-sm sm:text-base">
+              <span v-if="userVote && userVote.id_nominess === nominee.id"
+                class="text-green-600 font-medium text-sm sm:text-base">
                 ✓ Your current vote
               </span>
               <Button variant="outline" size="sm" @click.stop="openScoreModal(nominee)">
@@ -108,15 +117,6 @@
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      <!-- Confirm Vote Button -->
-      <div
-        v-if="selectedVote && (!userVote || userVote.id_nominess !== selectedVote.id) && (!userVote || !selectedVote || userVote.id_nominess !== selectedVote.id)"
-        class="flex justify-center mt-6">
-        <Button @click="submitVote(selectedVote)" :disabled="submittingVote">
-          {{ submittingVote ? 'Submitting…' : 'Confirm Vote' }}
-        </Button>
       </div>
 
       <!-- No Nominees -->
@@ -192,9 +192,22 @@ const selectedNomineeName = ref('')
 const countdown = ref({ days: 0, hours: 0, minutes: 0 })
 let countdownInterval: number | undefined
 
+// Voting period (start to end of current month)
+const votingPeriod = computed(() => {
+  const now = new Date()
+  const start = new Date(now.getFullYear(), now.getMonth(), 1)
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  return {
+    start: start.toLocaleDateString(),
+    end: end.toLocaleDateString(),
+    endRaw: end, // store raw Date for countdown
+    current: now
+  }
+})
+
 function updateCountdown() {
   const now = new Date()
-  const end = new Date(votingPeriod.value.end)
+  const end = votingPeriod.value.endRaw
   const diffMs = end.getTime() - now.getTime()
   if (diffMs <= 0) {
     countdown.value = { days: 0, hours: 0, minutes: 0 }
@@ -205,18 +218,6 @@ function updateCountdown() {
   const minutes = Math.floor((diffMs / (1000 * 60)) % 60)
   countdown.value = { days, hours, minutes }
 }
-
-// Voting period (start to end of current month)
-const votingPeriod = computed(() => {
-  const now = new Date()
-  const start = new Date(now.getFullYear(), now.getMonth(), 1)
-  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-  return {
-    start: start.toLocaleDateString(),
-    end: end.toLocaleDateString(),
-    current: now
-  }
-})
 
 // Fetch nominees
 async function fetchNominees() {
@@ -296,7 +297,7 @@ onMounted(async () => {
     await fetchNominees()
     await fetchEmployees()
     const votedNominee = nominees.value.find(n => n.id === parsed.id_nominess)
-    
+
     if (votedNominee) {
       selectedVote.value = {
         id: votedNominee.id,
@@ -315,7 +316,7 @@ function selectVote(nominee: any) {
   selectedVote.value = { id: nominee.id, name: nominee.name, id_employee: nominee.id_employee }
 }
 
-// Submit vote (permite editar voto)
+// Submit vote
 async function submitVote(nominee: any) {
   if (!nominee || !user.value?.id_user) return
 
@@ -325,12 +326,19 @@ async function submitVote(nominee: any) {
     date: new Date().toISOString()
   }
 
+  const voteDataSession = {
+    id_user: user.value.id_user,
+    id_nominess: nominee.id,
+    date: new Date().toISOString(),
+    id_employee: nominee.id_employee
+  }
+
   submittingVote.value = true
   try {
     const voteService = VoteService.getInstance()
     await voteService.createVote(voteData)
     showSuccess('Success', `Vote submitted for ${nominee.name}!`)
-    window.sessionStorage.setItem('palomo-vote', JSON.stringify(voteData))
+    window.sessionStorage.setItem('palomo-vote', JSON.stringify(voteDataSession))
     userVote.value = voteData
     hasVoted.value = true
 
@@ -339,6 +347,7 @@ async function submitVote(nominee: any) {
       name: nominee.name,
       id_employee: nominee.id_employee
     }
+    
     await fetchAllData()
   } catch (err: any) {
     const message = err?.message?.replace(/^Error:\s*/i, '').trim() || 'Failed to submit vote.'
@@ -393,16 +402,34 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString()
 
 // Init
 onMounted(async () => {
-  try { await checkAuth() } catch { }
-  const cached = window.sessionStorage.getItem('palomo-vote')
-  if (cached) {
-    selectedVote.value = JSON.parse(cached)
-    hasVoted.value = true
+  try { await checkAuth() } catch {}
+
+  await fetchAllData();  
+
+  if (!userVote.value) {
+    const cached = window.sessionStorage.getItem('palomo-vote');
+    
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      userVote.value = { id_nominess: parsed.id_nominess };
+      hasVoted.value = true;
+
+      const voted = nominees.value.find(n => n.id === parsed.id_nominess);
+
+      if (voted) {
+        selectedVote.value = {
+          id: voted.id,
+          name: voted.name,
+          id_employee: voted.id_employee
+        };
+      }
+    }
   }
-  await fetchAllData()
-  updateCountdown()
-  countdownInterval = window.setInterval(updateCountdown, 1000)
-})
+
+  updateCountdown();
+  countdownInterval = window.setInterval(updateCountdown, 60_000);
+});
+
 
 onUnmounted(() => {
   if (countdownInterval) clearInterval(countdownInterval)
