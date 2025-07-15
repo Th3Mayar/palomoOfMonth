@@ -316,4 +316,10 @@ onMounted(async () => {
   }
   await fetchAllData()
 })
+
+// Page configuration
+definePageMeta({
+  middleware: 'auth',
+  layout: 'auth-layout'
+})
 </script>
