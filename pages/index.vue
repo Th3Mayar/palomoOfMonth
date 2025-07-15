@@ -66,7 +66,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto"
           :class="{
             'sm:!grid-cols-1 !max-w-2xl': !isAdmin,
-            'lg:!grid-cols-2 !max-w-2xl': !isAdmin,
+            'lg:!grid-cols-2 !max-w-3xl': !isAdmin,
             '!max-w-lg': !isAdmin
           }">
         <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
@@ -77,7 +77,7 @@
             <h2 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">Palomos</h2>
             <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Manage palomo information and records</p>
             <Button 
-              @click="handlePalomosClick" 
+              @click="handlePalomosClick"
               class="w-full mt-auto text-sm sm:text-base"
               variant="default"
             >
