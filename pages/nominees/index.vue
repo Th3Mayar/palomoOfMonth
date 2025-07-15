@@ -6,40 +6,60 @@
     </div>
 
     <!-- Countdown Timer -->
-    <div class="fixed top-4 right-4 z-40 flex flex-col items-end space-y-2">
-      <div class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex items-center gap-2">
-        <Calendar class="w-4 h-4" />
-        <span class="text-xs sm:text-sm flex gap-1">
-          Voting ends in:
-          <span>{{ countdown.days }}d</span>
-          <span>{{ countdown.hours }}h</span>
-          <span>{{ countdown.minutes }}m</span>
-        </span>
+    <div class="fixed top-4 right-4 z-40 lg:flex flex-col items-end space-y-2 w-full sm:w-auto hidden">
+      <div class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+        <div class="flex items-center gap-2 justify-between w-full sm:w-auto">
+          <Calendar class="w-4 h-4" />
+          <span class="text-xs sm:text-sm flex gap-1 flex-wrap">
+            Voting ends in:
+            <span>{{ countdown.days }}d</span>
+            <span>{{ countdown.hours }}h</span>
+            <span>{{ countdown.minutes }}m</span>
+          </span>
+        </div>
       </div>
       <!-- Alerts -->
       <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
     </div>
 
     <!-- Title and Instructions -->
-    <div class="text-center px-4 sm:px-0 mt-10">
-      <p class="flex text-base sm:text-lg text-muted-foreground mb-5 sm:mb-5 max-w-7xl mx-auto justify-between">
-        Vote for your favorite palomo this month. You can change your vote.
-        <Button as="a" href="/" variant="outline" class="w-full sm:w-auto">
-          <ArrowLeft class="mr-2 h-4 w-4" />
-          Back to Home
-        </Button>
-      </p>
-
-      <!-- Voting Period Info -->
+    <div class="text-center px-2 sm:px-0 mt-10 w-full">
+      <div class="flex flex-col sm:flex-row items-center justify-between mb-5 max-w-7xl mx-auto gap-3">
+        <div class="w-full sm:w-auto flex flex-col gap-2">
+          <p class="text-base sm:text-lg text-muted-foreground">
+            Vote for your favorite palomo this month. You can change your vote.
+          </p>
+          <!-- Responsive Countdown: below Back to Home on mobile, right on desktop -->
+          <div class="flex sm:hidden w-full justify-center mt-2">
+            <div class="bg-primary text-white px-4 py-2 rounded-lg shadow font-semibold text-sm flex items-center gap-2 w-full justify-center">
+              <Calendar class="w-4 h-4" />
+              <span class="text-xs sm:text-sm flex gap-1 flex-wrap">
+                Voting ends in:
+                <span>{{ countdown.days }}d</span>
+                <span>{{ countdown.hours }}h</span>
+                <span>{{ countdown.minutes }}m</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="w-full sm:w-auto flex flex-col gap-2">
+          <Button as="a" href="/" variant="outline" class="w-full sm:w-auto mt-2 sm:mt-0">
+            <ArrowLeft class="mr-2 h-4 w-4" />
+            Back to Home
+          </Button>
+        </div>
+      </div>
       <Card class="mb-8 max-w-7xl mx-auto">
-        <CardContent class="p-3 flex gap-2 items-center justify-center">
-          <Calendar class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary" />
-          <p class="text-sm sm:text-base text-foreground">
-            Voting period: {{ votingPeriod.start }} – {{ votingPeriod.end }}
-          </p>
-          <p class="text-xs sm:text-sm text-muted-foreground">
-            You may vote once per month. Voting again on the same nominee has no effect.
-          </p>
+        <CardContent class="p-3 flex flex-col sm:flex-row gap-2 items-center justify-center">
+          <Calendar class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary mb-2 sm:mb-0" />
+          <div class="flex flex-col items-center sm:items-start">
+            <p class="text-sm sm:text-base text-foreground">
+              Voting period: {{ votingPeriod.start }} – {{ votingPeriod.end }}
+            </p>
+            <p class="text-xs sm:text-sm text-muted-foreground">
+              You may vote once per month. Voting again on the same nominee has no effect.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
