@@ -67,7 +67,7 @@
           :class="{
             'sm:!grid-cols-1 !max-w-2xl': !isAdmin,
             'lg:!grid-cols-2 !max-w-3xl': !isAdmin,
-            '!max-w-lg': !isAdmin
+            '!max-w-[42rem]': !isAdmin
           }">
         <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
