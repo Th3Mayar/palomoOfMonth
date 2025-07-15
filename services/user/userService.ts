@@ -2,9 +2,6 @@ import type {
   User, 
   CreateUserRequest, 
   UpdateUserRequest,
-  UserApiResponse,
-  mapApiResponseToUser,
-  mapApiResponseArrayToUsers
 } from '~/types/user';
 
 export class UserService {
