@@ -10,6 +10,9 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "shadcn-nuxt"
   ],
+  plugins: [
+    '~/plugins/theme.client.ts'
+  ],
   veeValidate: {
     // disable or enable auto imports
     autoImports: true,

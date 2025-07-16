@@ -280,7 +280,7 @@ watch(user, (newUser) => {
 }, { immediate: true, deep: true })
 
 // Check authentication when mounting component
-onMounted(() => {
+onBeforeMount(() => {
   checkAuth()
 })
 </script>

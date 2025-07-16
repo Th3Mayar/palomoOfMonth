@@ -19,12 +19,25 @@ module.exports = {
       padding: "2rem",
       screens: {
         "2xl": "1400px",
+        sm: "var(--container-max-width)",
+        md: "var(--container-max-width)",
       },
     },
     extend: {
       fontFamily: {
         poppins: ["Poppins", "cursive"],
+        sans: "var(--font-family-main)",
       },
+      fontSize: {
+        base: "var(--base-font-size)",
+      },
+      spacing: {
+        'card': 'var(--card-spacing)'
+      },
+      transitionDuration: {
+        DEFAULT: 'var(--transition-duration)',
+      },
+      borderRadius: { DEFAULT: 'var(--radius)' },
       colors: {
         background: "#FFFFFF",
         mainContent: "#F0F4F8",
@@ -57,7 +70,7 @@ module.exports = {
         textVariant3: "#512DA8", // Indigo
         textVariant4: "#212121",
         stateVariant: "#8E24AA", // ✅ Fix
-        buttonVariantTertiary: "#7C4DFF", 
+        buttonVariantTertiary: "#7C4DFF",
         contentButton: "#F5F5F5",
 
         // Dark mode

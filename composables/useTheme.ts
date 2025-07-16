@@ -64,6 +64,43 @@ export const useTheme = () => {
     }
   }
 
+  // Typography settings: font size and font family
+  const applyTypography = (size: ThemeSettings['fontSize'], font: string) => {
+    if (!process.client) return
+    const mapSize = { small: '14px', medium: '16px', large: '18px' }
+    document.documentElement.style.setProperty('--base-font-size', mapSize[size])
+    document.documentElement.style.setProperty('--font-family-main', font)
+  }
+
+  // Layout settings: container width, spacing, and border radius
+  const applyLayout = (
+    w: ThemeSettings['containerWidth'],
+    spacing: number,
+    radius: ThemeSettings['borderRadius']
+  ) => {
+    if (!process.client) return
+    const mapWidth = { narrow: '640px', normal: '768px', wide: '1024px' }
+    const mapSpace = { 2: '0.5rem', 4: '1rem', 6: '1.5rem', 8: '2rem' }
+    const mapRadius = { none: '0', small: '0.25rem', medium: '0.5rem', large: '1rem' }
+    document.documentElement.style.setProperty('--container-max-width', mapWidth[w])
+    document.documentElement.style.setProperty('--card-spacing', mapSpace[spacing])
+    document.documentElement.style.setProperty('--radius', mapRadius[radius])
+  }
+
+  // Localization: set the HTML lang attribute
+  const applyLocale = (lang: string) => {
+    if (!process.client) return
+    document.documentElement.setAttribute('lang', lang)
+  }
+
+  // Animation settings: toggle and set duration
+  const applyAnimations = (enabled: boolean, speed: ThemeSettings['transitionSpeed']) => {
+    if (!process.client) return
+    const duration = speed === 'slow' ? '0.6s' : speed === 'fast' ? '0.15s' : '0.3s'
+    document.documentElement.style.setProperty('--transition-duration', duration)
+    document.documentElement.classList.toggle('no-animations', !enabled)
+  }
+
   // Auxiliary function to convert HEX to HSL
   const hexToHsl = (hex: string) => {
     const r = parseInt(hex.slice(1, 3), 16) / 255
@@ -111,6 +148,10 @@ export const useTheme = () => {
       applyTheme(settings.value.theme)
       applyPrimaryColor(settings.value.primaryColor)
       applyLogoColor(settings.value.logoColor)
+      applyTypography(settings.value.fontSize, settings.value.font)
+      applyLayout(settings.value.containerWidth, settings.value.cardSpacing, settings.value.borderRadius)
+      applyLocale(settings.value.language)
+      applyAnimations(settings.value.animations, settings.value.transitionSpeed)
     }
   }
 
@@ -133,6 +174,18 @@ export const useTheme = () => {
     }
     if (newSettings.logoColor) {
       applyLogoColor(newSettings.logoColor)
+    }
+    if (newSettings.fontSize || newSettings.font) {
+      applyTypography(newSettings.fontSize, newSettings.font)
+    }
+    if (newSettings.containerWidth || newSettings.cardSpacing || newSettings.borderRadius) {
+      applyLayout(newSettings.containerWidth, newSettings.cardSpacing, newSettings.borderRadius)
+    }
+    if (newSettings.language) {
+      applyLocale(newSettings.language)
+    }
+    if (newSettings.animations !== undefined || newSettings.transitionSpeed) {
+      applyAnimations(newSettings.animations, newSettings.transitionSpeed)
     }
     
     saveSettings()
@@ -162,6 +215,10 @@ export const useTheme = () => {
     initializeTheme,
     applyTheme,
     applyPrimaryColor,
-    applyLogoColor
+    applyLogoColor,
+    applyTypography,
+    applyLayout,
+    applyLocale,
+    applyAnimations
   }
 }
