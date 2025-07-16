@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="container mx-auto px-4 py-8 max-w-4xl mt-10">
     <!-- Back to Top Button -->
     <transition name="fade">
       <button
@@ -890,11 +890,114 @@ if (process.client) {
 </script>
 
 <style scoped>
-/* Fade transition for Back to Top button */
+/**** Responsive container padding and max width ****/
+.container {
+  max-width: 100vw;
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+/**** Responsive grid gap ****/
+.grid {
+  gap: 1.5rem;
+}
+@media (max-width: 640px) {
+  .grid {
+    gap: 1rem;
+  }
+}
+
+/**** Responsive card padding ****/
+.card-content {
+  padding: 1rem;
+}
+@media (min-width: 640px) {
+  .card-content {
+    padding: 1.5rem;
+  }
+}
+
+/**** Responsive button spacing ****/
+button {
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+}
+@media (min-width: 640px) {
+  button {
+    min-height: 40px;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/**** Responsive font sizes ****/
+h1 {
+  font-size: 2rem;
+}
+@media (min-width: 640px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+}
+
+/**** Responsive Back to Top button ****/
+.fixed.bottom-8.right-8 {
+  bottom: 1.5rem;
+  right: 1.5rem;
+}
+@media (max-width: 640px) {
+  .fixed.bottom-8.right-8 {
+    bottom: 1rem;
+    right: 1rem;
+  }
+}
+
+/**** Responsive form grid ****/
+.grid-cols-1.md\:grid-cols-2 {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/**** Responsive card section spacing ****/
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+@media (max-width: 640px) {
+  .space-y-6 > * + * {
+    margin-top: 1rem;
+  }
+}
+
+/**** Fade transition for Back to Top button ****/
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+.fade-enter, .fade-leave-to {
   opacity: 0;
 }
 </style>
