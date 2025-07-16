@@ -1,5 +1,16 @@
 <template>
   <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Back to Top Button -->
+    <transition name="fade">
+      <button
+        v-if="showBackToTop"
+        @click="scrollToTop"
+        class="fixed bottom-8 right-8 z-50 bg-primary text-white rounded-full shadow-lg p-3 flex items-center justify-center animate-pulse hover:scale-110 transition-transform"
+        aria-label="Back to top"
+      >
+        <ArrowUp class="h-6 w-6" />
+      </button>
+    </transition>
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
@@ -198,9 +209,10 @@
             Adjust text size and font family
           </CardDescription>
         </CardHeader>
-        <CardContent class="space-y-6">
+        <!-- class="space-y-6" -->
+        <CardContent>
           <!-- Font size -->
-          <div class="space-y-2">
+          <div class="space-y-2 hidden">
             <label class="text-sm font-medium">Font size</label>
             <div class="flex gap-2">
               <Button 
@@ -230,18 +242,13 @@
           <!-- Font family -->
           <div class="space-y-2">
             <label class="text-sm font-medium">Font family</label>
-            <select
+            <Select
               v-model="currentFont"
-              @change="setFont"
-              class="w-full p-2 border border-input rounded-md bg-background"
-            >
-              <option value="poppins">Poppins (Default)</option>
-              <option value="inter">Inter</option>
-              <option value="roboto">Roboto</option>
-              <option value="opensans">Open Sans</option>
-              <option value="lato">Lato</option>
-              <option value="system">System font</option>
-            </select>
+              :options="fontOptions"
+              placeholder="Select font family"
+              class="w-full"
+              @update:modelValue="setFont"
+            />
           </div>
         </CardContent>
       </Card>
@@ -257,9 +264,9 @@
             Customize element arrangement
           </CardDescription>
         </CardHeader>
-        <CardContent class="space-y-6">
+        <CardContent class="">
           <!-- Container width -->
-          <div class="space-y-2">
+          <div class="space-y-2 hidden">
             <label class="text-sm font-medium">Container width</label>
             <div class="flex gap-2">
               <Button 
@@ -287,7 +294,7 @@
           </div>
 
           <!-- Card spacing -->
-          <div class="space-y-2">
+          <div class="space-y-2 hidden">
             <label class="text-sm font-medium">Card spacing</label>
             <input
               v-model="cardSpacing"
@@ -339,7 +346,7 @@
       </Card>
 
       <!-- Language Section -->
-      <Card>
+      <Card class="hidden">
         <CardHeader>
           <CardTitle class="flex items-center">
             <Globe class="mr-2 h-5 w-5" />
@@ -472,13 +479,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { 
   ArrowLeft, Palette, Type, Layout, Globe, Zap, Settings, 
   Save, RotateCcw, Download, Sun, Moon, Monitor, User,
-  Pencil
+  Pencil, ArrowUp
 } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
@@ -487,6 +494,7 @@ import CardDescription from '~/components/ui/CardDescription.vue'
 import CardHeader from '~/components/ui/CardHeader.vue'
 import CardTitle from '~/components/ui/CardTitle.vue'
 import Alert from '~/components/ui/Alert.vue'
+import Select from '~/components/ui/Select.vue'
 
 // Types and Services
 import { UserService } from '~/services/user/userService'
@@ -655,10 +663,25 @@ const currentFontSize = computed({
   get: () => settings.value.fontSize,
   set: (value) => updateSettings({ fontSize: value })
 })
-const currentFont = computed({
-  get: () => settings.value.font,
-  set: (value) => updateSettings({ font: value })
-})
+const currentFont = ref('poppins')
+
+watch(
+  () => settings.value.font,
+  (val) => {
+    // Map font-family string to select value
+    const fontMap: Record<string, string> = {
+      'Poppins, sans-serif': 'poppins',
+      'Inter, sans-serif': 'inter',
+      'Roboto, sans-serif': 'roboto',
+      'Open Sans, sans-serif': 'opensans',
+      'Lato, sans-serif': 'lato',
+      'system-ui, sans-serif': 'system'
+    }
+    currentFont.value = fontMap[val] || 'poppins'
+  },
+  { immediate: true }
+)
+
 const currentContainerWidth = computed({
   get: () => settings.value.containerWidth,
   set: (value) => updateSettings({ containerWidth: value })
@@ -700,6 +723,16 @@ const primaryColors = [
   { name: 'Teal', value: '#14B8A6', preview: '#14B8A6' }
 ]
 
+// Opciones de tipografía para el Select
+const fontOptions = [
+  { value: 'poppins', label: 'Poppins (Default)' },
+  { value: 'inter', label: 'Inter' },
+  { value: 'roboto', label: 'Roboto' },
+  { value: 'opensans', label: 'Open Sans' },
+  { value: 'lato', label: 'Lato' },
+  { value: 'system', label: 'System font' }
+]
+
 // Functions to handle changes
 const setTheme = (theme: 'light' | 'dark' | 'auto') => {
   currentTheme.value = theme
@@ -725,7 +758,22 @@ const setFontSize = (size: 'small' | 'medium' | 'large') => {
   showInfo('Font size updated')
 }
 
-const setFont = () => {
+const setFont = (val?: string) => {
+  // Map value to actual font-family string
+  const fontMap: Record<string, string> = {
+    poppins: 'Poppins, sans-serif',
+    inter: 'Inter, sans-serif',
+    roboto: 'Roboto, sans-serif',
+    opensans: 'Open Sans, sans-serif',
+    lato: 'Lato, sans-serif',
+    system: 'system-ui, sans-serif'
+  }
+  const fontValue = fontMap[val || currentFont.value] || 'Poppins, sans-serif'
+  updateSettings({ font: fontValue })
+  // For immediate effect, apply the font directly
+  if (typeof window !== 'undefined') {
+    document.documentElement.style.setProperty('--font-family-main', fontValue)
+  }
   showInfo('Font updated')
 }
 
@@ -800,6 +848,17 @@ const exportSettings = () => {
   showSuccess('Settings exported', 'File downloaded successfully')
 }
 
+// Scroll to top functionality
+const showBackToTop = ref(false)
+
+const handleScroll = () => {
+  showBackToTop.value = window.scrollY > 300
+}
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
 // Load settings on mount
 onMounted(async () => {
   loadSettings()
@@ -823,4 +882,19 @@ onMounted(async () => {
     showError('Authentication Error', 'Please log in again to access settings.')
   }
 })
+
+// Global event listener for scroll
+if (process.client) {
+  window.addEventListener('scroll', handleScroll)
+}
 </script>
+
+<style scoped>
+/* Fade transition for Back to Top button */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+</style>

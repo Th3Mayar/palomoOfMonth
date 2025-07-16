@@ -107,8 +107,8 @@
           <div v-if="selectedVote?.id === nominee.id && (!userVote || userVote.id_nominess !== selectedVote.id)
             && selectedVote.id_employee === nominee.id_employee
           " class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-lg z-20">
-            <Button @click.stop="submitVote(selectedVote)" :disabled="submittingVote" class="text-lg px-6 py-3">
-              {{ submittingVote ? 'Submitting…' : 'Confirm Vote' }}
+            <Button @click.stop="submitVote(selectedVote)" :disabled="submittingVote" class="text-lg px-6 py-3 gap-2">
+              <CircleCheck /> {{ submittingVote ? 'Submitting…' : 'Confirm Vote' }}
             </Button>
           </div>
 
@@ -184,7 +184,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, onUnmounted } from 'vue'
-import { Calendar, User, Users, X, ArrowBigRightDash, Trophy, ArrowLeft } from 'lucide-vue-next'
+import { Calendar, User, Users, X, ArrowBigRightDash, Trophy, ArrowLeft, CircleCheck } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
 import CardContent from '~/components/ui/CardContent.vue'
