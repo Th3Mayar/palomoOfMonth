@@ -19,8 +19,6 @@
           </span>
         </div>
       </div>
-      <!-- Alerts -->
-      <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
     </div>
 
     <!-- Title and Instructions -->
@@ -294,15 +292,22 @@ async function fetchAllData() {
 
 // Previous vote
 async function checkUserVote() {
-  if (!isLoggedIn.value || !user.value?.id) return
+  if (!isLoggedIn.value || !user.value?.id_user) return
   try {
     const voteService = VoteService.getInstance()
-    const result = await voteService.getUserVote(user.value.id, votingPeriod.value.current)
-    userVote.value = result
-    hasVoted.value = !!result
 
-    if (result && result.id_nominess) {
-      const votedNominee = nominees.value.find(n => n.id === result.id_nominess)
+    const month = votingPeriod.value.current.getMonth() + 1
+    const year = votingPeriod.value.current.getFullYear()
+    const votes = await voteService.getVotesByMonthAndYear(month, year)
+
+    // Find the user's vote
+    const userVoteRecord = votes.find(v => v.id_user === user.value.id_user)
+    userVote.value = userVoteRecord || null
+    hasVoted.value = !!userVoteRecord
+
+    if (userVoteRecord && userVoteRecord.id_nominess) {
+      // Search for the nominee in the nominees list
+      const votedNominee = nominees.value.find(n => n.id === userVoteRecord.id_nominess || n.id_nominees === userVoteRecord.id_nominess)
       if (votedNominee) {
         selectedVote.value = {
           id: votedNominee.id,
@@ -320,29 +325,6 @@ async function checkUserVote() {
   }
 }
 
-onMounted(async () => {
-  try { await checkAuth() } catch { }
-  const cached = window.sessionStorage.getItem('palomo-vote')
-  if (cached) {
-    const parsed = JSON.parse(cached)
-    await fetchNominees()
-    await fetchEmployees()
-    const votedNominee = nominees.value.find(n => n.id === parsed.id_nominess)
-
-    if (votedNominee) {
-      selectedVote.value = {
-        id: votedNominee.id,
-        name: votedNominee.name,
-        id_employee: votedNominee.id_employee
-      }
-      hasVoted.value = true
-    }
-  }
-  await fetchAllData()
-  updateCountdown()
-  countdownInterval = window.setInterval(updateCountdown, 1000)
-})
-
 function selectVote(nominee: any) {
   selectedVote.value = { id: nominee.id, name: nominee.name, id_employee: nominee.id_employee }
 }
@@ -357,19 +339,11 @@ async function submitVote(nominee: any) {
     date: new Date().toISOString()
   }
 
-  const voteDataSession = {
-    id_user: user.value.id_user,
-    id_nominess: nominee.id,
-    date: new Date().toISOString(),
-    id_employee: nominee.id_employee
-  }
-
   submittingVote.value = true
   try {
     const voteService = VoteService.getInstance()
     await voteService.createVote(voteData)
     showSuccess('Success', `Vote submitted for ${nominee.name}!`)
-    window.sessionStorage.setItem('palomo-vote', JSON.stringify(voteDataSession))
     userVote.value = voteData
     hasVoted.value = true
 
@@ -388,39 +362,20 @@ async function submitVote(nominee: any) {
   }
 }
 
-// Open score modal
 async function openScoreModal(nominee: any) {
   try {
     let idEmployee = nominee?.id_employee
-
-    if (!idEmployee) {
-      const storedVote = window.sessionStorage.getItem('palomo-vote')
-      if (storedVote) {
-        const parsed = JSON.parse(storedVote)
-        const votedNominee = nominees.value.find(n => n.id === parsed.id_nominess)
-        if (votedNominee) {
-          idEmployee = votedNominee.id_employee
-          selectedNomineeName.value = votedNominee.name
-        }
-      }
-    } else {
-      selectedNomineeName.value = nominee.name
-    }
-
+    selectedNomineeName.value = nominee.name
     if (!idEmployee) {
       showError('Missing data', 'Could not find employee for this nominee.')
       return
     }
-
     const token = useCookie('auth-token').value
     const allScores = await $fetch<any>('/api/modules/scores', {
       headers: { Authorization: `Bearer ${token}` }
     })
-
     const scoresList = Array.isArray((allScores as any)?.data) ? (allScores as any).data : allScores
-
     const filteredScores = scoresList.filter((score: any) => score.id_employee === idEmployee)
-
     selectedNomineeScores.value = filteredScores
     isScoreModalOpen.value = true
   } catch (err: any) {
@@ -434,29 +389,7 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString()
 // Init
 onMounted(async () => {
   try { await checkAuth() } catch { }
-
   await fetchAllData();
-
-  if (!userVote.value) {
-    const cached = window.sessionStorage.getItem('palomo-vote');
-
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      userVote.value = { id_nominess: parsed.id_nominess };
-      hasVoted.value = true;
-
-      const voted = nominees.value.find(n => n.id === parsed.id_nominess);
-
-      if (voted) {
-        selectedVote.value = {
-          id: voted.id,
-          name: voted.name,
-          id_employee: voted.id_employee
-        };
-      }
-    }
-  }
-
   updateCountdown();
   countdownInterval = window.setInterval(updateCountdown, 60_000);
 });
