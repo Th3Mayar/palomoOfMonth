@@ -39,6 +39,15 @@ export default defineEventHandler(async (event) => {
       imageBytes: body.imageBytes || body.image || ""
     };
 
+    // Validate if employeeData contains imageBytes equal to string and remove
+    if (typeof employeeData.imageBytes === 'string' && employeeData.imageBytes === '') {
+      delete employeeData.imageBytes;
+    }
+
+    if (typeof employeeData.image === 'string' && employeeData.image === '') {
+      delete employeeData.image;
+    }
+
     // Update the employee
     const updateResponse = await $fetch(`${apiBaseUrl}/Employees/${id}`, {
       method: 'PUT',
