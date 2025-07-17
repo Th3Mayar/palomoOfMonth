@@ -1,6 +1,7 @@
 export default defineNuxtRouteMiddleware((to) => {
   const token = useCookie('auth-token')
   const userCookie = useCookie('user-data', { 
+    maxAge: 60 * 60 * 24, // 1 day
     default: () => null,
     serialize: JSON.stringify,
     deserialize: (value) => {
