@@ -34,6 +34,21 @@ export class UserService {
     }
   }
 
+  async getUserById(id: number): Promise<User> {
+    try {
+      const token = useCookie('auth-token');
+      const response = await $fetch<User>(`/api/modules/users/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token.value}`,
+        },
+      });
+      return response;
+    } catch (error) {
+      throw new Error('Failed to fetch user');
+    }
+  }
+
   async createUser(userData: CreateUserRequest): Promise<User> {
     try {
       const token = useCookie('auth-token');
@@ -53,7 +68,6 @@ export class UserService {
   }
 
   async updateUser(id: number, userData: UpdateUserRequest): Promise<User> {
-    console.log('Updating user with ID:', id, 'and data:', userData);
     try {
       const token = useCookie('auth-token');
       const response = await $fetch<User>(`/api/modules/users/${id}`, {
