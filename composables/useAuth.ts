@@ -1,3 +1,6 @@
+import bcrypt from 'bcryptjs';
+import { UserService } from '~/services/user/userService';
+
 interface LoginRequest {
   name: string
   password: string
@@ -62,17 +65,15 @@ export const useAuth = () => {
         if (apiData.token) {
           token.value = apiData.token
           
-          // Use userData from the API response
-          const userData = apiData.userData || { 
-            name: credentials.name,
-            id_user: 1,
-            role: 'user'
+          // Set encrypted password in userData for session validation
+          const hashedPassword = bcrypt.hashSync(credentials.password, 10);
+          const userData = {
+            ...(apiData.userData || { name: credentials.name, id_user: 1, role: 'user' }),
+            password: hashedPassword
           }
-          
           user.value = userData
-          
+
           // Store user data in cookie for middleware access
-          // useCookie in Nuxt can handle objects directly
           userCookie.value = userData
           
           await navigateTo('/')
@@ -136,14 +137,31 @@ export const useAuth = () => {
     userCookie.value = null
     await navigateTo('/auth/login')
   }
-
-  const checkAuth = () => {
+  
+  const checkAuth = async () => {
     if (token.value) {
       try {
         // The userCookie should already be deserialized to an object
         if (userCookie.value) {
           user.value = userCookie.value
           isAdmin.value = user.value?.role === 'admin'
+
+          const userData = userCookie.value
+          const userId = userData.id || userData.id_user
+
+          const userService = UserService.getInstance()
+          const found = await userService.getUserById(userId)
+
+          const passwordMatch = found && found.password && bcrypt.compareSync(found.password, userData.password);
+
+          if (!passwordMatch) {
+            token.value = null;
+            user.value = null;
+            userCookie.value = null;
+            isAdmin.value = false;
+            return false;
+          }
+
           return true
         } else {
           // Clear token if no user data
@@ -160,6 +178,7 @@ export const useAuth = () => {
     } else {
       user.value = null
     }
+    
     return false
   }
 

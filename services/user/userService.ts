@@ -43,7 +43,7 @@ export class UserService {
           'Authorization': `Bearer ${token.value}`,
         },
       });
-      return response;
+      return response[0]; // Assuming the API returns an array with one user
     } catch (error) {
       throw new Error('Failed to fetch user');
     }
