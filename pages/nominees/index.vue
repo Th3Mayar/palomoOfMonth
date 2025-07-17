@@ -113,8 +113,16 @@
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
             <!-- Employee Photo -->
             <div class="h-32 sm:h-72 bg-muted rounded-lg flex items-center justify-center mb-4 relative">
-              <img v-if="nominee.photo" :src="nominee.photo" :alt="nominee.name"
-                class="h-full w-full object-cover rounded-lg" />
+              <Skeleton v-if="nomineeImageLoading[nominee.id] !== false && nominee.photo" :customClass="'absolute inset-0'" />
+              <img v-if="nominee.photo"
+                :src="nominee.photo"
+                :alt="nominee.name"
+                class="h-full w-full object-cover rounded-lg"
+                loading="lazy"
+                @load="() => nomineeImageLoading[nominee.id] = false"
+                @error="() => nomineeImageLoading[nominee.id] = false"
+                :style="nomineeImageLoading[nominee.id] === false ? '' : 'opacity:0;position:absolute;'"
+              />
               <div v-else class="text-muted-foreground">
                 <User class="w-12 h-12 sm:w-16 sm:h-16" />
               </div>
@@ -196,6 +204,7 @@ import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
 import CardContent from '~/components/ui/CardContent.vue'
 import Alert from '~/components/ui/Alert.vue'
+import Skeleton from '~/components/ui/Skeleton.vue'
 import { VoteService } from '~/services/vote/voteService'
 import { EmployeeService } from '~/services/employee/employeeService'
 
@@ -212,6 +221,8 @@ const selectedVote = ref<any | null>(null)
 const hasVoted = ref(false)
 const error = ref<string | null>(null)
 const submittingVote = ref(false)
+// Track image loading state for each nominee
+const nomineeImageLoading = ref<Record<string, boolean>>({})
 
 // Modal state
 const isScoreModalOpen = ref(false)
