@@ -133,7 +133,16 @@
                 class="text-green-600 font-medium text-sm sm:text-base">
                 ✓ Your current vote
               </span>
-              <Button variant="outline" size="sm" @click.stop="openScoreModal(nominee)">
+              <Button
+                variant="outline"
+                size="sm"
+                @click.stop="openScoreModal(nominee)"
+                :class="(selectedVote?.id === nominee.id
+                  && (!userVote || userVote.id_nominess !== selectedVote.id)
+                  && selectedVote.id_employee === nominee.id_employee)
+                  ? 'z-50'
+                  : 'z-0'"
+              >
                 View Palomerías
               </Button>
             </div>
