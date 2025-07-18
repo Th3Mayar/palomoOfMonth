@@ -81,11 +81,14 @@
         </VeeForm>
 
         <div class="mt-6 text-center">
-          <p class="text-sm text-muted-foreground">
+          <p class="text-sm text-muted-foreground flex flex-col items-center md:flex-row md:justify-center">
             Forgot your password?
-            <NuxtLink to="/auth/forgot-password" class="text-primary hover:underline">
+            <Button
+              type="button" 
+              variant="link"
+            >
               Reset password
-            </NuxtLink>
+            </Button>
           </p>
         </div>
       </CardContent>
