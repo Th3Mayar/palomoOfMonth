@@ -111,4 +111,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   height: 100%;
   cursor: pointer;
 }
+
+.overflow-y-auto {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  scrollbar-color: hsl(var(--border)) transparent;
+  scrollbar-width: thin;
+}
 </style>
