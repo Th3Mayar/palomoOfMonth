@@ -53,8 +53,6 @@ export default defineEventHandler(async (event) => {
         imageBytes: (response as any).imageBytes || body.imageBytes || ''
       };
     } else {
-      // For POST, we should try to get all employees to find the newly created one
-      // or return with a temporary ID
       mappedEmployee = {
         id: Date.now(), // temporary ID until we refresh the list
         name: body.name,

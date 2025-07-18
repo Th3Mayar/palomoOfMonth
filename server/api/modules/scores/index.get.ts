@@ -36,7 +36,6 @@ export default defineEventHandler(async (event) => {
 
       return response;
     } catch (error: any) {
-      console.error('Error fetching scores:', error);
       throw createError({
         statusCode: error.statusCode || 500,
         statusMessage: error.message || 'Failed to fetch scores'
