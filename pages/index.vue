@@ -2,13 +2,7 @@
   <div class="py-4 sm:py-8">
     <!-- Alerts container -->
     <div class="fixed top-4 right-4 z-50 space-y-2">
-      <Alert
-        v-for="(alert, index) in alerts"
-        :key="alert.id"
-        :alert="alert"
-        :index="index"
-        @remove="removeAlert"
-      />
+      <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
     </div>
 
     <!-- Header with navigation -->
@@ -22,28 +16,23 @@
           Palomo of the Month
         </h1>
       </div>
-      
+
       <!-- Navigation section -->
-      <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+      <div
+        class="flex flex-col sm:flex-row items-center justify-center lg:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
         <!-- Settings button always visible for testing -->
         <Button as="button" @click.prevent="navigateTo('/settings')" variant="ghost" size="sm" class="w-full sm:w-auto">
           <Settings class="mr-2 h-4 w-4" />
           Settings
         </Button>
-        
+
         <!-- Authentication buttons -->
-        <Button 
-          v-if="!isLoggedIn" 
-          ref="loginButtonRef" 
-          as="button" 
-          @click.prevent="navigateTo('/auth/login')"
-          variant="default"
-          class="w-full sm:w-auto"
-        >
+        <Button v-if="!isLoggedIn" ref="loginButtonRef" as="button" @click.prevent="navigateTo('/auth/login')"
+          variant="default" class="w-full sm:w-auto">
           <LogIn class="mr-2 h-4 w-4" />
           Sign In
         </Button>
-        
+
         <!-- User info and logout (responsive) -->
         <div v-else class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
           <span class="text-foreground text-sm sm:text-base text-center sm:text-left">
@@ -59,28 +48,26 @@
 
     <div class="text-center px-4 sm:px-0">
       <p class="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto">
-        {{ isLoggedIn ? 'Welcome back' : 'Welcome to the application' }} to recognize the outstanding palomo of the month
+        {{ isLoggedIn ? 'Welcome back' : 'Welcome to the application' }} to recognize the outstanding palomo of the
+        month
       </p>
-      
+
       <!-- Cards Grid - Responsive -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto"
-          :class="{
-            'sm:!grid-cols-1 !max-w-2xl': !isAdmin,
-            'lg:!grid-cols-2 !max-w-3xl': !isAdmin,
-            '!max-w-[42rem]': !isAdmin
-          }">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto" :class="{
+        'sm:!grid-cols-1 !max-w-2xl': !isAdmin,
+        'lg:!grid-cols-2 !max-w-3xl': !isAdmin,
+        '!max-w-[42rem]': !isAdmin
+      }">
         <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
-            <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-primary/10 rounded-lg mb-3 sm:mb-4 mx-auto">
+            <div
+              class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-primary/10 rounded-lg mb-3 sm:mb-4 mx-auto">
               <Users class="h-5 w-5 sm:h-6 sm:w-6 text-button-primary" />
             </div>
             <h2 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">Palomos</h2>
-            <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Manage palomo information and records</p>
-            <Button 
-              @click="handlePalomosClick"
-              class="w-full mt-auto text-sm sm:text-base"
-              variant="default"
-            >
+            <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Manage palomo information and
+              records</p>
+            <Button @click="handlePalomosClick" class="w-full mt-auto text-sm sm:text-base" variant="default">
               View Palomos
             </Button>
           </CardContent>
@@ -88,57 +75,51 @@
 
         <Card class="hover:shadow-lg transition-shadow h-full" v-show="isAdmin">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
-            <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-green-500/10 rounded-lg mb-3 sm:mb-4 mx-auto">
+            <div
+              class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-green-500/10 rounded-lg mb-3 sm:mb-4 mx-auto">
               <UserCog class="h-5 w-5 sm:h-6 sm:w-6 text-green-500" />
             </div>
             <h2 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">Users</h2>
-            <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Manage user accounts and permissions</p>
-            <Button 
-              @click="handleUsersClick" 
-              class="w-full mt-auto text-sm sm:text-base"
-              variant="default"
-              style="background-color: rgb(34 197 94); color: white;"
-            >
+            <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Manage user accounts and
+              permissions</p>
+            <Button @click="handleUsersClick" class="w-full mt-auto text-sm sm:text-base" variant="default"
+              style="background-color: rgb(34 197 94); color: white;">
               View Users
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card class="hover:shadow-lg transition-shadow h-full">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
-            <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-secondary/10 rounded-lg mb-3 sm:mb-4 mx-auto">
+            <div
+              class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-secondary/10 rounded-lg mb-3 sm:mb-4 mx-auto">
               <Award class="h-5 w-5 sm:h-6 sm:w-6 text-button-secondary" />
             </div>
             <h2 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">Nominees</h2>
-            <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Review this month's nominations</p>
-            <Button 
-              @click="handleNomineesClick" 
-              variant="secondary" 
-              class="w-full mt-auto text-sm sm:text-base"
-            >
+            <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Review this month's nominations
+            </p>
+            <Button @click="handleNomineesClick" variant="secondary" class="w-full mt-auto text-sm sm:text-base">
               View Nominees
             </Button>
           </CardContent>
         </Card>
-        
+
         <Card class="hover:shadow-lg transition-shadow h-full">
           <CardContent class="p-4 sm:p-6 h-full flex flex-col">
-            <div class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-variant/10 rounded-lg mb-3 sm:mb-4 mx-auto">
+            <div
+              class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-button-variant/10 rounded-lg mb-3 sm:mb-4 mx-auto">
               <BarChart3 class="h-5 w-5 sm:h-6 sm:w-6 text-button-variant" />
             </div>
             <h2 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">Scores</h2>
-            <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Check current scores and rankings</p>
-            <Button 
-              @click="handleScoresClick" 
-              variant="outline" 
-              class="w-full mt-auto text-sm sm:text-base"
-            >
+            <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Check current scores and
+              rankings</p>
+            <Button @click="handleScoresClick" variant="outline" class="w-full mt-auto text-sm sm:text-base">
               View Scores
             </Button>
           </CardContent>
         </Card>
       </div>
-      
+
       <!-- Additional section to show more content -->
       <div class="mt-8 sm:mt-12">
         <h2 class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-foreground">Key Features</h2>
@@ -147,15 +128,23 @@
             <CardContent class="p-4 sm:p-6 text-center">
               <div class="text-button-primary text-3xl sm:text-4xl mb-3 sm:mb-4">🏆</div>
               <h3 class="font-semibold text-foreground mb-2 text-base sm:text-lg">Voting System</h3>
-              <p class="text-muted-foreground text-xs sm:text-sm">Vote for the palomo of the month easily and transparently</p>
+              <p class="text-muted-foreground text-xs sm:text-sm">Vote for the palomo of the month easily and
+                transparently</p>
+              <Button @click="handleNomineesClick" variant="link" class="w-full text-sm sm:text-base mt-3">
+                Vote Now
+              </Button>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent class="p-4 sm:p-6 text-center">
               <div class="text-button-secondary text-3xl sm:text-4xl mb-3 sm:mb-4">📊</div>
               <h3 class="font-semibold text-foreground mb-2 text-base sm:text-lg">Statistics</h3>
-              <p class="text-muted-foreground text-xs sm:text-sm">Review voting statistics and trends</p>
+              <p class="text-muted-foreground text-xs sm:text-sm">Review voting statistics and trends to guide data‑driven</p>
+
+              <Button @click="handleDashboardClick" variant="link" class="w-full text-sm sm:text-base mt-3">
+                View Dashboard
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -246,7 +235,7 @@ const handleNomineesClick = () => {
       }
     })
   } else {
-    if(isAdmin.value) {
+    if (isAdmin.value) {
       navigateTo('/admin/nominees')
     } else {
       navigateTo('/nominees')
@@ -267,11 +256,28 @@ const handleScoresClick = () => {
       }
     })
   } else {
-    if(isAdmin.value) {
+    if (isAdmin.value) {
       navigateTo('/admin/scores')
     } else {
       navigateTo('/scores')
     }
+  }
+}
+
+// Function to handle Dashboard click
+const handleDashboardClick = () => {
+  if (!isLoggedIn.value) {
+    showWarning(
+      'Access Required',
+      'You must sign in to access the dashboard'
+    )
+    nextTick(() => {
+      if (loginButtonRef.value && loginButtonRef.value.$el) {
+        loginButtonRef.value.$el.focus()
+      }
+    })
+  } else {
+    navigateTo('/dashboard')
   }
 }
 
@@ -288,6 +294,7 @@ onBeforeMount(() => {
 <style scoped>
 /* Responsive enhancements */
 @media (max-width: 640px) {
+
   /* Mobile-specific adjustments */
   .container {
     padding-left: 1rem;
@@ -296,6 +303,7 @@ onBeforeMount(() => {
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
+
   /* Tablet-specific adjustments */
   .grid {
     gap: 1.5rem;
