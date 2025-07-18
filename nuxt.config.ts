@@ -46,6 +46,7 @@ export default defineNuxtConfig({
     usersCreateEndpoint: process.env.USERS_CREATE_ENDPOINT,
     usersUpdateEndpoint: process.env.USERS_UPDATE_ENDPOINT,
     usersDeleteEndpoint: process.env.USERS_DELETE_ENDPOINT,
+    apiKeyPalomosRemoveBg: process.env.API_KEY_PALOMOS_REMOVE_BG,
     // Public keys (exposed to client-side)
     public: {
       apiBaseUrl: process.env.API_BASE_URL
