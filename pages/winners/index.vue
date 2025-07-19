@@ -41,25 +41,27 @@ async function fetchEmployees() {
 const { alerts, showSuccess, showError, removeAlert } = useAlert()
 
 onBeforeMount(async () => {
-  try {
-    await fetchEmployees()
-    const winnerService = WinnerService.getInstance();
-    winner.value = await winnerService.generateCurrentMonthWinner();
+  if(showWinner.value) {
+    try {
+      await fetchEmployees()
+      const winnerService = WinnerService.getInstance();
+      winner.value = await winnerService.generateCurrentMonthWinner();
 
-    if (employees.value.length) {
-      const winnerEmployee = employees.value.find((employee: EmployeeApiResponse) => employee.id === winner.value.id_employee);
-      if (winnerEmployee) {
-        winner.value.image = winnerEmployee.image;
-        winner.value.name = winnerEmployee.name;
+      if (employees.value.length) {
+        const winnerEmployee = employees.value.find((employee: EmployeeApiResponse) => employee.id === winner.value.id_employee);
+        if (winnerEmployee) {
+          winner.value.image = winnerEmployee.image;
+          winner.value.name = winnerEmployee.name;
+        } else {
+          showError('Winner employee not found.');
+        }
       } else {
-        showError('Winner employee not found.');
+        showError('No employees found.');
       }
-    } else {
-      showError('No employees found.');
+      
+    } catch (e) {
+      showError('No winner found for this month.');
     }
-    
-  } catch (e) {
-    showError('No winner found for this month.');
   }
 
   // Check if current date is after the last day of the current month

@@ -1,5 +1,6 @@
 // API Response type (from external API)
 export interface EmployeeApiResponse {
+  [x: string]: any;
   id_employee: number;
   name: string;
   image: string | null;
