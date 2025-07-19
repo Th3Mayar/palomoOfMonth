@@ -347,7 +347,7 @@
           <img 
             :src="previewImageSrc" 
             :alt="previewImageName" 
-            class="max-w-full max-h-96 object-contain rounded-lg border"
+            class="max-w-full max-h-96 object-contain rounded-lg border bg-white shadow-md"
           />
         </div>
         <DialogFooter>

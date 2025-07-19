@@ -9,7 +9,7 @@
 
     <img
       v-if="image"
-      :src="processedImage || image"
+      :src="image"
       alt="Winner"
       class="absolute rounded-full object-cover ring-[.59rem] ring-white border-white select-none"
       :style="photoStyle"
@@ -27,45 +27,10 @@
 </template>
 
 <script setup lang="ts">
-import { removeBackground } from '~/lib/utils';
-import { ref, watch } from 'vue';
-
 const props = defineProps<{
   image: string
   name: string
 }>()
-
-const processedImage = ref<string>('');
-
-function isValidUrl(url: string) {
-  if (typeof url !== 'string' || !url.trim()) return false;
-  try {
-    new URL(url)
-    return true
-  } catch {
-    return false
-  }
-}
-
-watch(
-  () => props.image,
-  async (newImage) => {
-    if (newImage && isValidUrl(newImage)) {
-      try {
-        processedImage.value = await removeBackground(newImage)
-      } catch (e) {
-        processedImage.value = ''
-        console.error('Error al remover el fondo:', e)
-      }
-    } else {
-      processedImage.value = ''
-      if (newImage) {
-        console.error('La imagen debe ser una URL pública válida para remove.bg')
-      }
-    }
-  },
-  { immediate: true }
-)
 
 const photoStyle = {
   top: '19%',

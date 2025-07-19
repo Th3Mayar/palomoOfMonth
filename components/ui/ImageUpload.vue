@@ -78,6 +78,7 @@
 <script setup lang="ts">
 import { Upload, X } from 'lucide-vue-next'
 import Button from './Button.vue'
+import { removeBackground } from '~/lib/utils'
 
 interface Props {
   modelValue?: string
@@ -157,6 +158,7 @@ const processFile = async (file: File) => {
   
   // Validate file size
   const fileSizeMB = file.size / (1024 * 1024)
+
   if (fileSizeMB > props.maxSize) {
     error.value = `File size exceeds ${props.maxSize}MB limit`
     return
@@ -172,17 +174,25 @@ const processFile = async (file: File) => {
     }
     reader.readAsDataURL(file)
     
-    // Convert to base64 for the model
-    const base64Reader = new FileReader()
-    base64Reader.onload = (e) => {
-      const base64String = (e.target?.result as string).split(',')[1]
-      console.log('🖼️ ImageUpload: Converting to base64')
-      console.log('🖼️ ImageUpload: Base64 string length:', base64String?.length || 0)
-      console.log('🖼️ ImageUpload: Base64 preview:', base64String?.substring(0, 50) + '...')
-      emit('update:modelValue', base64String)
-      emit('file-selected', file)
+    // Enviar el archivo como FormData al backend para remover el fondo
+    const formData = new FormData()
+    formData.append('image', file)
+
+    try {
+      const response = await fetch('/api/utils/remove-bg', {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await response.json()
+      if (data.base64) {
+        emit('update:modelValue', data.base64)
+        emit('file-selected', file)
+      } else {
+        error.value = 'Error removing background'
+      }
+    } catch (err) {
+      error.value = 'Error processing file'
     }
-    base64Reader.readAsDataURL(file)
     
   } catch (err) {
     error.value = 'Error processing file'

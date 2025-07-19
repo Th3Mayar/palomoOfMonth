@@ -38,7 +38,7 @@ onBeforeMount(async () => {
         await fetchEmployees()
 
         if (employees.value.length) {
-            employeeExample.value = employees.value[2]
+            employeeExample.value = employees.value[5]
             showSuccess('Employees loaded successfully.')
         } else {
             showError('No employees found.')

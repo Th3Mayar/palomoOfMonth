@@ -22,6 +22,13 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Name is required',
     });
   }
+
+  if (body.imageType && !['image/jpeg', 'image/png', 'image/webp'].includes(body.imageType)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Only JPG, PNG, or WEBP images are allowed',
+    });
+  }
   
   try {
     const employeeData = {

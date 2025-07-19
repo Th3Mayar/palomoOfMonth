@@ -1,49 +1,79 @@
-import { readBody } from 'h3'
+
+import { readMultipartFormData } from 'h3'
 import FormData from 'form-data'
+import axios from 'axios'
+
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  const imageUrl = body?.imageUrl
-  if (!imageUrl) {
-    throw createError({ statusCode: 400, statusMessage: 'imageUrl is required' })
-  }
-  const config = useRuntimeConfig()
-  const apiKey = config.apiKeyPalomosRemoveBg
+  const form = await readMultipartFormData(event)
+  const imageFile = form?.find(f => f.name === 'image')
 
-  // Descarga la imagen
-  const imageRes = await fetch(imageUrl)
-  if (!imageRes.ok) throw createError({ statusCode: 400, statusMessage: 'No se pudo descargar la imagen' })
-  const arrayBuffer = await imageRes.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
+  if (!imageFile || !imageFile.data) {
+    throw createError({ statusCode: 400, statusMessage: 'image file is required' })
+  }
+
+  const config = useRuntimeConfig()
+  
+  const apiKey = String(
+    config.apiKeyPalomosRemoveBg ||
+    config.public?.apiKeyPalomosRemoveBg ||
+    process.env.API_KEY_PALOMOS_REMOVE_BG
+  )
+
+  if (!apiKey || apiKey === 'undefined') {
+    throw createError({ statusCode: 500, statusMessage: 'API Key for remove.bg is missing' })
+  }
+
+  // imageFile.data es un Buffer
+  const buffer = imageFile.data
 
   if (!buffer.length) {
-    console.error('Buffer vacío al descargar la imagen desde:', imageUrl)
-    throw createError({ statusCode: 400, statusMessage: 'La imagen descargada está vacía' })
+    throw createError({ statusCode: 400, statusMessage: 'The image buffer is empty' })
   }
-  console.log('Buffer size:', buffer.length, 'bytes para', imageUrl)
 
-  // Prepara el formData para remove.bg
-  const formData = new FormData()
+  const formData = new FormData();
 
   formData.append('image_file', buffer, {
-      filename: 'image.jpg',
-      contentType: 'image/jpeg'
-  })
+    filename: imageFile.filename || 'image.jpg',
+    contentType: 'image/jpeg',
+  });
 
-  const response = await fetch('https://api.remove.bg/v1.0/removebg', {
-    method: 'POST',
-    headers: { 'X-Api-Key': apiKey, ...formData.getHeaders() },
-    body: formData as any,
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error('remove.bg error:', errorText)
-    throw createError({ statusCode: response.status, statusMessage: errorText })
+  // Calculate Content-Length to avoid issues with remove.bg
+  const headers = formData.getHeaders();
+  try {
+    const length = await new Promise<number>((resolve, reject) => {
+      formData.getLength((err, len) => {
+        if (err) reject(err); else resolve(len);
+      });
+    });
+    headers['Content-Length'] = length;
+  } catch (e) {
+    console.warn('Could not calculate Content-Length:', e);
   }
 
-  const arrayBufferResult = await response.arrayBuffer()
-  const resultBuffer = Buffer.from(arrayBufferResult)
-  setHeader(event, 'Content-Type', 'image/png')
-  return resultBuffer
+  let resultBuffer: Buffer;
+
+  try {
+    const response = await axios.post(
+      'https://api.remove.bg/v1.0/removebg',
+      formData,
+      {
+        headers: {
+          'X-Api-Key': apiKey,
+          ...headers
+        },
+        responseType: 'arraybuffer',
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+      }
+    );
+    resultBuffer = Buffer.from(response.data);
+
+    setHeader(event, 'Content-Type', 'application/json');
+    return { base64: resultBuffer.toString('base64') };
+
+  } catch (error: any) {
+    const errorText = error?.response?.data?.toString() || error?.message || 'Unknown error';
+    throw createError({ statusCode: error?.response?.status || 500, statusMessage: errorText });
+  }
 })
