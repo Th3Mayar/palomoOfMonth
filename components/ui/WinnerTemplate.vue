@@ -2,7 +2,7 @@
   <div class="relative w-full max-w-[400px] mx-auto aspect-[4/5] h-full justify-center items-center translate-y-[40%]">
     <img
       src="/images/template/template_winner.svg"
-      class="absolute inset-0 w-full h-full pointer-events-none select-none"
+      class="absolute inset-0 w-full h-full pointer-events-none select-none rounded-3xl"
       alt="Winner Frame"
       draggable="false"
     />
@@ -44,7 +44,7 @@ const nameStyle = {
   left: 0,
   fontSize: '1.2rem',
   letterSpacing: '1px',
-  textShadow: '0 1px 5px #0cfb04',
-  "font-family": 'Montserrat',
+  textShadow: '0 1px 1px #0cfb04',
+  "font-family": '"Press Start 2P", cursive',
 }
 </script>
