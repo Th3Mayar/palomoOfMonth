@@ -1,21 +1,28 @@
 <template>
-  <div class="py-4 sm:py-8">
+  <ParticlesBg class="h-full" />
+  <div class="overflow-hidden">
     <!-- Alerts -->
     <div class="fixed top-4 right-4 z-50 space-y-2">
       <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
     </div>
 
-    <WinnerTemplate
+    <div class="min-h-screen bg-bg-dark-background/50 flex items-center justify-center relative z-10">
+      <CountdownCard />
+    </div>
+
+    <!-- <WinnerTemplate
       v-if="employeeExample"
       :image="employeeExample.image"
       :name="employeeExample.name"
-    />
+    /> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import Alert from '~/components/ui/Alert.vue';
+import CountdownCard from '~/components/ui/CountdownCard.vue';
 import WinnerTemplate from '~/components/ui/WinnerTemplate.vue';
+import ParticlesBg from '~/components/ui/ParticlesBg.vue';
 import { EmployeeService } from '~/services/employee/employeeService'
 import { EmployeeApiResponse } from '~/types/employee';
 
@@ -39,7 +46,7 @@ onBeforeMount(async () => {
 
         if (employees.value.length) {
             employeeExample.value = employees.value[5]
-            showSuccess('Employees loaded successfully.')
+            // showSuccess('Employees loaded successfully.')
         } else {
             showError('No employees found.')
         }

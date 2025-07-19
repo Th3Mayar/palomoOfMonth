@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-background to-secondary/20">
     <!-- Optional auth header -->
-    <div class="absolute top-4 left-4">
+    <div class="absolute top-4 left-4 !z-50">
       <NuxtLink to="/" class="flex items-center space-x-2">
         <div class="w-8 h-8 bg-button-primary rounded-lg flex items-center justify-center">
           <span class="text-white font-bold text-sm">P</span>
