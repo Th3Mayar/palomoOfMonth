@@ -1,20 +1,20 @@
 <template>
-  <ParticlesBg class="h-full" />
+  <ParticlesBg v-if="!showWinner" class="h-full" />
   <div class="overflow-hidden">
     <!-- Alerts -->
     <div class="fixed top-4 right-4 z-50 space-y-2">
       <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
     </div>
 
-    <div class="min-h-screen bg-bg-dark-background/50 flex items-center justify-center relative z-10">
+    <div v-if="!showWinner" class="min-h-screen bg-bg-dark-background/50 flex items-center justify-center relative z-10">
       <CountdownCard />
     </div>
 
-    <!-- <WinnerTemplate
-      v-if="employeeExample"
+    <WinnerTemplate
+      v-if="showWinner && employeeExample"
       :image="employeeExample.image"
       :name="employeeExample.name"
-    /> -->
+    />
   </div>
 </template>
 
@@ -28,6 +28,7 @@ import { EmployeeApiResponse } from '~/types/employee';
 
 const employees = ref([])
 const employeeExample = ref<EmployeeApiResponse | null>(null)
+const showWinner = ref(false)
 
 // Fetch employees
 async function fetchEmployees() {
@@ -52,6 +53,13 @@ onBeforeMount(async () => {
         }
     } else {
         showError('You must be logged in to view this page.')
+    }
+
+    // Check if current date is after the last day of the current month
+    const now = new Date()
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+    if (now > lastDayOfMonth) {
+      showWinner.value = true
     }
 
     console.log("employeeExample:", employeeExample.value)
