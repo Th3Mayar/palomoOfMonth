@@ -20,6 +20,19 @@
       <!-- Navigation section -->
       <div
         class="flex flex-col sm:flex-row items-center justify-center lg:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+        
+
+        <!-- Winner Notification with animation and countdown -->
+        <div class="relative flex flex-col items-center">
+          <div v-if="timeLeft" class="absolute -top-5 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow z-10 select-none animate-pulse leading-none tracking-tight">
+            {{ timeLeft.days }}d
+          </div>
+          <Trophy
+            class="h-4 w-4 cursor-pointer animate-bell"
+            @click.prevent="navigateTo('/winners')"
+          />
+        </div>
+        
         <!-- Settings button always visible for testing -->
         <Button as="button" @click.prevent="navigateTo('/settings')" variant="ghost" size="sm" class="w-full sm:w-auto">
           <Settings class="mr-2 h-4 w-4" />
@@ -168,7 +181,31 @@
 </template>
 
 <script setup>
-import { LogIn, LogOut, Users, Award, BarChart3, Settings, UserCog } from 'lucide-vue-next'
+import { LogIn, LogOut, Users, Award, BarChart3, Settings, UserCog, Trophy } from 'lucide-vue-next'
+import { ref, computed, onBeforeMount, watch } from 'vue'
+// Calculate time left until end of month (con patrón correcto de intervalo)
+const timeLeft = ref({ days: 0, hours: 0 })
+let interval = null
+function updateTimeLeft() {
+  const now = new Date()
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0, 0)
+  const diff = endOfMonth.getTime() - now.getTime()
+  if (diff > 0) {
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+    timeLeft.value = { days, hours }
+  } else {
+    timeLeft.value = { days: 0, hours: 0 }
+  }
+}
+onMounted(() => {
+  updateTimeLeft()
+  interval = setInterval(updateTimeLeft, 60 * 1000)
+})
+onUnmounted(() => {
+  if (interval) clearInterval(interval)
+})
+
 import Button from '~/components/ui/Button.vue'
 import Card from '~/components/ui/Card.vue'
 import CardContent from '~/components/ui/CardContent.vue'
@@ -290,6 +327,26 @@ onBeforeMount(() => {
   checkAuth()
 })
 </script>
+
+<style scoped>
+@keyframes bell-swing {
+  0% { transform: translateX(0) rotate(-10deg); }
+  10% { transform: translateX(-2px) rotate(10deg); }
+  20% { transform: translateX(2px) rotate(-10deg); }
+  30% { transform: translateX(-2px) rotate(10deg); }
+  40% { transform: translateX(2px) rotate(-10deg); }
+  50% { transform: translateX(-2px) rotate(10deg); }
+  60% { transform: translateX(2px) rotate(-10deg); }
+  70% { transform: translateX(-2px) rotate(10deg); }
+  80% { transform: translateX(2px) rotate(-10deg); }
+  90% { transform: translateX(-2px) rotate(10deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+.animate-bell {
+  animation: bell-swing 1.2s infinite cubic-bezier(.36,.07,.19,.97);
+  transform-origin: 50% 0%;
+}
+</style>
 
 <style scoped>
 /* Responsive enhancements */
