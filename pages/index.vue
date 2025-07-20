@@ -20,10 +20,9 @@
       <!-- Navigation section -->
       <div
         class="flex flex-col sm:flex-row items-center justify-center lg:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
-        
 
         <!-- Winner Notification with animation and countdown -->
-        <div class="relative flex flex-col items-center">
+        <div class="relative flex flex-col items-center mt-2 sm:mt-0 lg:mt-0">
           <div v-if="timeLeft" class="absolute -top-5 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow z-10 select-none animate-pulse leading-none tracking-tight">
             {{ timeLeft.days }}d
           </div>
