@@ -1,5 +1,6 @@
 <template>
   <ParticlesBg v-if="!showWinner" class="h-full" />
+  <!-- <SnakeGame v-if="!showWinner" class="h-full relative" /> -->
   <div :class="['relative', !showWinner ? 'overflow-hidden h-screen' : 'h-full']">
     <!-- Alerts -->
     <div class="fixed top-4 right-4 z-50 space-y-2">
@@ -25,6 +26,7 @@ import confetti from 'canvas-confetti';
 import { watch, onMounted, onUnmounted } from 'vue';
 import { EmployeeService } from '~/services/employee/employeeService'
 import { EmployeeApiResponse } from '~/types/employee'
+import SnakeGame from '~/components/ui/SnakeGame.vue'
 
 const winner = ref<any>(null)
 const employees = ref([])

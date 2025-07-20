@@ -18,12 +18,18 @@ onMounted(async () => {
       fullScreen: { enable: false },
       background: { color: 'transparent' },
       particles: {
-        number: { value: 100 },
-        color: { value: '#fff' },
-        shape: { type: 'circle' },
-        opacity: { value: 0.5 },
-        size: { value: 3 },
-        move: { enable: true, speed: 1, direction: 'none', random: false, straight: false, outModes: { default: 'out' } }
+        number: { value: 120 },
+        color: { value: ['#fff', '#10FB06', '#1B71D9', '#FFD700', '#FF3CAC'] },
+        shape: {
+          type: ['circle', 'star', 'triangle', 'polygon'],
+          options: {
+            star: { sides: 5 },
+            polygon: { sides: 6 }
+          }
+        },
+        opacity: { value: 0.6 },
+        size: { value: { min: 2, max: 6 } },
+        move: { enable: true, speed: 1.2, direction: 'none', random: true, straight: false, outModes: { default: 'out' } }
       },
       interactivity: {
         events: {

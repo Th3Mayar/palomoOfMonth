@@ -860,7 +860,7 @@ const scrollToTop = () => {
 }
 
 // Load settings on mount
-onMounted(async () => {
+onBeforeMount(async () => {
   loadSettings()
   
   // Force check auth first to ensure user data is loaded

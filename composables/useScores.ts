@@ -146,8 +146,6 @@ export const useScores = () => {
         const updatedScores = scores.value.map(score => {
           const employee = employeesList.find(emp => emp.id === score.employeeId)
           
-          console.log(`Score ${score.id}: employeeId=${score.employeeId}, found employee:`, employee)
-          
           return {
             ...score,
             employeeName: employee ? employee.name : `Palomo ID: ${score.employeeId}`
@@ -156,13 +154,6 @@ export const useScores = () => {
         
         // Force Vue reactivity by replacing the entire array
         scores.value = updatedScores
-        
-        console.log('Updated scores with names:', scores.value.map(s => ({ id: s.id, employeeId: s.employeeId, employeeName: s.employeeName })))
-      } else {
-        console.log('Cannot update names:', {
-          employeesCount: employeesList ? employeesList.length : 0,
-          scoresCount: scores.value.length
-        })
       }
     } catch (err) {
       console.warn('Failed to update employee names:', err)

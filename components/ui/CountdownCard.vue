@@ -1,5 +1,9 @@
 <template>
   <div class="w-full max-w-md mx-auto rounded-3xl shadow-xl p-6 flex flex-col items-center space-y-6 !z-50">
+    <Button as="button" variant="secondary" @click.prevent="navigateTo('/')" class="text-end justify-end select-none">
+      <ArrowLeft class="mr-2 h-4 w-4" />
+      Back to Home
+    </Button>
     <h2 class="text-2xl font-semibold text-background text-center select-none">
       The winner comes out in
     </h2>
@@ -9,12 +13,18 @@
       <TimeBlock label="Minutes" :value="countdown.minutes" />
       <TimeBlock label="Seconds" :value="countdown.seconds" />
     </div>
+    <Button as="button" variant="link" @click.prevent="navigateTo('/winners/game')" class="text-end justify-end select-none">
+      <Gamepad2 class="mr-2 h-4 w-4" />
+      Snake game to wait a bit
+    </Button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import TimeBlock from './TimeBlock.vue'
+import { ArrowLeft, Gamepad2 } from 'lucide-vue-next'
+import Button from './Button.vue'
 
 const countdown = ref({
   days: 0,
