@@ -1,7 +1,7 @@
 <template>
   <ParticlesBg v-if="!showWinner" class="h-full" />
   <!-- <SnakeGame v-if="!showWinner" class="h-full relative" /> -->
-  <div :class="['relative', !showWinner ? 'overflow-hidden h-screen' : 'h-full']">
+  <div :class="['relative', !showWinner ? 'overflow-hidden h-max' : 'h-max']">
     <!-- Alerts -->
     <div class="fixed top-4 right-4 z-50 space-y-2">
       <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
