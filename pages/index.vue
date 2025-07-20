@@ -22,12 +22,12 @@
         class="flex flex-col sm:flex-row items-center justify-center lg:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
 
         <!-- Winner Notification with animation and countdown -->
-        <div class="relative flex flex-col items-center mt-2 sm:mt-0 lg:mt-0">
-          <div v-if="timeLeft" class="absolute -top-5 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow z-10 select-none animate-pulse leading-none tracking-tight">
-            {{ timeLeft.days }}d
+        <div class="relative flex items-center mt-2 sm:mt-0 lg:mt-0">
+          <div v-if="timeLeft" class="flex !w-max absolute -top-5 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow z-10 select-none animate-pulse leading-none tracking-tight">
+            {{ timeLeft.days }}d {{ timeLeft.hours }}h
           </div>
           <Trophy
-            class="h-4 w-4 cursor-pointer animate-bell"
+            class="h-4 w-4 cursor-pointer animate-bell text-buttonSuccess"
             @click.prevent="navigateTo('/winners')"
           />
         </div>
@@ -46,9 +46,9 @@
         </Button>
 
         <!-- User info and logout (responsive) -->
-        <div v-else class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-          <span class="text-foreground text-sm sm:text-base text-center sm:text-left">
-            Hello, {{ user?.name || 'User' }}!
+        <div v-else class="flex flex-col gap-2 sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+          <span class="text-foreground text-sm sm:text-base text-center sm:text-left flex items-center">
+            <CircleUser class="mr-2 h-4 w-4" /> Hello, {{ user?.name || 'User' }}!
           </span>
           <Button @click="logout" variant="outline" size="sm" class="w-full sm:w-auto">
             <LogOut class="mr-2 h-4 w-4" />
@@ -94,8 +94,7 @@
             <h2 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">Users</h2>
             <p class="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 flex-grow">Manage user accounts and
               permissions</p>
-            <Button @click="handleUsersClick" class="w-full mt-auto text-sm sm:text-base" variant="default"
-              style="background-color: rgb(34 197 94); color: white;">
+            <Button @click="handleUsersClick" class="w-full mt-auto text-sm sm:text-base" variant="success">
               View Users
             </Button>
           </CardContent>
@@ -180,7 +179,7 @@
 </template>
 
 <script setup>
-import { LogIn, LogOut, Users, Award, BarChart3, Settings, UserCog, Trophy } from 'lucide-vue-next'
+import { LogIn, LogOut, Users, Award, BarChart3, Settings, UserCog, Trophy, CircleUser } from 'lucide-vue-next'
 import { ref, computed, onBeforeMount, watch } from 'vue'
 // Calculate time left until end of month (con patrón correcto de intervalo)
 const timeLeft = ref({ days: 0, hours: 0 })
@@ -342,7 +341,7 @@ onBeforeMount(() => {
   100% { transform: translateX(0) rotate(0deg); }
 }
 .animate-bell {
-  animation: bell-swing 1.2s infinite cubic-bezier(.36,.07,.19,.97);
+  animation: bell-swing 2.5s infinite cubic-bezier(.36,.07,.19,.97);
   transform-origin: 50% 0%;
 }
 </style>
