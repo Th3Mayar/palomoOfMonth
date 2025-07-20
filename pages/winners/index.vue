@@ -1,6 +1,6 @@
 <template>
   <ParticlesBg v-if="!showWinner" class="h-full" />
-  <div :class="!showWinner ? 'overflow-hidden' : 'h-full'">
+  <div :class="['relative', !showWinner ? 'overflow-hidden h-screen' : 'h-full']">
     <!-- Alerts -->
     <div class="fixed top-4 right-4 z-50 space-y-2">
       <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
