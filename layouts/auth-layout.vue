@@ -6,7 +6,7 @@
         <div class="w-8 h-8 bg-button-primary rounded-lg flex items-center justify-center">
           <span class="text-white font-bold text-sm">P</span>
         </div>
-        <span class="font-semibold text-foreground">Palomo of the Month</span>
+        <span class="font-semibold text-foreground select-none">Palomo of the Month</span>
       </NuxtLink>
     </div>
     <!-- Main content -->
