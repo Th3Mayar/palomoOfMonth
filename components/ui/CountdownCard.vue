@@ -13,14 +13,18 @@
       <TimeBlock label="Minutes" :value="countdown.minutes" />
       <TimeBlock label="Seconds" :value="countdown.seconds" />
     </div>
-    <Button as="button" variant="link" @click.prevent="navigateTo('/winners/game')" class="text-end justify-end select-none">
+   <section class="w-full flex items-center justify-center">
+     <Button as="button" variant="link" @click.prevent="navigateTo('/winners/game')"
+      class="text-end justify-end select-none">
       <Gamepad2 class="mr-2 h-4 w-4" />
-      Snake game to wait a bit
+      Snake game
     </Button>
-     <Button as="button" variant="link" @click.prevent="navigateTo('/winners/game/memory')" class="text-end justify-end select-none">
+    <Button as="button" variant="link" @click.prevent="navigateTo('/winners/game/memory')"
+      class="text-end justify-end select-none">
       <Gamepad2 class="mr-2 h-4 w-4" />
-      Memory / Pairs game
+      Memory / Pairs
     </Button>
+   </section>
   </div>
 </template>
 
