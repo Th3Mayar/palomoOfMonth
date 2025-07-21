@@ -17,6 +17,10 @@
       <Gamepad2 class="mr-2 h-4 w-4" />
       Snake game to wait a bit
     </Button>
+     <Button as="button" variant="link" @click.prevent="navigateTo('/winners/game/memory')" class="text-end justify-end select-none">
+      <Gamepad2 class="mr-2 h-4 w-4" />
+      Memory / Pairs game
+    </Button>
   </div>
 </template>
 

@@ -5,7 +5,6 @@
     </div>
 </template>
 
-
 <script setup lang="ts">
 import ParticlesBg from '~/components/ui/ParticlesBg.vue';
 import SnakeGame from '~/components/ui/SnakeGame.vue'
