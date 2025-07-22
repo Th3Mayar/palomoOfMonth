@@ -43,6 +43,25 @@ async function fetchEmployees() {
 const { alerts, showSuccess, showError, removeAlert } = useAlert()
 
 onBeforeMount(async () => {
+  const now = new Date()
+  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const isWeekday = lastDayOfMonth.getDay() >= 1 && lastDayOfMonth.getDay() <= 5
+
+  const deadline = new Date(
+    lastDayOfMonth.getFullYear(),
+    lastDayOfMonth.getMonth(),
+    lastDayOfMonth.getDate(),
+    14, 30, 0
+  )
+
+  if (
+    now.toDateString() === lastDayOfMonth.toDateString() &&
+    isWeekday &&
+    now >= deadline
+  ) {
+    showWinner.value = true
+  }
+
   if(showWinner.value) {
     try {
       await fetchEmployees()
@@ -64,13 +83,6 @@ onBeforeMount(async () => {
     } catch (e) {
       showError('No winner found for this month.');
     }
-  }
-
-  // Check if current date is after the last day of the current month
-  const now = new Date()
-  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
-  if (now > lastDayOfMonth) {
-    showWinner.value = true
   }
 })
 

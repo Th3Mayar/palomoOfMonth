@@ -41,18 +41,31 @@ const countdown = ref({
   seconds: 0,
 })
 
-const targetDate = new Date('2025-08-01T00:00:00')
+// Function to get the last business day of the current month at 14:30
+function getTargetDate() {
+  const now = new Date();
+  // Define the last day of the month
+  let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  // If the last day is a weekend, move to the previous Friday
+  while (lastDay.getDay() === 0 || lastDay.getDay() === 6) {
+    lastDay.setDate(lastDay.getDate() - 1);
+  }
+  // Set the time to 14:30
+  lastDay.setHours(14, 30, 0, 0);
+  return lastDay;
+}
 
 const updateCountdown = () => {
-  const now = new Date()
-  const diff = targetDate.getTime() - now.getTime()
+  const now = new Date();
+  const targetDate = getTargetDate();
+  const diff = targetDate.getTime() - now.getTime();
 
   countdown.value = {
-    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-    minutes: Math.floor((diff / (1000 * 60)) % 60),
-    seconds: Math.floor((diff / 1000) % 60),
-  }
+    days: Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24))),
+    hours: Math.max(0, Math.floor((diff / (1000 * 60 * 60)) % 24)),
+    minutes: Math.max(0, Math.floor((diff / (1000 * 60)) % 60)),
+    seconds: Math.max(0, Math.floor((diff / 1000) % 60)),
+  };
 }
 
 let interval: any
