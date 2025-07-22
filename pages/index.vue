@@ -181,27 +181,44 @@
 <script setup>
 import { LogIn, LogOut, Users, Award, BarChart3, Settings, UserCog, Trophy, CircleUser } from 'lucide-vue-next'
 import { ref, computed, onBeforeMount, watch } from 'vue'
-// Calculate time left until end of month (con patrón correcto de intervalo)
-const timeLeft = ref({ days: 0, hours: 0 })
+
+// Calculate time left until last weekday of the month at 14:30
+const timeLeft = ref({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 let interval = null
+
+function getTargetDate() {
+  const now = new Date();
+  // Last day of the month
+  let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  // If it's Saturday (6) or Sunday (0), go back to Friday
+  while (lastDay.getDay() === 0 || lastDay.getDay() === 6) {
+    lastDay.setDate(lastDay.getDate() - 1);
+  }
+  // Set hour to 14:30
+  lastDay.setHours(14, 30, 0, 0);
+  return lastDay;
+}
+
 function updateTimeLeft() {
-  const now = new Date()
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0, 0)
-  const diff = endOfMonth.getTime() - now.getTime()
+  const now = new Date();
+  const targetDate = getTargetDate();
+  const diff = targetDate.getTime() - now.getTime();
   if (diff > 0) {
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
-    timeLeft.value = { days, hours }
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+    timeLeft.value = { days, hours, minutes, seconds };
   } else {
-    timeLeft.value = { days: 0, hours: 0 }
+    timeLeft.value = { days: 0, hours: 0, minutes: 0, seconds: 0 };
   }
 }
 onMounted(() => {
-  updateTimeLeft()
-  interval = setInterval(updateTimeLeft, 60 * 1000)
+  updateTimeLeft();
+  interval = setInterval(updateTimeLeft, 1000);
 })
 onUnmounted(() => {
-  if (interval) clearInterval(interval)
+  if (interval) clearInterval(interval);
 })
 
 import Button from '~/components/ui/Button.vue'
