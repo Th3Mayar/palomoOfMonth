@@ -183,11 +183,14 @@
         <div class="p-6 space-y-4">
           <ul v-if="selectedNomineeScores.length">
             <li v-for="(item, idx) in selectedNomineeScores" :key="idx" class="border-b pb-2 mb-2">
-              <p class="text-sm text-muted-foreground mb-1 flex gap-1">{{ formatDate(item.date) }} <strong class="flex">
-                  <ArrowBigRightDash class="-mt-[2px]" /> ({{ item.score
-                  }})
-                </strong></p>
-              <p class="text-foreground text-sm whitespace-pre-wrap">{{ item.reason }}</p>
+              <p class="text-sm text-muted-foreground mb-1 flex gap-1">{{ formatDate(item.date) }}</p>
+              <p class="text-foreground text-sm whitespace-pre-wrap">
+                <div class="inline-flex items-center px-2 rounded-full text-sm font-medium mt-1"
+                   :class="getScoreColorClass(item.score)">
+                  {{ item.score }}
+                </div>
+                {{ item.reason }}
+              </p>
             </li>
           </ul>
           <p v-else class="text-muted-foreground text-sm">No records found.</p>
@@ -211,6 +214,7 @@ import { EmployeeService } from '~/services/employee/employeeService'
 // Authentication & Alerts
 const { user, checkAuth, isLoggedIn } = useAuth()
 const { alerts, showSuccess, showError, removeAlert } = useAlert()
+const { getMaxScore } = useScoreConfig()
 
 // State
 const loading = ref(true)
@@ -249,6 +253,16 @@ const votingPeriod = computed(() => {
     current: now
   }
 })
+
+const getScoreColorClass = (score: number) => {
+  const maxScore = getMaxScore()
+  const percentage = (score / maxScore) * 100
+  
+  if (percentage >= 80) return 'bg-red-500 text-white-800'
+  if (percentage >= 60) return 'bg-yellow-700 text-white-800'
+  if (percentage >= 40) return 'bg-yellow-600 text-white-800'
+  return 'bg-green-600 text-white-800'
+}
 
 function updateCountdown() {
   const now = new Date()
