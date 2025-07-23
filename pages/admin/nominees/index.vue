@@ -252,6 +252,7 @@ import TableCell from '~/components/ui/TableCell.vue'
 
 // Types
 import type { Nominee, NomineesFilters, GenerateNomineesResponse } from '~/types/nominees'
+import { NumberFieldDecrementProps } from 'radix-vue'
 
 // Composables
 const { alerts, showSuccess, showError, removeAlert } = useAlert()
@@ -377,8 +378,10 @@ const refreshData = () => {
 
 const openGenerateModal = () => {
   showGenerateModal.value = true
+  // Set default month to current month (1-based, number type)
+  const now = new Date()
   generateForm.value = {
-    month: '',
+    month: now.getMonth() + 1 as any,
     max_quantity: 5
   }
 }
