@@ -229,18 +229,23 @@ const isScoreModalOpen = ref(false)
 const selectedNomineeScores = ref<any[]>([])
 const selectedNomineeName = ref('')
 
-const countdown = ref({ days: 0, hours: 0, minutes: 0 })
+const countdown = ref({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 let countdownInterval: number | undefined
 
-// Voting period (start to end of current month)
+// Voting period (start to last business day of current month at 14:30)
 const votingPeriod = computed(() => {
   const now = new Date()
   const start = new Date(now.getFullYear(), now.getMonth(), 1)
-  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  // Get last business day of month
+  let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  while (lastDay.getDay() === 0 || lastDay.getDay() === 6) {
+    lastDay.setDate(lastDay.getDate() - 1)
+  }
+  lastDay.setHours(14, 30, 0, 0)
   return {
     start: start.toLocaleDateString(),
-    end: end.toLocaleDateString(),
-    endRaw: end, // store raw Date for countdown
+    end: lastDay.toLocaleDateString(),
+    endRaw: lastDay,
     current: now
   }
 })
@@ -250,13 +255,14 @@ function updateCountdown() {
   const end = votingPeriod.value.endRaw
   const diffMs = end.getTime() - now.getTime()
   if (diffMs <= 0) {
-    countdown.value = { days: 0, hours: 0, minutes: 0 }
+    countdown.value = { days: 0, hours: 0, minutes: 0, seconds: 0 }
     return
   }
-  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24)
-  const minutes = Math.floor((diffMs / (1000 * 60)) % 60)
-  countdown.value = { days, hours, minutes }
+  const days = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)))
+  const hours = Math.max(0, Math.floor((diffMs / (1000 * 60 * 60)) % 24))
+  const minutes = Math.max(0, Math.floor((diffMs / (1000 * 60)) % 60))
+  const seconds = Math.max(0, Math.floor((diffMs / 1000) % 60))
+  countdown.value = { days, hours, minutes, seconds }
 }
 
 // Fetch nominees
@@ -402,7 +408,7 @@ onMounted(async () => {
   try { await checkAuth() } catch { }
   await fetchAllData();
   updateCountdown();
-  countdownInterval = window.setInterval(updateCountdown, 60_000);
+  countdownInterval = window.setInterval(updateCountdown, 1000);
 });
 
 
