@@ -55,6 +55,44 @@ import DialogHeader from "./DialogHeader.vue";
 import DialogFooter from "./DialogFooter.vue";
 import { ArrowLeft, Tally3, Tally5 } from "lucide-vue-next";
 
+// Save game state to localStorage
+function saveGameState() {
+  const state = {
+    snake,
+    direction,
+    nextDirection,
+    food,
+    score: score.value,
+    maxScore: maxScore.value,
+    growing,
+    paused: paused.value,
+    gameOver: gameOver.value
+  };
+  localStorage.setItem('snake-game-state', JSON.stringify(state));
+}
+
+// Load game state from localStorage
+function loadGameState() {
+  const stateStr = localStorage.getItem('snake-game-state');
+  if (!stateStr) return false;
+  try {
+    const state = JSON.parse(stateStr);
+    if (!state.snake || !state.direction || !state.food) return false;
+    snake = state.snake;
+    direction = state.direction;
+    nextDirection = state.nextDirection;
+    food = state.food;
+    score.value = state.score;
+    maxScore.value = state.maxScore;
+    growing = state.growing;
+    paused.value = state.paused;
+    gameOver.value = state.gameOver;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const score = ref(0);
 const maxScore = ref(0);
@@ -274,6 +312,9 @@ function resetGame() {
   food = randomFood();
   score.value = 0;
   gameOver.value = false;
+  paused.value = false;
+  growing = false;
+  saveGameState();
 }
 
 function setMaxScore(newScore: number) {
@@ -297,11 +338,13 @@ function update() {
   // Wall collision
   if (head.x < 0 || head.x >= width / grid || head.y < 0 || head.y >= height / grid) {
     handleGameOver();
+    saveGameState();
     return;
   }
   // Self collision
   if (snake.some((s, i) => i > 0 && s.x === head.x && s.y === head.y)) {
     handleGameOver();
+    saveGameState();
     return;
   }
 
@@ -317,6 +360,7 @@ function update() {
   } else {
     growing = false;
   }
+  saveGameState();
 }
 
 function loop() {
@@ -367,7 +411,8 @@ onMounted(() => {
     canvasRef.value.height = height;
     ctx = canvasRef.value.getContext("2d");
     document.addEventListener("keydown", handleKey);
-    resetGame();
+    let loaded = loadGameState();
+    if (!loaded) resetGame();
     draw();
     intervalId = setInterval(loop, 120);
   }
