@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-8 max-w-4xl mt-10">
+  <div class="container mx-auto px-2 py-6 max-w-4xl mt-10 sm:px-4 sm:py-8 sm:mt-10">
     <!-- Back to Top Button -->
     <transition name="fade">
       <button
@@ -7,24 +7,26 @@
         @click="scrollToTop"
         class="fixed bottom-8 right-8 z-50 bg-primary text-white rounded-full shadow-lg p-3 flex items-center justify-center animate-pulse hover:scale-110 transition-transform"
         aria-label="Back to top"
+        style="min-width:44px;min-height:44px;"
       >
         <ArrowUp class="h-6 w-6" />
       </button>
     </transition>
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
       <div>
-        <h1 class="text-3xl font-bold text-foreground mb-2">Settings</h1>
-        <p class="text-muted-foreground">Customize your Palomo of the Month experience</p>
+        <h1 class="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">Settings</h1>
+        <p class="text-muted-foreground text-sm sm:text-base">Customize your Palomo of the Month experience</p>
       </div>
-      <Button as="button" variant="outline" @click.prevent="navigateTo('/')">
+      <Button as="button" variant="outline" @click.prevent="navigateTo('/')" class="w-full sm:w-auto">
         <ArrowLeft class="mr-2 h-4 w-4" />
-        Back to Home
+        <span class="hidden sm:inline">Back to Home</span>
+        <span class="sm:hidden">Home</span>
       </Button>
     </div>
 
     <!-- Alerts -->
-    <div class="fixed top-0 right-0 z-50">
+    <div class="fixed top-2 right-2 z-50 w-full max-w-xs sm:max-w-sm">
       <Alert
         v-for="(alert, index) in alerts"
         :key="alert.id"
@@ -34,11 +36,11 @@
       />
     </div>
 
-    <div class="grid gap-6">
+    <div class="grid gap-4 sm:gap-6">
       <!-- Account Configuration Section -->
       <Card>
         <CardHeader>
-          <div class="flex items-center">
+          <div class="flex items-center gap-2">
             <User class="mr-2 h-5 w-5" />
             <div>
               <CardTitle>Account Configuration</CardTitle>
@@ -49,8 +51,8 @@
           </div>
         </CardHeader>
         <CardContent class="space-y-6">
-          <form @submit="onAccountSubmit" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form @submit="onAccountSubmit" class="space-y-4 sm:space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div class="space-y-2">
                 <label class="text-sm font-medium leading-none">
                   New Username
@@ -87,7 +89,7 @@
                   {{ accountErrors.password }}
                 </p>
               </div>
-              <div class="space-y-2 md:col-span-2" v-if="isEditingAccount">
+              <div class="space-y-2 sm:col-span-2" v-if="isEditingAccount">
                 <label class="text-sm font-medium leading-none">
                   Confirm Password
                   <span class="text-destructive">*</span>
@@ -100,16 +102,16 @@
                 />
               </div>
             </div>
-            <div class="pt-4 border-t flex gap-2">
-              <Button type="button" @click="isEditingAccount = true" v-if="!isEditingAccount" class="w-full md:w-auto">
+            <div class="pt-4 border-t flex flex-col gap-2 sm:flex-row">
+              <Button type="button" @click="isEditingAccount = true" v-if="!isEditingAccount" class="w-full sm:w-auto">
                 <Pencil class="mr-2 h-4 w-4" /> Edit
               </Button>
               <!-- Cancel Button -->
-              <Button type="button" @click="isEditingAccount = false" v-if="isEditingAccount" class="w-full md:w-auto" variant="outline">
+              <Button type="button" @click="isEditingAccount = false" v-if="isEditingAccount" class="w-full sm:w-auto" variant="outline">
                 <ArrowLeft class="mr-2 h-4 w-4" />
                 Cancel
               </Button>
-              <Button type="submit" :disabled="loading || !isEditingAccount" v-if="isEditingAccount" class="w-full md:w-auto">
+              <Button type="submit" :disabled="loading || !isEditingAccount" v-if="isEditingAccount" class="w-full sm:w-auto">
                 <Save class="mr-2 h-4 w-4" />
                 {{ loading ? 'Updating...' : 'Update Account' }}
               </Button>
@@ -133,7 +135,7 @@
           <!-- Dark/Light Mode -->
           <div class="space-y-2">
             <label class="text-sm font-medium">Theme Mode</label>
-            <div class="flex gap-3">
+            <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
               <Button 
                 @click="setTheme('light')" 
                 :variant="currentTheme === 'light' ? 'default' : 'outline'"
@@ -164,7 +166,7 @@
           <!-- Primary Color -->
           <div class="space-y-2">
             <label class="text-sm font-medium">Primary color</label>
-            <div class="grid grid-cols-6 gap-2">
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
               <button
                 v-for="color in primaryColors"
                 :key="color.name"
@@ -311,7 +313,7 @@
           <!-- Border radius -->
           <div class="space-y-2">
             <label class="text-sm font-medium">Border radius</label>
-            <div class="flex gap-2">
+            <div class="flex flex-col gap-2 sm:flex-row">
               <Button 
                 @click="setBorderRadius('none')" 
                 :variant="currentBorderRadius === 'none' ? 'default' : 'outline'"
@@ -402,7 +404,7 @@
         </CardHeader>
         <CardContent class="space-y-6">
           <!-- Enable animations -->
-          <div class="flex items-center justify-between">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <label class="text-sm font-medium">Animations</label>
               <p class="text-sm text-muted-foreground">Enable or disable animations</p>
@@ -419,7 +421,7 @@
           <!-- Transition speed -->
           <div class="space-y-2">
             <label class="text-sm font-medium">Transition speed</label>
-            <div class="flex gap-2">
+            <div class="flex flex-col gap-2 sm:flex-row">
               <Button 
                 @click="setTransitionSpeed('slow')" 
                 :variant="currentTransitionSpeed === 'slow' ? 'default' : 'outline'"
@@ -458,7 +460,7 @@
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div class="flex gap-4">
+          <div class="flex flex-col gap-2 sm:flex-row sm:gap-4">
             <Button @click="saveSettings" variant="default">
               <Save class="mr-2 h-4 w-4" />
               Save changes

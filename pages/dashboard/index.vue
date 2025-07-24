@@ -1,18 +1,18 @@
 <template>
-  <div class="container mx-auto px-4 py-8 mt-10">
+  <div class="container mx-auto px-2 py-6 mt-6 sm:px-4 sm:py-8 sm:mt-10">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
-      <div class="flex-1 min-w-0">
-      </div>
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+      <div class="flex-1 min-w-0"></div>
       <div class="flex-shrink-0">
         <Button as="button" @click.prevent="navigateTo('/')" variant="outline" class="w-full sm:w-auto">
           <ArrowLeft class="mr-2 h-4 w-4" />
-          Back to Home
+          <span class="hidden sm:inline">Back to Home</span>
+          <span class="sm:hidden">Home</span>
         </Button>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <!-- Palomos Card -->
       <Card class="shadow-md flex items-center h-28">
         <div class="flex items-center h-full w-full">
@@ -105,7 +105,7 @@
       </Card>
     </div>
 
-    <div class="mt-10 mb-8 flex gap-8">
+    <div class="mt-8 mb-8 flex flex-col gap-8 lg:flex-row">
       <section class="w-full">
         <h2 class="text-xl font-semibold mb-4">Nominees Table</h2>
         <div v-if="loading" class="flex items-center justify-center p-8">
@@ -118,7 +118,7 @@
           <h3 class="text-lg font-medium mb-2">No Nominees Found</h3>
           <p class="text-muted-foreground mb-4">No nominees available for this period.</p>
         </div>
-        <div class="rounded-md border table-container">
+        <div class="rounded-md border table-container overflow-x-auto">
           <div class="table-scroll-wrapper">
             <Table>
               <TableHeader>
@@ -171,7 +171,7 @@
           <h3 class="text-lg font-medium mb-2">No Scores Found</h3>
           <p class="text-muted-foreground mb-4">No scores available for this period.</p>
         </div>
-        <div class="rounded-md border table-container">
+        <div class="rounded-md border table-container overflow-x-auto">
           <div class="table-scroll-wrapper">
             <Table>
               <TableHeader class="sticky top-0 z-10">
@@ -213,14 +213,14 @@
       </section>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
       <div>
         <h2 class="text-xl font-semibold mb-2">Votes Distribution</h2>
         <div v-if="loading" class="flex items-center justify-center h-64">
           <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
         </div>
         <div v-else>
-          <Bar :data="votesChartData" :options="barChartOptions" />
+          <div class="overflow-x-auto"><Bar :data="votesChartData" :options="barChartOptions" /></div>
         </div>
       </div>
       <div>
@@ -232,7 +232,7 @@
           <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
         </div>
         <div v-else>
-          <Bar :data="scoresChartData" :options="barChartOptions" />
+          <div class="overflow-x-auto"><Bar :data="scoresChartData" :options="barChartOptions" /></div>
         </div>
       </div>
     </div>
@@ -472,7 +472,7 @@ const scoresChartData = computed(() => ({
 const barChartOptions = {
   responsive: true,
   plugins: {
-    legend: { display: true, position: 'top' }, // Show legends
+    legend: { display: true, position: 'top' as const }, // Show legends
     title: { display: false },
     tooltip: {
       callbacks: {
@@ -489,12 +489,12 @@ const barChartOptions = {
   },
   scales: {
     x: {
-      type: 'category', // CategoryScale
+      type: "category", // use the literal type instead of string
       grid: { display: false },
       title: { display: true, text: 'Date / Employee' },
     },
     y: {
-      type: 'linear', // LinearScale
+      type: "linear", // use the literal type instead of string
       grid: { display: true },
       title: { display: true, text: 'Votes / Score' },
       beginAtZero: true
