@@ -55,7 +55,7 @@ import DialogHeader from "./DialogHeader.vue";
 import DialogFooter from "./DialogFooter.vue";
 import { ArrowLeft, Tally3, Tally5 } from "lucide-vue-next";
 
-// Save game state to localStorage
+// Save the current game state to localStorage
 function saveGameState() {
   const state = {
     snake,
@@ -71,7 +71,8 @@ function saveGameState() {
   localStorage.setItem('snake-game-state', JSON.stringify(state));
 }
 
-// Load game state from localStorage
+// Load the game state from localStorage
+// Returns true if a state was loaded, false otherwise
 function loadGameState() {
   const stateStr = localStorage.getItem('snake-game-state');
   if (!stateStr) return false;
@@ -85,7 +86,7 @@ function loadGameState() {
     score.value = state.score;
     maxScore.value = state.maxScore;
     growing = state.growing;
-    paused.value = state.paused;
+    paused.value = true; // Always pause when loading a saved game
     gameOver.value = state.gameOver;
     return true;
   } catch {
@@ -402,7 +403,7 @@ function getCurrentUser() {
 }
 
 onMounted(() => {
-  // Load max score from storage
+  // Load max score from localStorage
   const stored = localStorage.getItem("snake-max-score");
   if (stored) maxScore.value = Number(stored);
 
@@ -411,8 +412,11 @@ onMounted(() => {
     canvasRef.value.height = height;
     ctx = canvasRef.value.getContext("2d");
     document.addEventListener("keydown", handleKey);
+    // If a saved game exists, load it and pause
     let loaded = loadGameState();
-    if (!loaded) resetGame();
+    if (!loaded) {
+      resetGame();
+    }
     draw();
     intervalId = setInterval(loop, 120);
   }
