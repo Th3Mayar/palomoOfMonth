@@ -243,7 +243,7 @@ const votingPeriod = computed(() => {
   let targetDate
   // LOGIC TO REMOVE FOR THE FUTURE.
   if (now.getDate() === 29) {
-    targetDate = new Date(now.getFullYear(), now.getMonth(), 29, 17, 0, 0)
+    targetDate = new Date(now.getFullYear(), now.getMonth(), 29, 16, 0, 0)
   } else {
     targetDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
     while (targetDate.getDay() === 0 || targetDate.getDay() === 6) {

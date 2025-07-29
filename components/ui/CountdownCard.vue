@@ -69,7 +69,7 @@ function getTargetDate() {
 
   // LOGIC TO REMOVE FOR THE FUTURE.
   if (now.getDate() === 29) {
-    now.setHours(17, 0, 0, 0);
+    now.setHours(16, 0, 0, 0);
     return now;
   }
 
