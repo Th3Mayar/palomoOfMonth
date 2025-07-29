@@ -104,7 +104,7 @@ onBeforeMount(async () => {
   }
 
   // LOGIC TO REMOVE FOR THE FUTURE.
-  if (target.getDate() === 29 && target.getHours() === 16) {
+  if (target.getDate() === 29 && target.getHours() === 17) {
     showWinner.value = true;
   }
 
