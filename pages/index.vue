@@ -196,6 +196,13 @@ function getTargetDate() {
   }
   // Set hour to 14:30
   lastDay.setHours(14, 30, 0, 0);
+
+  // LOGIC TO REMOVE FOR THE FUTURE.
+  if (now.getDate() === 29) {
+    now.setHours(16, 0, 0, 0);
+    return now;
+  }
+
   return lastDay;
 }
 
