@@ -32,14 +32,6 @@ const winner = ref<any>(null)
 const employees = ref([])
 const showWinner = ref(false)
 let confettiInterval: ReturnType<typeof setInterval> | null = null
-let interval: any
-
-const countdown = ref({
-  days: 0,
-  hours: 0,
-  minutes: 0,
-  seconds: 0,
-})
 
 // Fetch employees
 async function fetchEmployees() {
@@ -50,43 +42,10 @@ async function fetchEmployees() {
 // Authentication & Alerts
 const { alerts, showSuccess, showError, removeAlert } = useAlert()
 
-function getTargetDate() {
-  const now = new Date();
-  // Define the last day of the month
-  let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  // If the last day is a weekend, move to the previous Friday
-  while (lastDay.getDay() === 0 || lastDay.getDay() === 6) {
-    lastDay.setDate(lastDay.getDate() - 1);
-  }
-  // Set the time to 14:30
-  lastDay.setHours(14, 30, 0, 0);
-
-  if (now.getDate() === 29) {
-    now.setHours(14, 25, 0, 0);
-    return now;
-  }
-
-  return lastDay;
-}
-
-const updateCountdown = () => {
-  const now = new Date();
-  const targetDate = getTargetDate();
-  const diff = targetDate.getTime() - now.getTime();
-
-  countdown.value = {
-    days: Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24))),
-    hours: Math.max(0, Math.floor((diff / (1000 * 60 * 60)) % 24)),
-    minutes: Math.max(0, Math.floor((diff / (1000 * 60)) % 60)),
-    seconds: Math.max(0, Math.floor((diff / 1000) % 60)),
-  };
-}
-
 onBeforeMount(async () => {
   const now = new Date()
   const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
   const isWeekday = lastDayOfMonth.getDay() >= 1 && lastDayOfMonth.getDay() <= 5
-  const target = getTargetDate();
 
   const deadline = new Date(
     lastDayOfMonth.getFullYear(),
@@ -101,11 +60,6 @@ onBeforeMount(async () => {
     now >= deadline
   ) {
     showWinner.value = true
-  }
-
-  // LOGIC TO REMOVE FOR THE FUTURE.
-  if (target.getDate() === 29 && target.getHours() === 16) {
-    showWinner.value = true;
   }
 
   if(showWinner.value) {
@@ -151,14 +105,10 @@ onMounted(() => {
       confetti({ particleCount: 500 });
     }, 10000);
   }
-
-  updateCountdown()
-  interval = setInterval(updateCountdown, 1000)
 });
 
 onUnmounted(() => {
   if (confettiInterval) clearInterval(confettiInterval);
-  clearInterval(interval)
 });
 
 // Page configuration

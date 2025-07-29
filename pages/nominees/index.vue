@@ -240,21 +240,16 @@ let countdownInterval: number | undefined
 const votingPeriod = computed(() => {
   const now = new Date()
   const start = new Date(now.getFullYear(), now.getMonth(), 1)
-  let targetDate
-  // LOGIC TO REMOVE FOR THE FUTURE.
-  if (now.getDate() === 29) {
-    targetDate = new Date(now.getFullYear(), now.getMonth(), 29, 16, 0, 0)
-  } else {
-    targetDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    while (targetDate.getDay() === 0 || targetDate.getDay() === 6) {
-      targetDate.setDate(targetDate.getDate() - 1)
-    }
-    targetDate.setHours(14, 30, 0, 0)
+  // Get last business day of month
+  let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  while (lastDay.getDay() === 0 || lastDay.getDay() === 6) {
+    lastDay.setDate(lastDay.getDate() - 1)
   }
+  lastDay.setHours(14, 30, 0, 0)
   return {
     start: start.toLocaleDateString(),
-    end: targetDate.toLocaleDateString(),
-    endRaw: targetDate,
+    end: lastDay.toLocaleDateString(),
+    endRaw: lastDay,
     current: now
   }
 })
