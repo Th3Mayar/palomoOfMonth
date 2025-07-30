@@ -3,7 +3,7 @@ import { ref } from 'vue'
 
 export const useWinnerStore = defineStore('winner', () => {
   const showWinner = ref(true)
-  const winner = ref(null)
+  const winner = ref(true)
   const targetDate = ref<Date | null>(null)
 
   function setShowWinner(val: boolean) {
