@@ -32,7 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useWinnerStore } from '~/composables/useWinnerStore'
 
 const showOnlySeconds = computed(() => 
   countdown.value.days === 0 && countdown.value.hours === 0 && countdown.value.minutes === 0
@@ -55,6 +56,9 @@ const countdown = ref({
   seconds: 0,
 })
 
+// Winner store
+const winnerStore = useWinnerStore()
+
 // Function to get the last business day of the current month at 14:30
 function getTargetDate() {
   const now = new Date();
@@ -66,6 +70,13 @@ function getTargetDate() {
   }
   // Set the time to 14:30
   lastDay.setHours(14, 30, 0, 0);
+
+  // LOGIC TO REMOVE FOR THE FUTURE.
+  if (now.getDate() === 30) {
+    now.setHours(13, 40, 0, 0);
+    return now;
+  }
+
   return lastDay;
 }
 
@@ -91,6 +102,13 @@ onMounted(() => {
 
 onUnmounted(() => {
   clearInterval(interval)
+})
+
+// Watch for countdown finish and set winner state in store
+watch(isFinished, (finished) => {
+  if (finished) {
+    winnerStore.setShowWinner(true)
+  }
 })
 </script>
 

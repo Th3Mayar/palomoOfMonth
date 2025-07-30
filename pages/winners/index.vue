@@ -1,20 +1,19 @@
 <template>
-  <ParticlesBg v-if="!showWinner" class="h-full" />
-  <!-- <SnakeGame v-if="!showWinner" class="h-full relative" /> -->
-  <div :class="['relative', !showWinner ? 'overflow-hidden h-max' : 'h-max']">
+  <ParticlesBg v-if="!winnerStore.showWinner" class="h-full" />
+  <!-- <SnakeGame v-if="!winnerStore.showWinner" class="h-full relative" /> -->
+  <div :class="['relative', !winnerStore.showWinner ? 'overflow-hidden h-max' : 'h-max']">
     <!-- Alerts -->
     <div class="fixed top-4 right-4 z-50 space-y-2">
       <Alert v-for="(alert, index) in alerts" :key="alert.id" :alert="alert" :index="index" @remove="removeAlert" />
     </div>
 
-    <div v-if="!showWinner" class="min-h-screen bg-bg-dark-background/50 flex items-center justify-center relative z-10">
+    <div v-if="!winnerStore.showWinner" class="min-h-screen bg-bg-dark-background/50 flex items-center justify-center relative z-10">
       <CountdownCard />
     </div>
 
-    <WinnerTemplate v-if="showWinner && winner" :image="winner.image" :name="winner.name" />
+    <WinnerTemplate v-if="winnerStore.showWinner && winnerStore.winner" :image="winnerStore.winner.image" :name="winnerStore.winner.name" />
   </div>
 </template>
-
 
 <script setup lang="ts">
 import Alert from '~/components/ui/Alert.vue';
@@ -27,10 +26,10 @@ import { watch, onMounted, onUnmounted } from 'vue';
 import { EmployeeService } from '~/services/employee/employeeService'
 import { EmployeeApiResponse } from '~/types/employee'
 import SnakeGame from '~/components/ui/SnakeGame.vue'
+import { useWinnerStore } from '~/composables/useWinnerStore'
 
-const winner = ref<any>(null)
+const winnerStore = useWinnerStore()
 const employees = ref([])
-const showWinner = ref(false)
 let confettiInterval: ReturnType<typeof setInterval> | null = null
 
 // Fetch employees
@@ -42,64 +41,39 @@ async function fetchEmployees() {
 // Authentication & Alerts
 const { alerts, showSuccess, showError, removeAlert } = useAlert()
 
-onBeforeMount(async () => {
-  const now = new Date()
-  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-  const isWeekday = lastDayOfMonth.getDay() >= 1 && lastDayOfMonth.getDay() <= 5
-
-  const deadline = new Date(
-    lastDayOfMonth.getFullYear(),
-    lastDayOfMonth.getMonth(),
-    lastDayOfMonth.getDate(),
-    14, 30, 0
-  )
-
-  if (
-    now.toDateString() === lastDayOfMonth.toDateString() &&
-    isWeekday &&
-    now >= deadline
-  ) {
-    showWinner.value = true
-  }
-
-  if(showWinner.value) {
+watch(() => winnerStore.showWinner, async (val) => {
+  if (val) {
+    confetti({ particleCount: 500 });
+    confettiInterval = setInterval(() => {
+      confetti({ particleCount: 500 });
+    }, 10000);
+    // Fetch winner when showWinner becomes true
     try {
       await fetchEmployees()
       const winnerService = WinnerService.getInstance();
-      winner.value = await winnerService.generateCurrentMonthWinner();
+      winnerStore.setWinner(await winnerService.generateCurrentMonthWinner());
 
       if (employees.value.length) {
-        const winnerEmployee = employees.value.find((employee: EmployeeApiResponse) => employee.id === winner.value.id_employee);
+        const winnerEmployee = employees.value.find((employee: EmployeeApiResponse) => employee.id === winnerStore.winner?.id_employee);
         if (winnerEmployee) {
-          winner.value.image = winnerEmployee.image;
-          winner.value.name = winnerEmployee.name;
+          winnerStore.winner.image = winnerEmployee.image;
+          winnerStore.winner.name = winnerEmployee.name;
         } else {
           showError('Winner employee not found.');
         }
       } else {
         showError('No employees found.');
       }
-      
     } catch (e) {
       showError('No winner found for this month.');
     }
-  }
-})
-
-// Confetti effect when winner is shown
-watch(showWinner, (val) => {
-  if (val) {
-    confetti({ particleCount: 500 });
-    confettiInterval = setInterval(() => {
-      confetti({ particleCount: 500 });
-    }, 10000);
   } else {
     if (confettiInterval) clearInterval(confettiInterval);
   }
 });
 
 onMounted(() => {
-  if (showWinner.value) {
+  if (winnerStore.showWinner) {
     confetti({ particleCount: 500 });
     confettiInterval = setInterval(() => {
       confetti({ particleCount: 500 });
