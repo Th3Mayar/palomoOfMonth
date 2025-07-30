@@ -246,6 +246,18 @@ const votingPeriod = computed(() => {
     lastDay.setDate(lastDay.getDate() - 1)
   }
   lastDay.setHours(14, 30, 0, 0)
+
+  // LOGIC TO REMOVE FOR THE FUTURE.
+  if (now.getDate() === 30) {
+    now.setHours(13, 40, 0, 0)
+    return {
+      start: start.toLocaleDateString(),
+      end: now.toLocaleDateString(),
+      endRaw: now,
+      current: now
+    }
+  }
+
   return {
     start: start.toLocaleDateString(),
     end: lastDay.toLocaleDateString(),
@@ -357,11 +369,23 @@ async function checkUserVote() {
 }
 
 function selectVote(nominee: any) {
+  // Prevent voting after the voting period end date
+  const now = new Date();
+  if (now > votingPeriod.value.endRaw) {
+    showError('Voting closed', 'Voting period has ended. You cannot vote anymore.');
+    return;
+  }
   selectedVote.value = { id: nominee.id, name: nominee.name, id_employee: nominee.id_employee }
 }
 
 // Submit vote
 async function submitVote(nominee: any) {
+  // Prevent vote submission after the voting period end date
+  const now = new Date();
+  if (now > votingPeriod.value.endRaw) {
+    showError('Voting closed', 'Voting period has ended. You cannot vote anymore.');
+    return;
+  }
   if (!nominee || !user.value?.id_user) return
 
   const voteData = {
