@@ -249,7 +249,7 @@ const votingPeriod = computed(() => {
 
   // LOGIC TO REMOVE FOR THE FUTURE.
   if (now.getDate() === 30) {
-    now.setHours(13, 40, 0, 0)
+    now.setHours(12, 40, 0, 0)
     return {
       start: start.toLocaleDateString(),
       end: now.toLocaleDateString(),
