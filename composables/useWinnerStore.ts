@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useWinnerStore = defineStore('winner', () => {
-  const showWinner = ref(false)
+  const showWinner = ref(true)
   const winner = ref(null)
   const targetDate = ref<Date | null>(null)
 
