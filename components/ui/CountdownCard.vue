@@ -61,6 +61,10 @@ const winnerStore = useWinnerStore()
 
 // Function to get the last business day of the current month at 14:30
 function getTargetDate() {
+  if (winnerStore.targetDate) {
+    return new Date(winnerStore.targetDate)
+  }
+  
   const now = new Date();
   // Define the last day of the month
   let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -102,6 +106,11 @@ onMounted(() => {
 
 onUnmounted(() => {
   clearInterval(interval)
+})
+
+// Watch for changes in winnerStore.targetDate and update countdown immediately
+watch(() => winnerStore.targetDate, () => {
+  updateCountdown()
 })
 
 // Watch for countdown finish and set winner state in store
