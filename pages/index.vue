@@ -181,21 +181,41 @@
 <script setup>
 import { LogIn, LogOut, Users, Award, BarChart3, Settings, UserCog, Trophy, CircleUser } from 'lucide-vue-next'
 import { ref, computed, onBeforeMount, watch } from 'vue'
+import Button from '~/components/ui/Button.vue'
+import Card from '~/components/ui/Card.vue'
+import CardContent from '~/components/ui/CardContent.vue'
+import Alert from '~/components/ui/Alert.vue'
+import { useWinnerStore } from '~/composables/useWinnerStore'
 
 // Calculate time left until last weekday of the month at 14:30
 const timeLeft = ref({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 let interval = null
 
+// Winner store
+const winnerStore = useWinnerStore()
+
+// Function to get the last business day of the current month at 14:30
 function getTargetDate() {
+  if (winnerStore.targetDate) {
+    return new Date(winnerStore.targetDate)
+  }
+  
   const now = new Date();
-  // Last day of the month
+  // Define the last day of the month
   let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  // If it's Saturday (6) or Sunday (0), go back to Friday
+  // If the last day is a weekend, move to the previous Friday
   while (lastDay.getDay() === 0 || lastDay.getDay() === 6) {
     lastDay.setDate(lastDay.getDate() - 1);
   }
-  // Set hour to 14:30
+  // Set the time to 14:30
   lastDay.setHours(14, 30, 0, 0);
+
+  // LOGIC TO REMOVE FOR THE FUTURE.
+  if (now.getDate() === 30) {
+    now.setHours(13, 40, 0, 0);
+    return now;
+  }
+
   return lastDay;
 }
 
@@ -220,11 +240,6 @@ onMounted(() => {
 onUnmounted(() => {
   if (interval) clearInterval(interval);
 })
-
-import Button from '~/components/ui/Button.vue'
-import Card from '~/components/ui/Card.vue'
-import CardContent from '~/components/ui/CardContent.vue'
-import Alert from '~/components/ui/Alert.vue'
 
 // Page configuration
 definePageMeta({
